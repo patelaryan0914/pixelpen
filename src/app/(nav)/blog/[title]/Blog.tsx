@@ -10,7 +10,7 @@ const Blog = ({ data }: any) => {
       theme={"light"}
       editor={editor}
       editable={false}
-      className="w-full lg:w-2/5 "
+      className="w-full lg:w-4/5 xl:w-2/5"
     />
   );
 };

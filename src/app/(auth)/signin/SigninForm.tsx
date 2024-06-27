@@ -73,7 +73,7 @@ const SigninForm = () => {
       </div>
       <div className="mt-4 text-center text-sm">
         Dont have an Account?{" "}
-        <Link href="/signin" className="underline">
+        <Link href="/signup" className="underline">
           Sign Up
         </Link>
       </div>

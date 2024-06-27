@@ -1,3 +1,5 @@
+import { getSession } from "@/app/actions";
+import { AuthRequired } from "@/lib/exceptions";
 import dynamic from "next/dynamic";
 
 const BlogEditor = dynamic(() => import("./BlogEditor"), {
@@ -5,11 +7,10 @@ const BlogEditor = dynamic(() => import("./BlogEditor"), {
   loading: () => <p>Loading...</p>,
 });
 const Editor = async () => {
+  const session = await getSession();
+  if (!session) throw new AuthRequired();
   return (
-    <div className="flex flex-col justify-center items-center">
-      <h1 className="text-slate-500 text-sm mb-5">
-        *The Text written in the first block will be considered as Title.
-      </h1>
+    <div className="flex flex-col justify-center items-center mt-4">
       <BlogEditor />
     </div>
   );

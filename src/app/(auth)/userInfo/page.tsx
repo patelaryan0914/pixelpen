@@ -8,6 +8,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getSession } from "@/app/actions";
 import { AuthRequired } from "@/lib/exceptions";
+import UserInfoUpdate from "./UserInfoUpdate";
 
 const TeamMember = async () => {
   const session = await getSession();
@@ -28,11 +29,14 @@ const TeamMember = async () => {
               <AvatarFallback>OM</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium leading-none">Sofia Davis</p>
-              <p className="text-sm text-muted-foreground">{session.email}</p>
+              <p className="text-sm font-medium leading-none">John Doe</p>
+              <p className="text-sm text-muted-foreground">
+                {session.userInfo.email}
+              </p>
             </div>
           </div>
         </div>
+        <UserInfoUpdate />
       </CardContent>
     </Card>
   );

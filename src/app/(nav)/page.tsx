@@ -7,12 +7,12 @@ export default async function Home() {
     take: 4,
   });
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-start">
       {findBlogs.map((blog: Blog) => (
-        <Link href={`/blog/${blog.title}`}>
-          <RecommendationCard key={blog.id} data={blog} />
+        <Link key={blog.id} href={`/blog/${blog.title}`} className="w-full">
+          <RecommendationCard data={blog} />
         </Link>
       ))}
-    </main>
+    </div>
   );
 }
