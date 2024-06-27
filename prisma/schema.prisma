@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String     @id @default(uuid())
+  username    String?
+  email       String     @unique
+  password    String
+  avatar      String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  blogs       Blog[]
+  comments    Comment[]
+  likes       Like[]
+  images      Image[]
+  subscriptionsAsPublisher Subscription[] @relation("publisher")
+  subscriptionsAsReader    Subscription[] @relation("reader")
+}
+
+model Blog {
+  id          String     @id @default(uuid())
+  ownerId     String
+  content     Json
+  title       String
+  status      Status
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  owner       User       @relation(fields: [ownerId], references: [id])
+  comments    Comment[]
+  likes       Like[]
+  tags        Tag[]
+  images      Image[]
+}
+
+model Tag {
+  id      String   @id @default(uuid())
+  blogId  String
+  tag     String
+  blog    Blog     @relation(fields: [blogId], references: [id])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  ownerId   String
+  blogId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  owner     User     @relation(fields: [ownerId], references: [id])
+  blog      Blog     @relation(fields: [blogId], references: [id])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  ownerId   String
+  blogId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  owner     User     @relation(fields: [ownerId], references: [id])
+  blog      Blog     @relation(fields: [blogId], references: [id])
+}
+
+model Subscription {
+  id          String   @id @default(uuid())
+  publisherId String
+  readerId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publisher   User     @relation("publisher", fields: [publisherId], references: [id])
+  reader      User     @relation("reader", fields: [readerId], references: [id])
+}
+
+model Image {
+  id        String      @id @default(uuid())
+  imageUrl  String
+  ownerId   String
+  blogId    String?
+  usedAs    ImageUsedAs
+  owner     User        @relation(fields: [ownerId], references: [id])
+  blog      Blog?        @relation(fields: [blogId], references: [id])
+}
+
+enum Status {
+  Published
+  Draft
+}
+
+enum ImageUsedAs {
+  Avatar
+  Blogs
+}

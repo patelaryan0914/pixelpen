@@ -1,0 +1,114 @@
+"use server";
+
+import prisma from "@/lib/db";
+import { userSchema } from "@/lib/zod-schema";
+import { redirect } from "next/navigation";
+import bcrypt from "bcryptjs";
+import { SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { User } from "./types";
+
+const secretKey = "secret";
+const key = new TextEncoder().encode(secretKey);
+
+export default async function signUp(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const hashpassword = bcrypt.hashSync(password, 10);
+  const response = await prisma.user.create({
+    data: {
+      email,
+      password: hashpassword,
+    },
+  });
+
+  if (!response)
+    return {
+      error: "Something Went Wrong",
+    };
+  const expires = new Date(Date.now() + 900 * 1000);
+  const tempInfo = response.email;
+  const session = await encrypt({ email: tempInfo, expires });
+  // Save the session in a cookie
+  cookies().set("session", session, { expires, httpOnly: true });
+  return {
+    status: 200,
+  };
+}
+
+export async function encrypt(payload: any) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("1 hour from now")
+    .sign(key);
+}
+
+export async function decrypt(input: string): Promise<any> {
+  const { payload } = await jwtVerify(input, key, {
+    algorithms: ["HS256"],
+  });
+  return payload;
+}
+
+export async function signIn(formData: FormData) {
+  // Verify credentials && get the user
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const getUser: User | null = await prisma.user.findFirst({
+    where: { email },
+  });
+  if (!getUser)
+    return {
+      error: "User doesn't exist with this email.",
+    };
+  if (!(await bcrypt.compare(password, getUser.password))) {
+    return {
+      error: "Password entered is Incorrect",
+    };
+  }
+  const userInfo = {
+    id: getUser.id,
+    email: getUser.email,
+    username: getUser.username,
+    avatar: getUser.avatar,
+  };
+  // Create the session
+  const expires = new Date(Date.now() + 3600 * 1000);
+  const session = await encrypt({ userInfo, expires });
+
+  // Save the session in a cookie
+  cookies().set("session", session, { expires, httpOnly: true });
+  return {
+    status: 200,
+  };
+}
+
+export async function logout() {
+  // Destroy the session
+  cookies().set("session", "", { expires: new Date(0) });
+}
+
+export async function getSession() {
+  const session = cookies().get("session")?.value;
+  if (!session) return null;
+  return await decrypt(session);
+}
+
+export async function updateSession(request: NextRequest) {
+  const session = request.cookies.get("session")?.value;
+  if (!session) return;
+
+  // Refresh the session so it doesn't expire
+  const parsed = await decrypt(session);
+  parsed.expires = new Date(Date.now() + 3600 * 1000);
+  const res = NextResponse.next();
+  res.cookies.set({
+    name: "session",
+    value: await encrypt(parsed),
+    httpOnly: true,
+    expires: parsed.expires,
+  });
+  return res;
+}
