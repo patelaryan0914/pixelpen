@@ -3,18 +3,21 @@ import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
-    // const session = await getSession();
-    const { content, title, status } = await req.json();
+    const session = await getSession();
+    const { content, status } = await req.json();
+    const title = content.filter((val: any) => val.type === "heading")[0]
+      .content[0].text;
+    console.log(title.replaceAll("?", ""));
 
     const publish = await prisma.blog.create({
       data: {
-        ownerId: "240e8624-0af9-4b36-8c3a-2d29acc52f83",
+        ownerId: session.userInfo.id,
         content,
         title,
         status,
       },
     });
-    return NextResponse.json({ message: "Publised", publish }, { status: 200 });
+    return NextResponse.json({ message: "Publised" }, { status: 200 });
   } catch (error: any) {
     console.error(`Error during compilation: ${error.message}`);
     return NextResponse.json(

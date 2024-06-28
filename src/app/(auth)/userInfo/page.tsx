@@ -2,14 +2,15 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { getSession } from "@/app/actions";
 import { AuthRequired } from "@/lib/exceptions";
 import UserInfoUpdate from "./UserInfoUpdate";
-
+import { CircleUser } from "lucide-react";
 const TeamMember = async () => {
   const session = await getSession();
   if (!session) throw new AuthRequired();
@@ -24,12 +25,17 @@ const TeamMember = async () => {
       <CardContent className="grid gap-6">
         <div className="flex items-center justify-between space-x-4">
           <div className="flex items-center space-x-4">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/avatars/01.png" alt="Image" />
-              <AvatarFallback>OM</AvatarFallback>
-            </Avatar>
+            {session.userInfo.avatar === null ? (
+              <CircleUser className="h-6 w-6 text-black " />
+            ) : (
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={session.userInfo.avatar} alt="Image" />
+              </Avatar>
+            )}
             <div>
-              <p className="text-sm font-medium leading-none">John Doe</p>
+              <p className="text-sm font-medium leading-none">
+                {session.userInfo.username}
+              </p>
               <p className="text-sm text-muted-foreground">
                 {session.userInfo.email}
               </p>
@@ -38,6 +44,9 @@ const TeamMember = async () => {
         </div>
         <UserInfoUpdate />
       </CardContent>
+      <CardFooter>
+        *If Leaved blank then default values will be applied.
+      </CardFooter>
     </Card>
   );
 };

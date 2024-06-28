@@ -2,6 +2,8 @@ import { Blog } from "@/app/types";
 import Image from "next/image";
 
 const RecommendationCard = async ({ data }: { data: Blog }) => {
+  console.log(data);
+
   return (
     <div className="h-full grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
       <div className="mx-auto mt-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 grid grid-cols-1 sm:grid-cols-3">
@@ -12,9 +14,8 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           </h3>
           <p className="mt-6 text-base leading-7 text-gray-600">
             {
-              data.content.initialContent.filter(
-                (val: any) => val.type == "paragraph"
-              )[0].content[0].text
+              data.content.filter((val: any) => val.type == "paragraph")[0]
+                .content[0].text
             }
           </p>
           <div className="mt-10 flex items-center gap-x-4">
@@ -28,9 +29,8 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           <div className="h-full rounded-2xl py-10 text-center lg:flex lg:flex-col lg:justify-center">
             <Image
               src={
-                data.content.initialContent.filter(
-                  (val: any) => val.type == "image"
-                )[0]?.props.url
+                data.content.filter((val: any) => val.type == "image")[0]?.props
+                  .url
               }
               width={500}
               height={500}

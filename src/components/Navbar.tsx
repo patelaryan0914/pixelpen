@@ -1,7 +1,12 @@
-import { Package2, Menu, Search, CircleUser } from "lucide-react";
+import { Package2, Menu, Search, CircleUser, User } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +19,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { Input } from "./ui/input";
 import { getSession, logout } from "@/app/actions";
 import { redirect } from "next/navigation";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 const Navbar = async () => {
   const session = await getSession();
   return (
@@ -39,6 +45,12 @@ const Navbar = async () => {
           Publish Your Own Blog
         </Link>
         <Link
+          href="/manage-blog"
+          className=" text-muted-foreground transition-colors hover:text-foreground "
+        >
+          Manage Blog
+        </Link>
+        <Link
           href="#"
           className="text-foreground transition-colors hover:text-foreground"
         >
@@ -52,7 +64,8 @@ const Navbar = async () => {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetTitle></SheetTitle>
+        <SheetContent side="left" aria-describedby={undefined}>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/"
@@ -73,13 +86,19 @@ const Navbar = async () => {
             >
               Publish Your Own Blog
             </Link>
+            <Link
+              href="/manage-blog"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Manage Blog
+            </Link>
             <Link href="#" className="hover:text-foreground">
               Settings
             </Link>
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="flex  w-full sm:w-2/5 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+      <div className="flex w-full sm:w-2/5 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
         <form className="ml-auto flex-1 sm:flex-initial">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -93,8 +112,14 @@ const Navbar = async () => {
         {session ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="default" className=" gap-x-2">
-                <CircleUser className="h-5 w-5" />
+              <Button variant="default" className="gap-x-2">
+                {session.userInfo.avatar === null ? (
+                  <CircleUser className="h-6 w-6 text-white" />
+                ) : (
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={session.userInfo.avatar} alt="Image" />
+                  </Avatar>
+                )}
                 <span className="sr-only">Toggle user menu</span>
                 {session.userInfo.username}
               </Button>
@@ -102,6 +127,9 @@ const Navbar = async () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/userInfo">Update Profile</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />

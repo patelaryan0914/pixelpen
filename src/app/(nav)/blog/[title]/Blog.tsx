@@ -4,14 +4,16 @@ import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 const Blog = ({ data }: any) => {
-  const editor = useCreateBlockNote(data.content);
+  const editor = useCreateBlockNote({ initialContent: data.content });
   return (
-    <BlockNoteView
-      theme={"light"}
-      editor={editor}
-      editable={false}
-      className="w-full lg:w-4/5 xl:w-2/5"
-    />
+    <>
+      <BlockNoteView
+        theme={"light"}
+        editor={editor}
+        editable={false}
+        className="w-full lg:w-4/5 xl:w-2/5"
+      />
+    </>
   );
 };
 

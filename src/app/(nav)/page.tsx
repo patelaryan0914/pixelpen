@@ -4,6 +4,7 @@ import { Blog } from "../types";
 import Link from "next/link";
 export default async function Home() {
   const findBlogs = await prisma.blog.findMany({
+    where: { status: "Published" },
     take: 4,
   });
   return (

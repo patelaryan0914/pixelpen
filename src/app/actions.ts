@@ -19,6 +19,7 @@ export default async function signUp(formData: FormData) {
   const response = await prisma.user.create({
     data: {
       email,
+      username: email.split("@")[0],
       password: hashpassword,
     },
   });
@@ -28,8 +29,13 @@ export default async function signUp(formData: FormData) {
       error: "Something Went Wrong",
     };
   const expires = new Date(Date.now() + 900 * 1000);
-  const tempInfo = response.email;
-  const session = await encrypt({ email: tempInfo, expires });
+  const userInfo = {
+    id: response.id,
+    email: response.email,
+    username: response.username,
+    avatar: response.avatar,
+  };
+  const session = await encrypt({ userInfo, expires });
   // Save the session in a cookie
   cookies().set("session", session, { expires, httpOnly: true });
   return {
@@ -111,4 +117,35 @@ export async function updateSession(request: NextRequest) {
     expires: parsed.expires,
   });
   return res;
+}
+
+export async function userInfo(result: {
+  username: string | null;
+  avatarUrl: string | null;
+}) {
+  const currentSession = await getSession();
+  const username = result.username ?? currentSession.userInfo.username;
+  const avatarUrl = (result.avatarUrl as string) ?? currentSession.avatarUrl;
+  const updateuserInfo = await prisma.user.update({
+    where: { id: currentSession.userInfo.id },
+    data: {
+      username,
+      avatar: avatarUrl,
+    },
+  });
+  const userInfo = {
+    id: updateuserInfo.id,
+    email: updateuserInfo.email,
+    username: updateuserInfo.username,
+    avatar: updateuserInfo.avatar,
+  };
+  // Create the session
+  const expires = new Date(Date.now() + 3600 * 1000);
+  const session = await encrypt({ userInfo, expires });
+
+  // Save the session in a cookie
+  cookies().set("session", session, { expires, httpOnly: true });
+  return {
+    status: 200,
+  };
 }
