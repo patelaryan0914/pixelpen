@@ -7,8 +7,8 @@ export async function POST(req: NextRequest) {
     const { content, status } = await req.json();
     const title = content.filter((val: any) => val.type === "heading")[0]
       .content[0].text;
-    console.log(title.replaceAll("?", ""));
-
+    const image = content.filter((val: any) => val.type === "image")[0].props
+      .url;
     const publish = await prisma.blog.create({
       data: {
         ownerId: session.userInfo.id,
@@ -17,6 +17,14 @@ export async function POST(req: NextRequest) {
         status,
       },
     });
+    if (publish)
+      await prisma.image.create({
+        data: {
+          imageUrl: image,
+          ownerId: session.userInfo.id,
+          blogId: publish.id,
+        },
+      });
     return NextResponse.json({ message: "Publised" }, { status: 200 });
   } catch (error: any) {
     console.error(`Error during compilation: ${error.message}`);

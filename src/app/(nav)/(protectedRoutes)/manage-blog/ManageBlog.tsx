@@ -28,8 +28,6 @@ import {
 } from "@/components/ui/table";
 
 const ManageBlog = ({ data }: any) => {
-  console.log(data);
-
   return (
     <Card>
       <CardHeader>
@@ -94,7 +92,7 @@ const ManageBlog = ({ data }: any) => {
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Showing <strong>1-10</strong> of <strong>32</strong> products
+          Showing <strong>1</strong> of <strong>{data.length}</strong> Blogs
         </div>
       </CardFooter>
     </Card>

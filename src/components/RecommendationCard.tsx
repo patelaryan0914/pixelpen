@@ -2,8 +2,6 @@ import { Blog } from "@/app/types";
 import Image from "next/image";
 
 const RecommendationCard = async ({ data }: { data: Blog }) => {
-  console.log(data);
-
   return (
     <div className="h-full grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
       <div className="mx-auto mt-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 grid grid-cols-1 sm:grid-cols-3">

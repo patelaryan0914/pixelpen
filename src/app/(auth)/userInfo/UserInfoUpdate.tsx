@@ -40,7 +40,6 @@ const UserInfoUpdate = () => {
           file,
           object: "avatar",
         });
-        console.log(fileUrl);
         if (fileUrl) formdata.append("fileUrl", fileUrl);
       }
       const result = await userInfoSchema.safeParseAsync({

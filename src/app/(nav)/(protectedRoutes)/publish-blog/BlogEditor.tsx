@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import "@blocknote/core/fonts/inter.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
@@ -6,7 +7,9 @@ import "@blocknote/mantine/style.css";
 import { Button } from "@/components/ui/button";
 import { uploadFile } from "@/lib/uploadFile";
 import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
 const BlogEditor = () => {
+  const [loading, setLoading] = useState<Boolean>(false);
   async function uploadFileForBlog(
     file: File
   ): Promise<string | Record<string, any>> {
@@ -26,12 +29,20 @@ const BlogEditor = () => {
   }
   const editor = useCreateBlockNote({ uploadFile: uploadFileForBlog });
   const saveBlogToDb = async (status: string) => {
+    setLoading(true);
     const save = await axios.post(
       "http://localhost:3000/api/blog",
       { content: editor.document, status },
       { withCredentials: true }
     );
-    console.log(save);
+    if (save.status == 200) setLoading(false);
+    if (status === "Draft")
+      return toast({
+        title: "Blog is saved as Draft you can edit it in Manage Blog Section",
+      });
+    return toast({
+      title: "Your Blog is Published Viewers can View your blog",
+    });
   };
   return (
     <>
@@ -43,7 +54,7 @@ const BlogEditor = () => {
           <Button size={"sm"} onClick={() => saveBlogToDb("Draft")}>
             Save
           </Button>
-          <Button size={"sm"} onClick={() => saveBlogToDb("Publish")}>
+          <Button size={"sm"} onClick={() => saveBlogToDb("Published")}>
             Publish
           </Button>
         </div>

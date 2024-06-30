@@ -17,11 +17,6 @@ export const uploadFile = async ({
   file: File;
   object: string;
 }) => {
-  console.log(
-    process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-    typeof process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID
-  );
-
   try {
     const sendRes = await s3Client.send(
       new PutObjectCommand({
