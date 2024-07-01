@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { MoreHorizontal } from "lucide-react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,13 +26,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import AddTags from "./AddTags";
+import { deleteBlog } from "@/app/actions";
+import { toast } from "@/components/ui/use-toast";
 const ManageBlog = ({ data }: any) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Products</CardTitle>
+        <CardTitle>Blogs</CardTitle>
         <CardDescription>
-          Manage your products and view their sales performance.
+          Manage your Blogs add tags,images to increase the viewer rate.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -45,6 +55,7 @@ const ManageBlog = ({ data }: any) => {
               </TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Tags</TableHead>
               <TableHead className="hidden md:table-cell">Created at</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
@@ -53,37 +64,75 @@ const ManageBlog = ({ data }: any) => {
           </TableHeader>
           <TableBody>
             {data.map((blog: any) => (
-              <TableRow>
+              <TableRow key={blog.id}>
                 <TableCell className="hidden sm:table-cell">
                   <Image
                     alt="Product image"
                     className="aspect-square rounded-md object-cover"
                     height="64"
-                    src="/placeholder.svg"
+                    src={blog.images[0].imageUrl}
                     width="64"
                   />
                 </TableCell>
-                <TableCell className="font-medium">{blog.title}</TableCell>
+                <TableCell className="font-medium">
+                  {blog.title.charAt(0).toUpperCase() +
+                    blog.title.slice(1).replaceAll("-", " ")}
+                </TableCell>
                 <TableCell>
                   <Badge variant="outline">{blog.status}</Badge>
+                </TableCell>
+                <TableCell>
+                  {blog.tags.map((tags: { tag: string }) => (
+                    <Badge variant="outline">{tags.tag}</Badge>
+                  ))}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {blog.createdAt.toJSON().slice(0, 10)}
                 </TableCell>
                 <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button aria-haspopup="true" size="icon" variant="ghost">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Dialog>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          aria-haspopup="true"
+                          size="icon"
+                          variant="ghost"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Toggle menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <DialogTrigger>Add Tags</DialogTrigger>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <form
+                            action={async () => {
+                              "use server";
+                              const res = await deleteBlog(blog.id);
+                              if (res?.status === 200)
+                                return toast({ title: "Blog Post Deleted" });
+                            }}
+                            className="w-full"
+                          >
+                            <button type="submit">Delete</button>
+                          </form>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add Tags.</DialogTitle>
+                        <DialogDescription>
+                          Tags makes user to find there interest related blogs.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <AddTags blogId={blog.id} defaultTags={blog.tags} />
+                    </DialogContent>
+                  </Dialog>
                 </TableCell>
               </TableRow>
             ))}

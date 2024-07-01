@@ -14,6 +14,11 @@ export interface Blog {
   content: any;
   title: string;
   status: string;
+  images?: Images[] | null;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
+}
+
+interface Images {
+  imageUrl?: string;
 }
