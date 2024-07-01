@@ -37,6 +37,8 @@ import {
 import AddTags from "./AddTags";
 import { deleteBlog } from "@/app/actions";
 import { toast } from "@/components/ui/use-toast";
+import Delete from "./Delete";
+import Link from "next/link";
 const ManageBlog = ({ data }: any) => {
   return (
     <Card>
@@ -104,7 +106,9 @@ const ManageBlog = ({ data }: any) => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link href={`/edit-blog/${blog.title}`}>Edit</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>
                           <DialogTrigger>Add Tags</DialogTrigger>
                         </DropdownMenuItem>
@@ -118,7 +122,7 @@ const ManageBlog = ({ data }: any) => {
                             }}
                             className="w-full"
                           >
-                            <button type="submit">Delete</button>
+                            <Delete />
                           </form>
                         </DropdownMenuItem>
                       </DropdownMenuContent>

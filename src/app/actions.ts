@@ -174,9 +174,29 @@ export async function deleteBlog(blogId: string) {
       prisma.image.deleteMany({ where: { blogId } }),
       prisma.blog.delete({ where: { id: blogId } }),
     ]);
-    console.log(deleteBlog);
-
     if (deleteBlog) revalidatePath("/manage-blog");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function subscribe(publisherId: string) {
+  try {
+    const session = await getSession();
+    const isSubscribed = await prisma.subscription.findFirst({
+      where: { publisherId, readerId: session.userIndo.id },
+    });
+    if (!isSubscribed) {
+      await prisma.subscription.create({
+        data: { publisherId, readerId: session.userIndo.id },
+      });
+    } else
+      await prisma.subscription.delete({
+        where: { id: isSubscribed.id },
+      });
     return {
       status: 200,
     };

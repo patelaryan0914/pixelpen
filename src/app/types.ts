@@ -6,6 +6,7 @@ export interface User {
   avatar?: string | null;
   createdAt: Date;
   updatedAt: Date;
+  subscriptionsAsPublisher?: number;
 }
 
 export interface Blog {

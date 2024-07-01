@@ -18,6 +18,11 @@ export default async function Home() {
           imageUrl: true,
         },
       },
+      tags: {
+        select: {
+          tag: true,
+        },
+      },
     },
   });
   return (
