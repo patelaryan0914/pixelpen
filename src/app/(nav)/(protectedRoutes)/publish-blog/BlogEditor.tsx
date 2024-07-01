@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { uploadFile } from "@/lib/uploadFile";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
+import { Icons } from "@/components/icons";
 const BlogEditor = () => {
   const [loading, setLoading] = useState<Boolean>(false);
   async function uploadFileForBlog(
@@ -52,10 +53,18 @@ const BlogEditor = () => {
         </h1>
         <div className="flex justify-between sm:justify-center gap-2">
           <Button size={"sm"} onClick={() => saveBlogToDb("Draft")}>
-            Save
+            {!loading ? (
+              "Save"
+            ) : (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
           </Button>
           <Button size={"sm"} onClick={() => saveBlogToDb("Published")}>
-            Publish
+            {!loading ? (
+              "Published"
+            ) : (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
           </Button>
         </div>
       </div>

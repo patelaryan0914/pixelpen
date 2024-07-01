@@ -11,9 +11,7 @@ const Blog = dynamic(() => import("./Blog"), {
 });
 const BlogDisplay = async ({ params }: { params: { title: string } }) => {
   const session = await getSession();
-  const blog = await prisma.blog.findFirst({
-    where: { title: params.title },
-  });
+  const blogs = await prisma.blog.findFirst({ where: { title: params.title } });
   return (
     <div className="flex flex-col justify-center items-center ">
       <div className="mt-4 w-full lg:w-4/5 xl:w-2/5 h-[100px] flex items-center justify-between space-x-4 border border-slate-200 shadow-sm rounded-lg ">
@@ -38,7 +36,7 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
           <Button>Follow</Button>
         </div>
       </div>
-      <Blog data={blog} />
+      <Blog data={blogs} />
     </div>
   );
 };

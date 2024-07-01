@@ -1,14 +1,13 @@
 "use server";
 
 import prisma from "@/lib/db";
-import { userSchema } from "@/lib/zod-schema";
-import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "./types";
-
+import { Option } from "@/components/ui/multiple-selector";
+import { revalidatePath } from "next/cache";
 const secretKey = "secret";
 const key = new TextEncoder().encode(secretKey);
 
@@ -148,4 +147,40 @@ export async function userInfo(result: {
   return {
     status: 200,
   };
+}
+export async function addTags(tags: Option[] | null, blogId: string) {
+  try {
+    const deleteTags = await prisma.tag.deleteMany({ where: { blogId } });
+    if (deleteTags)
+      tags?.forEach(
+        async (val) =>
+          await prisma.tag.create({ data: { blogId, tag: val.value } })
+      );
+    revalidatePath("/manage-blog");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function deleteBlog(blogId: string) {
+  try {
+    const deleteBlog = await prisma.$transaction([
+      prisma.tag.deleteMany({ where: { blogId } }),
+      prisma.comment.deleteMany({ where: { blogId } }),
+      prisma.like.deleteMany({ where: { blogId } }),
+      prisma.image.deleteMany({ where: { blogId } }),
+      prisma.blog.delete({ where: { id: blogId } }),
+    ]);
+    console.log(deleteBlog);
+
+    if (deleteBlog) revalidatePath("/manage-blog");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }

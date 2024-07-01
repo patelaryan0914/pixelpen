@@ -13,7 +13,6 @@ export const metadata: Metadata = {
 
 export default async function TaskPage() {
   const session = await getSession();
-
   const blogs = await prisma.blog.findMany({
     where: { ownerId: session.userInfo.id },
     select: {
@@ -21,6 +20,16 @@ export default async function TaskPage() {
       title: true,
       status: true,
       createdAt: true,
+      images: {
+        select: {
+          imageUrl: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: true,
+        },
+      },
     },
   });
   return (

@@ -38,7 +38,7 @@ const SigninForm = () => {
     }
     const serverResult = await signIn(formdata);
     if (serverResult?.error)
-      toast({
+      return toast({
         variant: "destructive",
         title: serverResult?.error,
       });
