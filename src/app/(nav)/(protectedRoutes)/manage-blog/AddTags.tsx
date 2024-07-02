@@ -80,6 +80,7 @@ const AddTags = ({
     <>
       <form action={onSubmit} className="w-2/3 space-y-6">
         <ErrorMessages errors={tagsError} />
+        <Submit />
         <MultipleSelector
           defaultOptions={options}
           onChange={(val: Option[]) => setTags(val)}
@@ -99,7 +100,6 @@ const AddTags = ({
             </p>
           }
         />
-        <Submit />
       </form>
     </>
   );

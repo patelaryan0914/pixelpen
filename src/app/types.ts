@@ -2,11 +2,11 @@ export interface User {
   id: string;
   username?: string | null;
   email: string;
-  password: string;
+  password?: string;
   avatar?: string | null;
   createdAt: Date;
   updatedAt: Date;
-  subscriptionsAsPublisher?: number;
+  _count?: subscribe;
 }
 
 export interface Blog {
@@ -18,8 +18,21 @@ export interface Blog {
   images?: Images[] | null;
   createdAt: Date;
   updatedAt?: Date;
+  owner?: User;
+  tags?: { tag: string }[];
+  _count?: countForBlog;
 }
 
 interface Images {
   imageUrl?: string;
+}
+
+interface subscribe {
+  subscriptionsAsPublisher?: number;
+  susubscriptionsAsReader?: number;
+}
+
+interface countForBlog {
+  likes?: number;
+  comments?: number;
 }
