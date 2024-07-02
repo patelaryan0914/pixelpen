@@ -68,7 +68,7 @@ export async function signIn(formData: FormData) {
     return {
       error: "User doesn't exist with this email.",
     };
-  if (!(await bcrypt.compare(password, getUser.password))) {
+  if (!(await bcrypt.compare(password, getUser.password!))) {
     return {
       error: "Password entered is Incorrect",
     };
@@ -156,7 +156,7 @@ export async function addTags(tags: Option[] | null, blogId: string) {
         async (val) =>
           await prisma.tag.create({ data: { blogId, tag: val.value } })
       );
-    revalidatePath("/manage-blog");
+    revalidatePath("/");
     return {
       status: 200,
     };
@@ -187,16 +187,40 @@ export async function subscribe(publisherId: string) {
   try {
     const session = await getSession();
     const isSubscribed = await prisma.subscription.findFirst({
-      where: { publisherId, readerId: session.userIndo.id },
+      where: { publisherId, readerId: session.userInfo.id },
     });
     if (!isSubscribed) {
       await prisma.subscription.create({
-        data: { publisherId, readerId: session.userIndo.id },
+        data: { publisherId, readerId: session.userInfo.id },
       });
     } else
       await prisma.subscription.delete({
         where: { id: isSubscribed.id },
       });
+    revalidatePath("/");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function likes(blogId: string) {
+  try {
+    const session = await getSession();
+    const isLiked = await prisma.like.findFirst({
+      where: { blogId, ownerId: session.userInfo.id },
+    });
+    if (!isLiked) {
+      await prisma.like.create({
+        data: { blogId, ownerId: session.userInfo.id },
+      });
+    } else
+      await prisma.like.delete({
+        where: { id: isLiked.id },
+      });
+    revalidatePath("/");
     return {
       status: 200,
     };

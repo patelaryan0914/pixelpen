@@ -4,3 +4,10 @@ export class AuthRequired extends Error {
     this.message = message;
   }
 }
+
+export class BlogNotFound extends Error {
+  constructor(message = "Blog Not Found!") {
+    super(message);
+    this.message = message;
+  }
+}

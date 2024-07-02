@@ -10,6 +10,7 @@ const Delete = () => {
     <Button
       type="submit"
       variant="destructive"
+      size="sm"
       className="w-full"
       aria-disabled={pending}
     >

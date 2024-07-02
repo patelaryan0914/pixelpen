@@ -1,18 +1,17 @@
 import { Metadata } from "next";
-import Image from "next/image";
-import { z } from "zod";
 import prisma from "@/lib/db";
 import { getSession } from "@/app/actions";
 import ManageBlog from "./ManageBlog";
+import { AuthRequired } from "@/lib/exceptions";
 
 export const metadata: Metadata = {
   title: "Manage Blog",
   description: "Manage all Your written Blogs at one place.",
 };
-// Simulate a database read for tasks.
 
 export default async function TaskPage() {
   const session = await getSession();
+  if (!session) throw new AuthRequired();
   const blogs = await prisma.blog.findMany({
     where: { ownerId: session.userInfo.id },
     select: {
