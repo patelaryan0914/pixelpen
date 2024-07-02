@@ -9,7 +9,14 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Button } from "./ui/button";
+import { getSession, subscribe } from "@/app/actions";
+import Link from "next/link";
+import { Badge } from "./ui/badge";
+import Like from "./Like";
+import { formatedNumber } from "@/lib/numberFormater";
 const RecommendationCard = async ({ data }: { data: Blog }) => {
+  const session = await getSession();
+  const followAccess: boolean = session ? true : false;
   const owner: User | null = await prisma.user.findUnique({
     where: { id: data.ownerId },
     include: {
@@ -18,21 +25,31 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
       },
     },
   });
-  console.log(owner);
+  let isSubscribed = false;
+  if (session) {
+    isSubscribed = !!(await prisma.subscription.findFirst({
+      where: {
+        publisherId: data.ownerId,
+        readerId: session.userInfo.id,
+      },
+    }));
+  }
   return (
     <div className="h-full grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
       <div className="mx-auto mt-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 grid grid-cols-1 sm:grid-cols-3">
         <div className="p-6 sm:p-8 lg:flex-auto col-span-2">
-          <h3 className="text-2xl font-bold tracking-tight text-gray-900">
-            {data.title.charAt(0).toUpperCase() +
-              data.title.slice(1).replaceAll("-", " ")}
-          </h3>
-          <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3">
-            {
-              data.content.filter((val: any) => val.type == "paragraph")[0]
-                .content[0].text
-            }
-          </p>
+          <Link href={`/blog/${data.title}`} className="w-full">
+            <h3 className="text-2xl font-bold tracking-tight text-gray-900">
+              {data.title.charAt(0).toUpperCase() +
+                data.title.slice(1).replaceAll("-", " ")}
+            </h3>
+            <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3">
+              {
+                data.content.filter((val: any) => val.type == "paragraph")[0]
+                  .content[0].text
+              }
+            </p>
+          </Link>
           <div className="mt-6 flex items-center gap-x-4">
             <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
               What’s included
@@ -69,11 +86,32 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
                         </Avatar>
                       )}
                     </div>
-                    <Button size="sm">Follow </Button>
+                    <form
+                      action={async () => {
+                        "use server";
+                        await subscribe(owner?.id!);
+                      }}
+                    >
+                      <Button
+                        type="submit"
+                        size="sm"
+                        aria-disabled={followAccess}
+                      >
+                        {isSubscribed ? "Unfollow" : "Follow"}
+                      </Button>
+                    </form>
                   </div>
                   <div>
                     <p className="mt-2 text-sm font-medium text-left">
                       {owner?.username}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="mt-2 text-sm font-medium text-left">
+                      {formatedNumber.format(
+                        owner?._count?.subscriptionsAsPublisher!
+                      ) + " "}
+                      Followers
                     </p>
                   </div>
                 </div>
@@ -82,17 +120,28 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center text-sm font-medium leading-none space-x-1">
                 <div>
-                  <Heart color="#374151" />
+                  <Like blogId={data?.id} />
                 </div>
-                <p className="text-xs">2.2k</p>
+                <p className="text-xs">
+                  {formatedNumber.format(data?._count?.likes!)}
+                </p>
               </div>
               <div className="flex items-center text-sm font-medium leading-none space-x-1">
                 <div>
                   <MessageSquareText color="#374151" />
                 </div>
-                <p className="text-xs">2.2k</p>
+                <p className="text-xs">
+                  {formatedNumber.format(data?._count?.comments!)}
+                </p>
               </div>
             </div>
+          </div>
+          <div className="flex justify-center space-x-1 mt-2">
+            {data?.tags!.map((val: { tag: string }, index: number) => (
+              <Badge variant="outline" key={index}>
+                {val.tag}
+              </Badge>
+            ))}
           </div>
         </div>
         <div className="-mt-2 p-6 sm:p-8  h-full lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0 min-h-fit">
