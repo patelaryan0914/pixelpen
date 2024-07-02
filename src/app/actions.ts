@@ -228,3 +228,22 @@ export async function likes(blogId: string) {
     console.log(error);
   }
 }
+
+export async function comment(formData: FormData) {
+  try {
+    const session = await getSession();
+    const comment = await prisma.comment.create({
+      data: {
+        blogId: formData.get("blogId") as string,
+        comment: formData.get("comment") as string,
+        ownerId: session.userInfo.id,
+      },
+    });
+    revalidatePath("/");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}

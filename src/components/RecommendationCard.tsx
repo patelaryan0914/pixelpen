@@ -35,128 +35,122 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
     }));
   }
   return (
-    <div className="h-full grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
-      <div className="mx-auto mt-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 grid grid-cols-1 sm:grid-cols-3">
-        <div className="p-6 sm:p-8 lg:flex-auto col-span-2">
-          <Link href={`/blog/${data.title}`} className="w-full">
-            <h3 className="text-2xl font-bold tracking-tight text-gray-900">
-              {data.title.charAt(0).toUpperCase() +
-                data.title.slice(1).replaceAll("-", " ")}
-            </h3>
-            <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3">
-              {
-                data.content.filter((val: any) => val.type == "paragraph")[0]
-                  .content[0].text
-              }
-            </p>
-          </Link>
-          <div className="mt-6 flex items-center gap-x-4">
-            <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
-              What’s included
-            </h4>
-            <div className="h-px flex-auto bg-gray-100" />
-          </div>
-          <div className="mt-4 flex items-center justify-between space-x-4">
-            <HoverCard>
-              <HoverCardTrigger>
-                <div className="flex items-center space-x-4">
-                  {owner?.avatar === null ? (
-                    <CircleUser className="h-8 w-8 text-black " />
-                  ) : (
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={owner?.avatar} alt="Image" />
-                    </Avatar>
-                  )}
-                  <div>
-                    <p className="text-sm font-medium leading-none">
-                      {owner?.username}
-                    </p>
-                  </div>
-                </div>
-              </HoverCardTrigger>
-              <HoverCardContent side="top">
-                <div className="flex flex-col justify-center items-start">
-                  <div className="w-full flex justify-between items-center">
-                    <div>
-                      {owner?.avatar === null ? (
-                        <CircleUser className="h-14 w-14 text-black " />
-                      ) : (
-                        <Avatar className="h-14 w-14">
-                          <AvatarImage src={owner?.avatar} alt="Image" />
-                        </Avatar>
-                      )}
-                    </div>
-                    <form
-                      action={async () => {
-                        "use server";
-                        await subscribe(owner?.id!);
-                      }}
-                    >
-                      <Button
-                        type="submit"
-                        size="sm"
-                        aria-disabled={followAccess}
-                      >
-                        {isSubscribed ? "Unfollow" : "Follow"}
-                      </Button>
-                    </form>
-                  </div>
-                  <div>
-                    <p className="mt-2 text-sm font-medium text-left">
-                      {owner?.username}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mt-2 text-sm font-medium text-left">
-                      {formatedNumber.format(
-                        owner?._count?.subscriptionsAsPublisher!
-                      ) + " "}
-                      Followers
-                    </p>
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center text-sm font-medium leading-none space-x-1">
+    <div className="mx-auto mt-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
+      <div className="p-6 sm:p-8  ">
+        <Link href={`/blog/${data.title}`} className="w-full">
+          <h3 className="text-2xl font-bold tracking-tight text-gray-900">
+            {data.title.charAt(0).toUpperCase() +
+              data.title.slice(1).replaceAll("-", " ")}
+          </h3>
+          <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3">
+            {
+              data.content.filter((val: any) => val.type == "paragraph")[0]
+                .content[0].text
+            }
+          </p>
+        </Link>
+        <div className="mt-6 flex items-center gap-x-4">
+          <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
+            What’s included
+          </h4>
+          <div className="h-px flex-auto bg-gray-100" />
+        </div>
+        <div className="mt-4 flex items-center justify-between space-x-4">
+          <HoverCard>
+            <HoverCardTrigger>
+              <div className="flex items-center space-x-4">
+                {owner?.avatar === null ? (
+                  <CircleUser className="h-8 w-8 text-black " />
+                ) : (
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={owner?.avatar} alt="Image" />
+                  </Avatar>
+                )}
                 <div>
-                  <Like blogId={data?.id} />
+                  <p className="text-sm font-medium leading-none">
+                    {owner?.username}
+                  </p>
                 </div>
-                <p className="text-xs">
-                  {formatedNumber.format(data?._count?.likes!)}
-                </p>
               </div>
-              <div className="flex items-center text-sm font-medium leading-none space-x-1">
+            </HoverCardTrigger>
+            <HoverCardContent side="top">
+              <div className="flex flex-col justify-center items-start">
+                <div className="w-full flex justify-between items-center">
+                  <div>
+                    {owner?.avatar === null ? (
+                      <CircleUser className="h-14 w-14 text-black " />
+                    ) : (
+                      <Avatar className="h-14 w-14">
+                        <AvatarImage src={owner?.avatar} alt="Image" />
+                      </Avatar>
+                    )}
+                  </div>
+                  <form
+                    action={async () => {
+                      "use server";
+                      await subscribe(owner?.id!);
+                    }}
+                  >
+                    <Button type="submit" size="sm" disabled={!followAccess}>
+                      {isSubscribed ? "Unfollow" : "Follow"}
+                    </Button>
+                  </form>
+                </div>
                 <div>
-                  <MessageSquareText color="#374151" />
+                  <p className="mt-2 text-sm font-medium text-left">
+                    {owner?.username}
+                  </p>
                 </div>
-                <p className="text-xs">
-                  {formatedNumber.format(data?._count?.comments!)}
-                </p>
+                <div>
+                  <p className="mt-2 text-sm font-medium text-left">
+                    {formatedNumber.format(
+                      owner?._count?.subscriptionsAsPublisher!
+                    ) + " "}
+                    Followers
+                  </p>
+                </div>
               </div>
+            </HoverCardContent>
+          </HoverCard>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center text-sm font-medium leading-none space-x-1">
+              <div>
+                <Like blogId={data?.id} />
+              </div>
+              <p className="text-xs">
+                {formatedNumber.format(data?._count?.likes!)}
+              </p>
+            </div>
+            <div className="flex items-center text-sm font-medium leading-none space-x-1">
+              <div>
+                <MessageSquareText color="#374151" />
+              </div>
+              <p className="text-xs">
+                {formatedNumber.format(data?._count?.comments!)}
+              </p>
             </div>
           </div>
-          <div className="flex justify-center space-x-1 mt-2">
-            {data?.tags!.map((val: { tag: string }, index: number) => (
-              <Badge variant="outline" key={index}>
-                {val.tag}
-              </Badge>
-            ))}
-          </div>
         </div>
-        <div className="-mt-2 p-6 sm:p-8  h-full lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0 min-h-fit">
-          <div className="h-full rounded-2xl  text-center lg:flex lg:flex-col lg:justify-center">
-            <Image
-              src={
-                data.content.filter((val: any) => val.type == "image")[0]?.props
-                  .url
-              }
-              width={500}
-              height={500}
-              alt="Image"
-              className="rounded-sm bg-cover "
-            />
-          </div>
+        <div className="flex justify-center space-x-1 mt-2">
+          {data?.tags!.map((val: { tag: string }, index: number) => (
+            <Badge variant="outline" key={index}>
+              {val.tag}
+            </Badge>
+          ))}
+        </div>
+      </div>
+      <div className="p-6 sm:p-8 w-full  h-full lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
+        <div className="h-full rounded-2xl  text-center flex items-center">
+          <Image
+            src={
+              data.content.filter((val: any) => val.type == "image")[0]?.props
+                .url
+            }
+            width={500}
+            height={500}
+            alt="Image"
+            className="rounded-sm "
+          />
         </div>
       </div>
     </div>
