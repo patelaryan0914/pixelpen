@@ -1,4 +1,3 @@
-import React from "react";
 import prisma from "@/lib/db";
 import dynamic from "next/dynamic";
 import { getSession, subscribe } from "@/app/actions";
@@ -11,11 +10,24 @@ import { BlogNotFound } from "@/lib/exceptions";
 import { Badge } from "@/components/ui/badge";
 import Like from "@/components/Like";
 import { formatedNumber } from "@/lib/numberFormater";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { HoverCard } from "@/components/ui/hover-card";
 const Blogs = dynamic(() => import("./Blog"), {
   ssr: false,
   loading: () => <p>Loading...</p>,
 });
 const ShareButton = dynamic(() => import("@/components/Share"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
+const CommentForm = dynamic(() => import("@/components/CommentForm"), {
   ssr: false,
   loading: () => <p>Loading...</p>,
 });
@@ -31,6 +43,13 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
         select: {
           likes: true,
           comments: true,
+        },
+      },
+      comments: {
+        select: {
+          owner: true,
+          comment: true,
+          id: true,
         },
       },
     },
@@ -72,7 +91,7 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
               await subscribe(blogs?.owner?.id!);
             }}
           >
-            <Button type="submit" size="sm" aria-disabled={followAccess}>
+            <Button type="submit" size="sm" disabled={!followAccess}>
               {isSubscribed ? "Unfollow" : "Follow"}
             </Button>
           </form>
@@ -99,7 +118,34 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
             </div>
             <div className="flex items-center text-sm font-medium leading-none space-x-1">
               <div>
-                <MessageSquareText color="#374151" />
+                <Sheet>
+                  <SheetTrigger className="flex items-center" asChild>
+                    <Button variant="ghost" size="icon">
+                      <MessageSquareText color="#374151" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Comments</SheetTitle>
+                      <SheetDescription>Share us a feedback!</SheetDescription>
+                    </SheetHeader>
+                    <CommentForm disabled={followAccess} blogId={blogs?.id} />
+                    <div className="flex flex-col">
+                      {blogs?.comments?.map((val) => (
+                        <div key={val.id} className="flex mt-4 items-center">
+                          {val.owner.avatar! === null ? (
+                            <CircleUser className="h-10 w-10 text-black " />
+                          ) : (
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={val.owner.avatar} alt="Image" />
+                            </Avatar>
+                          )}
+                          <div className="ml-2">{val.comment}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </div>
               <p className="text-xs">
                 {formatedNumber.format(blogs?._count?.comments!)}
@@ -137,8 +183,8 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
           }}
           className="justify-items-end"
         >
-          <Button type="submit" size="sm" aria-disabled={followAccess}>
-            {isSubscribed ? "Unfollow" : "Follow"}
+          <Button type="submit" size="sm" disabled={!followAccess}>
+            <HoverCard>{isSubscribed ? "Unfollow" : "Follow"}</HoverCard>
           </Button>
         </form>
       </div>

@@ -20,6 +20,7 @@ export interface Blog {
   updatedAt?: Date;
   owner?: User;
   tags?: { tag: string }[];
+  comments?: { owner: User; comment: string; id: string }[];
   _count?: countForBlog;
 }
 

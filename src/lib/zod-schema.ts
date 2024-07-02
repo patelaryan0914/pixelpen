@@ -31,3 +31,9 @@ export const userInfoSchema = z.object({
   ),
   avatarUrl: z.nullable(string().url({ message: "Must be an Url" })),
 });
+
+export const commentSchema = z.object({
+  comment: z.nullable(
+    string().max(200, { message: "username can not exceed 200 characters." })
+  ),
+});
