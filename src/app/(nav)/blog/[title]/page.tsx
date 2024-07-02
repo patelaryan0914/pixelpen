@@ -2,14 +2,20 @@ import React from "react";
 import prisma from "@/lib/db";
 import dynamic from "next/dynamic";
 import { getSession, subscribe } from "@/app/actions";
-import { CircleUser } from "lucide-react";
+import { CircleUser, MessageSquareText } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Blog } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { BlogNotFound } from "@/lib/exceptions";
 import { Badge } from "@/components/ui/badge";
+import Like from "@/components/Like";
+import { formatedNumber } from "@/lib/numberFormater";
 const Blogs = dynamic(() => import("./Blog"), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
+const ShareButton = dynamic(() => import("@/components/Share"), {
   ssr: false,
   loading: () => <p>Loading...</p>,
 });
@@ -21,6 +27,12 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
     include: {
       owner: true,
       tags: true,
+      _count: {
+        select: {
+          likes: true,
+          comments: true,
+        },
+      },
     },
   });
   if (!blogs) throw new BlogNotFound();
@@ -67,12 +79,37 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
         </div>
       </div>
       <Blogs data={blogs} />
-      <div className="w-4/5 xl:w-2/5 mb-5 flex justify-start space-x-1 mt-2">
-        {blogs?.tags!.map((val) => (
-          <Badge variant="outline">
-            <span className="p-1 text-base">{val.tag}</span>
-          </Badge>
-        ))}
+      <div className="w-4/5 xl:w-2/5 flex-col sm:flex justify-between">
+        <div className="mb-5 flex justify-start space-x-1 mt-2">
+          {blogs?.tags!.map((val: { tag: string }, index: number) => (
+            <Badge variant="outline" key={index}>
+              <p className="p-1 text-base">{val.tag}</p>
+            </Badge>
+          ))}
+        </div>
+        <div className="mb-5 flex justify-between items-center mt-2">
+          <div className="flex space-x-4">
+            <div className="flex items-center text-sm font-medium leading-none space-x-1">
+              <div>
+                <Like blogId={blogs?.id} />
+              </div>
+              <p className="text-xs">
+                {formatedNumber.format(blogs?._count?.likes!)}
+              </p>
+            </div>
+            <div className="flex items-center text-sm font-medium leading-none space-x-1">
+              <div>
+                <MessageSquareText color="#374151" />
+              </div>
+              <p className="text-xs">
+                {formatedNumber.format(blogs?._count?.comments!)}
+              </p>
+            </div>
+          </div>
+          <div className="flex justify-items-end">
+            <ShareButton />
+          </div>
+        </div>
       </div>
       <Separator className="w-4/5 xl:w-2/5 mb-5" />
       <div className="w-4/5 xl:w-2/5 flex justify-between items-center">
