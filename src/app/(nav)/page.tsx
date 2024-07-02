@@ -31,10 +31,12 @@ export default async function Home() {
     },
   });
   return (
-    <div className="flex min-h-screen flex-col items-center justify-start">
-      {findBlogs.map((blog: Blog) => (
-        <RecommendationCard data={blog} key={blog.id} />
-      ))}
+    <div className="flex h-screen flex-col items-center justify-start">
+      <div className="h-full grid w-full grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 ">
+        {findBlogs.map((blog: Blog) => (
+          <RecommendationCard data={blog} key={blog.id} />
+        ))}
+      </div>
     </div>
   );
 }
