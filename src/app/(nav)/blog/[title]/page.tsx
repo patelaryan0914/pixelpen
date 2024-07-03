@@ -10,6 +10,7 @@ import { BlogNotFound } from "@/lib/exceptions";
 import { Badge } from "@/components/ui/badge";
 import Like from "@/components/Like";
 import { formatedNumber } from "@/lib/numberFormater";
+import { Icons } from "@/components/icons";
 import {
   Sheet,
   SheetTrigger,
@@ -21,15 +22,27 @@ import {
 import { HoverCard } from "@/components/ui/hover-card";
 const Blogs = dynamic(() => import("./Blog"), {
   ssr: false,
-  loading: () => <p>Loading...</p>,
+  loading: () => (
+    <div className="h-screen w-screen flex justify-center items-center">
+      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
+    </div>
+  ),
 });
 const ShareButton = dynamic(() => import("@/components/Share"), {
   ssr: false,
-  loading: () => <p>Loading...</p>,
+  loading: () => (
+    <div className="h-screen w-screen flex justify-center items-center">
+      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
+    </div>
+  ),
 });
 const CommentForm = dynamic(() => import("@/components/CommentForm"), {
   ssr: false,
-  loading: () => <p>Loading...</p>,
+  loading: () => (
+    <div className="h-screen w-screen flex justify-center items-center">
+      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
+    </div>
+  ),
 });
 const BlogDisplay = async ({ params }: { params: { title: string } }) => {
   const session = await getSession();
