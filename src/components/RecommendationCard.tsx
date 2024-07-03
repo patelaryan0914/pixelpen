@@ -35,23 +35,23 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
     }));
   }
   return (
-    <div className="mx-auto mt-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
-      <div className="p-6 sm:p-8  ">
+    <div className="mx-auto my-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
+      <div className="p-6 sm:p-8 w-full flex flex-col justify-between lg:w-3/5">
         <Link href={`/blog/${data.title}`} className="w-full">
           <h3 className="text-2xl font-bold tracking-tight text-gray-900">
             {data.title.charAt(0).toUpperCase() +
               data.title.slice(1).replaceAll("-", " ")}
           </h3>
-          <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3">
+          <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-4">
             {
               data.content.filter((val: any) => val.type == "paragraph")[0]
                 .content[0].text
             }
           </p>
         </Link>
-        <div className="mt-6 flex items-center gap-x-4">
+        <div className="mt-10 flex items-center gap-x-4">
           <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
-            What’s included
+            Author
           </h4>
           <div className="h-px flex-auto bg-gray-100" />
         </div>
@@ -139,7 +139,7 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           ))}
         </div>
       </div>
-      <div className="p-6 sm:p-8 w-full  h-full lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
+      <div className="p-6 sm:p-8 w-full  h-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
         <div className="h-full rounded-2xl  text-center flex items-center">
           <Image
             src={

@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uploadFile } from "@/lib/uploadFile";
+import { findErrors } from "@/lib/utils";
 import { userInfoSchema } from "@/lib/zod-schema";
 import { UserCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 const Submit = () => {
   const { pending } = useFormStatus();
@@ -23,6 +25,7 @@ const Submit = () => {
 };
 
 const UserInfoUpdate = () => {
+  const [error, setError] = useState<any>([]);
   const router = useRouter();
   const validateData = async (formdata: FormData) => {
     const file: any = formdata.get("file-upload");
@@ -31,10 +34,15 @@ const UserInfoUpdate = () => {
         ? null
         : formdata.get("username")?.toString();
     try {
+      const result = await userInfoSchema.safeParseAsync({
+        username,
+        avatarUrl: formdata.get("fileUrl"),
+        fileSize: file.size,
+      });
+      if (!result.success) {
+        return setError(result.error.issues);
+      }
       if (file && file.size > 0) {
-        if (file.size > 2 * 1024 * 1024) {
-          throw new Error("File size must not exceed 2MB");
-        }
         const fileUrl = await uploadFile({
           fileName: file.name,
           file,
@@ -42,22 +50,21 @@ const UserInfoUpdate = () => {
         });
         if (fileUrl) formdata.append("fileUrl", fileUrl);
       }
-      const result = await userInfoSchema.safeParseAsync({
-        username,
-        avatarUrl: formdata.get("fileUrl"),
-      });
-      if (result.success == true) await userInfo(result.data);
+      await userInfo(result.data);
       router.push("/");
     } catch (err) {
       console.error("Error in handleFileChange:", err);
     }
   };
+  const usernameErrors = findErrors("username", error);
+  const fileSizeErrors = findErrors("fileSize", error);
   return (
     <div>
       <form action={validateData}>
         <div className="grid gap-y-2">
           <Label htmlFor="username" className="flex justify-between">
             Username
+            <ErrorMessages errors={usernameErrors} />
           </Label>
           <Input name="username" type="string" placeholder="John Doe" />
         </div>
@@ -92,6 +99,7 @@ const UserInfoUpdate = () => {
               <p className="text-xs leading-5 text-gray-600">
                 PNG, JPG, GIF up to 10MB
               </p>
+              <ErrorMessages errors={fileSizeErrors} />
             </div>
           </div>
         </div>
@@ -102,3 +110,9 @@ const UserInfoUpdate = () => {
 };
 
 export default UserInfoUpdate;
+
+const ErrorMessages = ({ errors }: { errors: string[] }) => {
+  if (errors.length === 0) return null;
+  const text = errors[0];
+  return <div className="text-red-600 peer">{text}</div>;
+};
