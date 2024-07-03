@@ -5,6 +5,25 @@ import { comment } from "@/app/actions";
 import { commentSchema } from "@/lib/zod-schema";
 import { useState } from "react";
 import { findErrors } from "@/lib/utils";
+import { useFormStatus } from "react-dom";
+import { Icons } from "./icons";
+const CommentButton = ({ disabled }: { disabled: boolean }) => {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      type="submit"
+      className="mt-2 w-full"
+      disabled={!disabled || pending}
+    >
+      {!pending ? (
+        "Comment"
+      ) : (
+        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+      )}
+    </Button>
+  );
+};
+
 const CommentForm = ({
   disabled,
   blogId,
@@ -31,9 +50,7 @@ const CommentForm = ({
           <ErrorMessages errors={commentErrors} />
           <Textarea className="mt-2" name="comment" disabled={!disabled} />
         </div>
-        <Button type="submit" className="mt-2 w-full" disabled={!disabled}>
-          Comment
-        </Button>
+        <CommentButton disabled={disabled} />
       </form>
     </>
   );

@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "./ui/button";
 import { getSession, likes } from "@/app/actions";
 import prisma from "@/lib/db";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 const Like = async ({ blogId }: { blogId: string }) => {
   const session = await getSession();
   const likeAccess: boolean = session ? true : false;
@@ -24,13 +25,29 @@ const Like = async ({ blogId }: { blogId: string }) => {
           await likes(blogId);
         }}
       >
-        <Button size="icon" variant="ghost" disabled={!likeAccess}>
-          {isLiked ? (
-            <Heart color="#ff0000" fill="red" />
+        <HoverCard>
+          {likeAccess ? (
+            <Button size="icon" variant="ghost" disabled={!likeAccess}>
+              {isLiked ? (
+                <Heart color="#ff0000" fill="red" />
+              ) : (
+                <Heart color="#374151" />
+              )}
+            </Button>
           ) : (
-            <Heart color="#374151" />
+            <HoverCardTrigger>
+              <Button size="icon" variant="ghost" disabled={!likeAccess}>
+                {isLiked ? (
+                  <Heart color="#ff0000" fill="red" />
+                ) : (
+                  <Heart color="#374151" />
+                )}
+              </Button>
+            </HoverCardTrigger>
           )}
-        </Button>
+
+          <HoverCardContent>User Must have an Account</HoverCardContent>
+        </HoverCard>
       </form>
     </div>
   );

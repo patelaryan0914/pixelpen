@@ -12,7 +12,9 @@ const ShareButton = () => {
       <Share
         color="#374151"
         onClick={(e) => {
-          navigator.clipboard.writeText(`http://localhost:3000/${pathname}`);
+          navigator.clipboard.writeText(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/${pathname}`
+          );
           return toast({ title: "Copied to Clipboard" });
         }}
       />

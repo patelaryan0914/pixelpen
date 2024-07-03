@@ -84,8 +84,10 @@ const ManageBlog = ({ data }: any) => {
                   <Badge variant="outline">{blog.status}</Badge>
                 </TableCell>
                 <TableCell>
-                  {blog.tags.map((tags: { tag: string }) => (
-                    <Badge variant="outline">{tags.tag}</Badge>
+                  {blog.tags.map((tags: { tag: string }, index: number) => (
+                    <Badge variant="outline" key={index}>
+                      {tags.tag}
+                    </Badge>
                   ))}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
