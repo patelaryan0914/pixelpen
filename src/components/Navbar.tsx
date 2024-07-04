@@ -20,6 +20,8 @@ import { Input } from "./ui/input";
 import { getSession, logout } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import ActiveNavbarRoute from "./ActiveNavbarRoute";
+
 const Navbar = async () => {
   const session = await getSession();
   return (
@@ -32,30 +34,7 @@ const Navbar = async () => {
           <Package2 className="h-6 w-6" />
           <span className="sr-only">Acme Inc</span>
         </Link>
-        <Link
-          href="/"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Home
-        </Link>
-        <Link
-          href="/publish-blog"
-          className=" text-muted-foreground transition-colors hover:text-foreground "
-        >
-          Publish Your Own Blog
-        </Link>
-        <Link
-          href="/manage-blog"
-          className=" text-muted-foreground transition-colors hover:text-foreground "
-        >
-          Manage Blog
-        </Link>
-        <Link
-          href="#"
-          className="text-foreground transition-colors hover:text-foreground"
-        >
-          Settings
-        </Link>
+        <ActiveNavbarRoute />
       </nav>
       <Sheet>
         <SheetTrigger asChild>
@@ -74,27 +53,7 @@ const Navbar = async () => {
               <Package2 className="h-6 w-6" />
               <span className="sr-only">Acme Inc</span>
             </Link>
-            <Link
-              href="/"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Home
-            </Link>
-            <Link
-              href="/publish-blog"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Publish Your Own Blog
-            </Link>
-            <Link
-              href="/manage-blog"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Manage Blog
-            </Link>
-            <Link href="#" className="hover:text-foreground">
-              Settings
-            </Link>
+            <ActiveNavbarRoute />
           </nav>
         </SheetContent>
       </Sheet>

@@ -1,7 +1,9 @@
-import RecommendationCard from "@/components/RecommendationCard";
 import prisma from "@/lib/db";
-import { Blog } from "../types";
-export default async function Home() {
+import RecommendationCard from "@/components/RecommendationCard";
+import { Blog } from "@/app/types";
+export default async function Home({ params }: { params: { tags: string } }) {
+  console.log(params.tags);
+
   const findBlogs = await prisma.blog.findMany({
     where: { status: "Published" },
     take: 4,
@@ -31,12 +33,10 @@ export default async function Home() {
     },
   });
   return (
-    <div className="flex h-screen flex-col items-center justify-start">
-      <div className="h-full grid w-full grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 ">
-        {findBlogs.map((blog: Blog) => (
-          <RecommendationCard data={blog} key={blog.id} />
-        ))}
-      </div>
-    </div>
+    <>
+      {findBlogs.map((blog: Blog) => (
+        <RecommendationCard data={blog} key={blog.id} />
+      ))}
+    </>
   );
 }

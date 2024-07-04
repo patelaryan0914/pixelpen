@@ -139,8 +139,8 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           ))}
         </div>
       </div>
-      <div className="p-6 sm:p-8 w-full  h-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
-        <div className="h-full rounded-2xl  text-center flex items-center">
+      <div className="p-6 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
+        <div className="h-full rounded-2xl text-center flex items-center">
           <Image
             src={
               data.content.filter((val: any) => val.type == "image")[0]?.props
