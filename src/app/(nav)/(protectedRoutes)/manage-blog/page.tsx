@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Manage all Your written Blogs at one place.",
 };
 
-export default async function TaskPage() {
+export default async function Page() {
   const session = await getSession();
   if (!session) throw new AuthRequired();
   const blogs = await prisma.blog.findMany({

@@ -1,6 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import prisma from "@/lib/db";
 
-export function page() {
+export default async function page() {
+  const blogs = await prisma.blog.findMany({});
   return (
     <div className="space-y-8">
       <div className="flex items-center">

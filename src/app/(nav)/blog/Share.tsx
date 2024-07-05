@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Share } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { toast } from "./ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 const ShareButton = () => {
   const pathname = usePathname();

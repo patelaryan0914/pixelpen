@@ -1,18 +1,18 @@
 import { Blog, User } from "@/app/types";
 import { CircleUser, Heart, MessageSquareText } from "lucide-react";
 import Image from "next/image";
-import { Avatar, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import prisma from "@/lib/db";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { getSession, subscribe } from "@/app/actions";
 import Link from "next/link";
-import { Badge } from "./ui/badge";
-import Like from "./Like";
+import { Badge } from "@/components/ui/badge";
+import Like from "../Like";
 import { formatedNumber } from "@/lib/numberFormater";
 const RecommendationCard = async ({ data }: { data: Blog }) => {
   const session = await getSession();

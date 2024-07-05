@@ -16,7 +16,7 @@ const BlogEditor = dynamic(() => import("./BlogEditor"), {
     </div>
   ),
 });
-const Editor = async () => {
+const Page = async () => {
   const session = await getSession();
   if (!session) throw new AuthRequired();
   return (
@@ -26,4 +26,4 @@ const Editor = async () => {
   );
 };
 
-export default Editor;
+export default Page;

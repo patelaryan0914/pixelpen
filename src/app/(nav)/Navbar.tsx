@@ -15,8 +15,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button, buttonVariants } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button, buttonVariants } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import { getSession, logout } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -25,14 +25,14 @@ import ActiveNavbarRoute from "./ActiveNavbarRoute";
 const Navbar = async () => {
   const session = await getSession();
   return (
-    <header className=" flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className=" flex h-16 items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden w-3/5 flex-col gap-6 text-lg font-medium lg:flex lg:flex-row lg:items-center lg:gap-5 lg:text-sm xl:gap-6">
         <Link
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
           <Package2 className="h-6 w-6" />
-          <span className="sr-only">Acme Inc</span>
+          <span className="sr-only">Pixel Pen</span>
         </Link>
         <ActiveNavbarRoute />
       </nav>
@@ -51,7 +51,7 @@ const Navbar = async () => {
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
+              <span className="sr-only">Pixel Pen</span>
             </Link>
             <ActiveNavbarRoute />
           </nav>

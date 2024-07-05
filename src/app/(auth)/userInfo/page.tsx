@@ -11,7 +11,7 @@ import { getSession } from "@/app/actions";
 import { AuthRequired } from "@/lib/exceptions";
 import UserInfoUpdate from "./UserInfoUpdate";
 import { CircleUser } from "lucide-react";
-const TeamMember = async () => {
+const Page = async () => {
   const session = await getSession();
   if (!session) throw new AuthRequired();
   return (
@@ -51,4 +51,4 @@ const TeamMember = async () => {
   );
 };
 
-export default TeamMember;
+export default Page;

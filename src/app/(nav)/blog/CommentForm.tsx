@@ -1,6 +1,6 @@
 "use client";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { comment } from "@/app/actions";
 import { commentSchema } from "@/lib/zod-schema";
 import { useState } from "react";

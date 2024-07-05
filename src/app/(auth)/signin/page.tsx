@@ -1,7 +1,7 @@
 import Image from "next/image";
 import SigninForm from "./SigninForm";
 
-const Signup = () => {
+const Page = () => {
   return (
     <div className="w-full h-screen lg:grid  lg:grid-cols-2 ">
       <div className="hidden bg-muted lg:block">
@@ -28,4 +28,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Page;
