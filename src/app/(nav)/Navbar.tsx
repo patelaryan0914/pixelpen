@@ -1,4 +1,4 @@
-import { Package2, Menu, Search, CircleUser, User } from "lucide-react";
+import { Package2, Menu, Search, CircleUser } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import {

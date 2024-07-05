@@ -11,7 +11,7 @@ const NavigationBarForBlogs = () => {
         <Link href="/add">
           <Plus />
         </Link>
-        <Link href="/">For You</Link>
+        <Link href="/forYou">For You</Link>
         <Link href="/following">Following</Link>
         <Link href="/nextjs">NextJs</Link>
         <Link href="/docker">Docker</Link>

@@ -1,8 +1,8 @@
 import { getSession } from "@/app/actions";
-import { AuthRequired } from "@/lib/exceptions";
 import dynamic from "next/dynamic";
 import { Metadata } from "next";
 import { Icons } from "@/components/icons";
+import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "Publish Blog",
   description: "Publish Your own blog.",
@@ -18,7 +18,9 @@ const BlogEditor = dynamic(() => import("./BlogEditor"), {
 });
 const Page = async () => {
   const session = await getSession();
-  if (!session) throw new AuthRequired();
+  if (!session) {
+    redirect("/login");
+  }
   return (
     <div className="flex flex-col justify-center items-center mt-4">
       <BlogEditor />

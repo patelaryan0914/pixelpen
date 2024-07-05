@@ -3,9 +3,5 @@ export default async function Home({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div className="col-span-1 lg:col-span-2 xl:border border-r-gray-200">
-      {children}
-    </div>
-  );
+  return <div className="col-span-1 lg:col-span-2">{children}</div>;
 }
