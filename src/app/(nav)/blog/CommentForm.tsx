@@ -6,7 +6,7 @@ import { commentSchema } from "@/lib/zod-schema";
 import { useState } from "react";
 import { findErrors } from "@/lib/utils";
 import { useFormStatus } from "react-dom";
-import { Icons } from "./icons";
+import { Icons } from "@/components/icons";
 const CommentButton = ({ disabled }: { disabled: boolean }) => {
   const { pending } = useFormStatus();
   return (
