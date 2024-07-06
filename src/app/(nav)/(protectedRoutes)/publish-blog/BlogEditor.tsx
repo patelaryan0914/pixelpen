@@ -32,7 +32,7 @@ const BlogEditor = () => {
   const saveBlogToDb = async (status: string) => {
     setLoading(true);
     const save = await axios.post(
-      "http://localhost:3000/api/blog",
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/blog`,
       { content: editor.document, status },
       { withCredentials: true }
     );

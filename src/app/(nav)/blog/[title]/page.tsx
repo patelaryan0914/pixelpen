@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { BlogNotFound } from "@/lib/exceptions";
 import { Badge } from "@/components/ui/badge";
-import Like from "@/components/Like";
+import Like from "../../Like";
 import { formatedNumber } from "@/lib/numberFormater";
 import { Icons } from "@/components/icons";
 import {
@@ -28,7 +28,7 @@ const Blogs = dynamic(() => import("./Blog"), {
     </div>
   ),
 });
-const ShareButton = dynamic(() => import("@/components/Share"), {
+const ShareButton = dynamic(() => import("../Share"), {
   ssr: false,
   loading: () => (
     <div className="h-screen w-screen flex justify-center items-center">
@@ -36,7 +36,7 @@ const ShareButton = dynamic(() => import("@/components/Share"), {
     </div>
   ),
 });
-const CommentForm = dynamic(() => import("@/components/CommentForm"), {
+const CommentForm = dynamic(() => import("../CommentForm"), {
   ssr: false,
   loading: () => (
     <div className="h-screen w-screen flex justify-center items-center">
@@ -44,7 +44,7 @@ const CommentForm = dynamic(() => import("@/components/CommentForm"), {
     </div>
   ),
 });
-const BlogDisplay = async ({ params }: { params: { title: string } }) => {
+const Page = async ({ params }: { params: { title: string } }) => {
   const session = await getSession();
   const followAccess: boolean = session ? true : false;
   const blogs: Blog | null = await prisma.blog.findFirst({
@@ -205,4 +205,4 @@ const BlogDisplay = async ({ params }: { params: { title: string } }) => {
   );
 };
 
-export default BlogDisplay;
+export default Page;

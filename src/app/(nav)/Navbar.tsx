@@ -1,4 +1,4 @@
-import { Package2, Menu, Search, CircleUser, User } from "lucide-react";
+import { Menu, Search, CircleUser, Pen } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import {
@@ -15,47 +15,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button, buttonVariants } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button, buttonVariants } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import { getSession, logout } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import ActiveNavbarRoute from "./ActiveNavbarRoute";
+
 const Navbar = async () => {
   const session = await getSession();
   return (
-    <header className=" flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className=" flex h-16 items-center justify-between gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden w-3/5 flex-col gap-6 text-lg font-medium lg:flex lg:flex-row lg:items-center lg:gap-5 lg:text-sm xl:gap-6">
         <Link
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <Package2 className="h-6 w-6" />
-          <span className="sr-only">Acme Inc</span>
+          <Pen className="h-6 w-6" />
+          <span className="sr-only">Pixel Pen</span>
         </Link>
-        <Link
-          href="/"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Home
-        </Link>
-        <Link
-          href="/publish-blog"
-          className=" text-muted-foreground transition-colors hover:text-foreground "
-        >
-          Publish Your Own Blog
-        </Link>
-        <Link
-          href="/manage-blog"
-          className=" text-muted-foreground transition-colors hover:text-foreground "
-        >
-          Manage Blog
-        </Link>
-        <Link
-          href="#"
-          className="text-foreground transition-colors hover:text-foreground"
-        >
-          Settings
-        </Link>
+        <ActiveNavbarRoute />
       </nav>
       <Sheet>
         <SheetTrigger asChild>
@@ -71,30 +50,10 @@ const Navbar = async () => {
               href="/"
               className="flex items-center gap-2 text-lg font-semibold"
             >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
+              <Pen className="h-6 w-6" />
+              <span className="sr-only">Pixel Pen</span>
             </Link>
-            <Link
-              href="/"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Home
-            </Link>
-            <Link
-              href="/publish-blog"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Publish Your Own Blog
-            </Link>
-            <Link
-              href="/manage-blog"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              Manage Blog
-            </Link>
-            <Link href="#" className="hover:text-foreground">
-              Settings
-            </Link>
+            <ActiveNavbarRoute />
           </nav>
         </SheetContent>
       </Sheet>

@@ -1,12 +1,12 @@
 "use client";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { comment } from "@/app/actions";
 import { commentSchema } from "@/lib/zod-schema";
 import { useState } from "react";
 import { findErrors } from "@/lib/utils";
 import { useFormStatus } from "react-dom";
-import { Icons } from "./icons";
+import { Icons } from "@/components/icons";
 const CommentButton = ({ disabled }: { disabled: boolean }) => {
   const { pending } = useFormStatus();
   return (

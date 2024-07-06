@@ -1,18 +1,18 @@
 import { Blog, User } from "@/app/types";
 import { CircleUser, Heart, MessageSquareText } from "lucide-react";
 import Image from "next/image";
-import { Avatar, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import prisma from "@/lib/db";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { getSession, subscribe } from "@/app/actions";
 import Link from "next/link";
-import { Badge } from "./ui/badge";
-import Like from "./Like";
+import { Badge } from "@/components/ui/badge";
+import Like from "../Like";
 import { formatedNumber } from "@/lib/numberFormater";
 const RecommendationCard = async ({ data }: { data: Blog }) => {
   const session = await getSession();
@@ -139,8 +139,8 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           ))}
         </div>
       </div>
-      <div className="p-6 sm:p-8 w-full  h-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
-        <div className="h-full rounded-2xl  text-center flex items-center">
+      <div className="p-6 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
+        <div className="h-full rounded-2xl text-center flex items-center">
           <Image
             src={
               data.content.filter((val: any) => val.type == "image")[0]?.props
