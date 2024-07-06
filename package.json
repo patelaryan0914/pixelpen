@@ -7,19 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate --no-engine"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",
-    "@blocknote/core": "^0.14.2",
-    "@blocknote/mantine": "^0.14.2",
-    "@blocknote/react": "^0.14.2",
     "@editorjs/checklist": "^1.6.0",
     "@editorjs/code": "^2.9.0",
     "@editorjs/delimiter": "^1.4.0",
     "@editorjs/editorjs": "^2.29.1",
     "@editorjs/embed": "^2.7.4",
-    "@editorjs/header": "^2.8.1",
+    "@editorjs/header": "^2.8.5",
     "@editorjs/image": "^2.9.0",
     "@editorjs/inline-code": "^1.5.0",
     "@editorjs/marker": "^1.4.0",
@@ -45,8 +42,6 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@tailwindcss/typography": "^0.5.13",
-    "@tanstack/react-table": "^8.17.3",
-    "@types/bcryptjs": "^2.4.6",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
@@ -67,6 +62,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/prismjs": "^1.26.4",
     "@types/react": "^18",
