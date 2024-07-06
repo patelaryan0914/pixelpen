@@ -24,6 +24,7 @@ const Editor = ({ data, onChange, holder }: EditorProps) => {
         ref.current.destroy();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <div id={holder} className="w-full prose " />;
 };
