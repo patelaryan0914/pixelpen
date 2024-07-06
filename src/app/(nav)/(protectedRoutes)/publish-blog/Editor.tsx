@@ -1,60 +1,36 @@
 "use client";
-import React, { memo, useState, useEffect, useRef } from "react";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
-import { editorConfig } from "@/lib/editorJsPlugins";
+import React, { useState } from "react";
+import { OutputData } from "@editorjs/editorjs";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
+import EditorJsRenderer from "../EditorJsRenderer";
+import EditorBlock from "./EditorBlock";
 const Editor = () => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [data, setData] = useState<OutputData>();
-  const ref = useRef<EditorJS>();
-  useEffect(() => {
-    if (!ref.current) {
-      try {
-        const editor = new EditorJS({
-          holder: "editor-js",
-          tools: editorConfig,
-          async onChange(api, event) {
-            const data = await api.saver.save();
-            setData(data);
-          },
-          hideToolbar: false,
-        });
-        ref.current = editor;
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    return () => {
-      if (ref.current && ref.current.destroy) {
-        ref.current.destroy();
-      }
-    };
-  }, []);
   const saveBlogToDb = async (status: string) => {
-    console.log(status, data);
-    // setLoading(true);
-    // const save = await axios.post(
-    //   "http://localhost:3000/api/blog",
-    //   { content: data?.blocks, status },
-    //   { withCredentials: true }
-    // );
-    // if (save.status == 200) setLoading(false);
-    // if (status === "Draft")
-    //   return toast({
-    //     title: "Blog is saved as Draft you can edit it in Manage Blog Section",
-    //   });
-    // return toast({
-    //   title: "Your Blog is Published Viewers can View your blog",
-    // });
+    setLoading(true);
+    const save = await axios.post(
+      `http://localhost:3000/api/blog`,
+      { content: data, status },
+      { withCredentials: true }
+    );
+    if (save.status == 200) setLoading(false);
+    if (status === "Draft")
+      return toast({
+        title: "Blog is saved as Draft you can edit it in Manage Blog Section",
+      });
+    return toast({
+      title: "Your Blog is Published Viewers can View your blog",
+    });
   };
 
   return (
     <>
-      <div className="w-4/5 xl:w-2/5 flex flex-col sm:flex-row justify-evenly sm:justify-between ">
-        <h1 className="text-slate-500 text-sm mb-5">
+      <div className="w-4/5 xl:w-2/5 my-2 flex flex-col sm:flex-row justify-evenly sm:justify-between items-center">
+        <h1 className="text-slate-500 text-sm ">
           *The Text written in the first block will be considered as Title.
         </h1>
         <div className="flex justify-between sm:justify-center gap-2">
@@ -74,9 +50,27 @@ const Editor = () => {
           </Button>
         </div>
       </div>
-      <div id="editor-js" className="prose w-4/5 xl:w-2/5 " />
+      <div className="h-screen w-full grid grid-cols-2">
+        <div className="w-full flex flex-col items-center border rounded-lg ">
+          <p className="text-xl font-bold my-2 ">Editor</p>
+          <EditorBlock
+            data={data}
+            onChange={setData}
+            holder="editorjs-container"
+          />
+        </div>
+        <div className="w-full flex flex-col items-center border rounded-lg">
+          <p className="text-xl font-bold my-2 ">Preview</p>
+
+          {data && (
+            <div className="w-full px-4">
+              <EditorJsRenderer data={data} />
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 };
 
-export default memo(Editor);
+export default Editor;

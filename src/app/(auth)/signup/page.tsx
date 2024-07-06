@@ -15,9 +15,9 @@ const Page = () => {
           <SignupForm />
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden bg-muted lg:block p-10">
         <Image
-          src="/placeholder.svg"
+          src="/images/Signin.svg"
           alt="Image"
           width="1920"
           height="1080"

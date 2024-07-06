@@ -7,7 +7,7 @@ const NavigationBarForBlogs = () => {
       <div className="w-2/5 hidden xl:block px-4 font-serif">
         Explore The World of Pixle Pen
       </div>
-      <div className="w-full xl:w-3/5 flex justify-evenly items-center  font-serif">
+      <div className="w-full xl:w-3/5 flex justify-evenly items-center font-serif">
         <Link href="/add">
           <Plus />
         </Link>
