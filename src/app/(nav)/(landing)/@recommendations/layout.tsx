@@ -6,10 +6,10 @@ export default async function Home({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="col-span-1 lg:col-span-2 ">
+    <>
       <NavigationBarForBlogs />
       <Separator />
       {children}
-    </div>
+    </>
   );
 }

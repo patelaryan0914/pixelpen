@@ -33,7 +33,7 @@ const page = async () => {
     },
   });
   return (
-    <div className="col-span-1 lg:col-span-2 xl:border border-r-gray-200">
+    <div>
       <NavigationBarForBlogs />
       <Separator />
       {findBlogs.map((blog: Blog) => (
