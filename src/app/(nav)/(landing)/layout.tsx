@@ -9,7 +9,7 @@ export default async function LandingLayout({
 }>) {
   return (
     <div className="flex h-screen flex-col items-start justify-start">
-      <div className="h-full grid w-full grid-cols-1 lg:grid-cols-3  gap-6 ">
+      <div className="h-full grid w-full grid-cols-1 lg:grid-cols-3">
         <div className="col-span-1 lg:col-span-2 lg:border-r">
           {recommendations}
         </div>

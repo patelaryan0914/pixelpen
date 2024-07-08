@@ -20,14 +20,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { HoverCard } from "@/components/ui/hover-card";
-const Blogs = dynamic(() => import("./Blog"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
-    </div>
-  ),
-});
+import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
 const ShareButton = dynamic(() => import("../Share"), {
   ssr: false,
   loading: () => (
@@ -67,6 +60,8 @@ const Page = async ({ params }: { params: { title: string } }) => {
       },
     },
   });
+  const tags = blogs?.tags!;
+  const comments = blogs?.comments!;
   if (!blogs) throw new BlogNotFound();
   let isSubscribed = false;
   if (session) {
@@ -110,14 +105,20 @@ const Page = async ({ params }: { params: { title: string } }) => {
           </form>
         </div>
       </div>
-      <Blogs data={blogs} />
+      <div className="w-4/5 xl:w-2/5 mt-2 font-serif">
+        <EditorJsRenderer data={blogs?.content} />
+      </div>
       <div className="w-4/5 xl:w-2/5 flex-col sm:flex justify-between">
         <div className="mb-5 flex justify-start space-x-1 mt-2">
-          {blogs?.tags!.map((val: { tag: string }, index: number) => (
-            <Badge variant="outline" key={index}>
-              <p className="p-1 text-base">{val.tag}</p>
-            </Badge>
-          ))}
+          {tags.length > 0 ? (
+            tags.map((val: { tag: string }, index: number) => (
+              <Badge variant="outline" key={index}>
+                <p className="p-1 text-base">{val.tag}</p>
+              </Badge>
+            ))
+          ) : (
+            <></>
+          )}
         </div>
         <div className="mb-5 flex justify-between items-center mt-2">
           <div className="flex space-x-4">
@@ -144,18 +145,25 @@ const Page = async ({ params }: { params: { title: string } }) => {
                     </SheetHeader>
                     <CommentForm disabled={followAccess} blogId={blogs?.id} />
                     <div className="flex flex-col">
-                      {blogs?.comments?.map((val) => (
-                        <div key={val.id} className="flex mt-4 items-center">
-                          {val.owner.avatar! === null ? (
-                            <CircleUser className="h-10 w-10 text-black " />
-                          ) : (
-                            <Avatar className="h-10 w-10">
-                              <AvatarImage src={val.owner.avatar} alt="Image" />
-                            </Avatar>
-                          )}
-                          <div className="ml-2">{val.comment}</div>
-                        </div>
-                      ))}
+                      {comments.length > 0 ? (
+                        blogs?.comments?.map((val) => (
+                          <div key={val.id} className="flex mt-4 items-center">
+                            {val.owner.avatar! === null ? (
+                              <CircleUser className="h-10 w-10 text-black " />
+                            ) : (
+                              <Avatar className="h-10 w-10">
+                                <AvatarImage
+                                  src={val.owner.avatar}
+                                  alt="Image"
+                                />
+                              </Avatar>
+                            )}
+                            <div className="ml-2">{val.comment}</div>
+                          </div>
+                        ))
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </SheetContent>
                 </Sheet>

@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import Like from "../Like";
 import { formatedNumber } from "@/lib/numberFormater";
+import { getFirstImageUrl, getFirstStringFromArray } from "@/lib/utils";
 const RecommendationCard = async ({ data }: { data: Blog }) => {
   const session = await getSession();
   const followAccess: boolean = session ? true : false;
@@ -25,6 +26,7 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
       },
     },
   });
+  const tags = data?.tags!;
   let isSubscribed = false;
   if (session) {
     isSubscribed = !!(await prisma.subscription.findFirst({
@@ -35,18 +37,14 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
     }));
   }
   return (
-    <div className="mx-auto my-10 w-4/5 sm:col-span-1 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
+    <div className=" mx-auto my-10 sm:col-span-1 w-4/5 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
       <div className="p-6 sm:p-8 w-full flex flex-col justify-between lg:w-3/5">
         <Link href={`/blog/${data.title}`} className="w-full">
           <h3 className="text-2xl font-bold tracking-tight text-gray-900">
-            {data.title.charAt(0).toUpperCase() +
-              data.title.slice(1).replaceAll("-", " ")}
+            {getFirstStringFromArray(data.content, "header")}
           </h3>
-          <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-4">
-            {
-              data.content.filter((val: any) => val.type == "paragraph")[0]
-                .content[0].text
-            }
+          <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3 3xl:line-clamp-4 ">
+            {getFirstStringFromArray(data.content, "paragraph")}
           </p>
         </Link>
         <div className="mt-10 flex items-center gap-x-4">
@@ -132,20 +130,19 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           </div>
         </div>
         <div className="flex justify-center space-x-1 mt-2">
-          {data?.tags!.map((val: { tag: string }, index: number) => (
-            <Badge variant="outline" key={index}>
-              {val.tag}
-            </Badge>
-          ))}
+          {tags.length > 0
+            ? tags.map((val: { tag: string }, index: number) => (
+                <Badge variant="outline" key={index}>
+                  {val.tag}
+                </Badge>
+              ))
+            : ""}
         </div>
       </div>
       <div className="p-6 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
         <div className="h-full rounded-2xl text-center flex items-center">
           <Image
-            src={
-              data.content.filter((val: any) => val.type == "image")[0]?.props
-                .url
-            }
+            src={getFirstImageUrl(data.content)}
             width={500}
             height={500}
             alt="Image"

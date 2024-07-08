@@ -18,7 +18,7 @@ import { uploadFile } from "./uploadFile";
 export const editorConfig = {
   header: {
     class: Header,
-    tunes: ["anyTuneName"],
+    // tunes: ["anyTuneName"],
     config: {
       placeholder: "Enter a header",
       levels: [1, 2, 3, 4, 5, 6],
@@ -27,7 +27,7 @@ export const editorConfig = {
   },
   paragraph: {
     class: Paragraph,
-    tunes: ["anyTuneName"],
+    // tunes: ["anyTuneName"],
     config: { placeholder: "Enter a Paragraph" },
     inlineToolbar: true,
   },
@@ -60,7 +60,7 @@ export const editorConfig = {
   image: {
     class: Image,
     config: {
-      uploader: uploadFileForBlog,
+      uploader: { uploadByFile: uploadFileForBlog },
     },
   },
   embed: Embed,
@@ -75,22 +75,24 @@ export const editorConfig = {
   Marker: Marker,
   inlineCode: InlineCode,
   underline: Underline,
-  anyTuneName: {
-    class: AlignmentTuneTool,
-    config: {
-      default: "left",
-      blocks: {
-        header: "left",
-        list: "left",
-      },
-    },
-  },
+  // anyTuneName: {
+  //   class: AlignmentTuneTool,
+  //   config: {
+  //     default: "left",
+  //     blocks: {
+  //       header: "left",
+  //       list: "left",
+  //     },
+  //   },
+  // },
 };
 
 async function uploadFileForBlog(file: File) {
   if (file && file.size > 0) {
     if (file.size > 2 * 1024 * 1024) {
-      throw new Error("File size must not exceed 2MB");
+      return {
+        success: 0,
+      };
     }
     const fileUrl = await uploadFile({
       fileName: file.name as string,

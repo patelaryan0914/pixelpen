@@ -1,3 +1,4 @@
+import { OutputData } from "@editorjs/editorjs";
 export interface User {
   id: string;
   username?: string | null;
@@ -11,17 +12,18 @@ export interface User {
 
 export interface Blog {
   id: string;
-  ownerId: string;
-  content: any;
+  ownerId?: string;
+  content?: any;
   title: string;
-  status: string;
+  status?: string;
   images?: Images[] | null;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt?: Date;
   owner?: User;
   tags?: { tag: string }[];
   comments?: { owner: User; comment: string; id: string }[];
   _count?: countForBlog;
+  blocks?: OutputData;
 }
 
 interface Images {
@@ -36,4 +38,10 @@ interface subscribe {
 interface countForBlog {
   likes?: number;
   comments?: number;
+}
+
+export interface EditorProps {
+  data?: OutputData;
+  onChange(val: OutputData): void;
+  holder: string;
 }

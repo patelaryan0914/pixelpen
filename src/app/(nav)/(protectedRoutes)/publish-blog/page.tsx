@@ -7,15 +7,6 @@ export const metadata: Metadata = {
   title: "Publish Blog",
   description: "Publish Your own blog.",
 };
-
-// const BlogEditor = dynamic(() => import("./BlogEditor"), {
-//   ssr: false,
-//   loading: () => (
-//     <div className="h-screen w-screen flex justify-center items-center">
-//       <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
-//     </div>
-//   ),
-// });
 const EditorJs = dynamic(() => import("./Editor"), {
   ssr: false,
   loading: () => (
@@ -27,10 +18,10 @@ const EditorJs = dynamic(() => import("./Editor"), {
 const Page = async () => {
   const session = await getSession();
   if (!session) {
-    redirect("/login");
+    redirect("/");
   }
   return (
-    <div className="flex flex-col justify-center items-center mt-4">
+    <div className="flex flex-col justify-center items-center">
       <EditorJs />
     </div>
   );

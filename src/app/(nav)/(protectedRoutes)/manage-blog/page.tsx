@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) redirect("/");
   const blogs = await prisma.blog.findMany({
     where: { ownerId: session.userInfo.id },
     select: {
