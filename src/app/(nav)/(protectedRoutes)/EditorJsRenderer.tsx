@@ -15,7 +15,7 @@ type ParsedContent = string | JSX.Element;
 const EditorJsRenderer = ({ data }: Props) => {
   const html = EditorJsToHtml.parse(data) as ParsedContent[];
   return (
-    <div className="prose max-w-full">
+    <div className="prose max-w-full text-primary">
       {html.map((item, index) => {
         if (typeof item === "string") {
           return (

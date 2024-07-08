@@ -7,7 +7,9 @@ import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import EditorJsRenderer from "../EditorJsRenderer";
 import EditorBlock from "./EditorBlock";
+import { useTheme } from "next-themes";
 const Editor = () => {
+  const { theme } = useTheme();
   const [loading, setLoading] = useState<Boolean>(false);
   const [data, setData] = useState<OutputData>();
   const saveBlogToDb = async (status: string) => {

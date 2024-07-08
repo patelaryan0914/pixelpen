@@ -1,7 +1,8 @@
 import { Separator } from "@/components//ui/separator";
 import { ProfileForm } from "./profile-form";
-
-export default function SettingsProfilePage() {
+import { getSession } from "@/app/actions";
+export default async function SettingsProfilePage() {
+  const session = await getSession();
   return (
     <div className="space-y-6">
       <div>
@@ -11,7 +12,7 @@ export default function SettingsProfilePage() {
         </p>
       </div>
       <Separator />
-      <ProfileForm />
+      <ProfileForm session={session} />
     </div>
   );
 }

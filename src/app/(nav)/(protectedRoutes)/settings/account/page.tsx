@@ -1,7 +1,9 @@
 import { Separator } from "@/components/ui/separator";
 import { AccountForm } from "./account-form";
+import { getSession } from "@/app/actions";
 
-export default function SettingsAccountPage() {
+export default async function SettingsAccountPage() {
+  const session = await getSession();
   return (
     <div className="space-y-6">
       <div>
@@ -12,7 +14,7 @@ export default function SettingsAccountPage() {
         </p>
       </div>
       <Separator />
-      <AccountForm />
+      <AccountForm userInfo={session.userInfo} />
     </div>
   );
 }

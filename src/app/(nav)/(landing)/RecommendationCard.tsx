@@ -40,7 +40,7 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
     <div className=" mx-auto my-10 sm:col-span-1 w-4/5 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
       <div className="p-6 sm:p-8 w-full flex flex-col justify-between lg:w-3/5">
         <Link href={`/blog/${data.title}`} className="w-full">
-          <h3 className="text-2xl font-bold tracking-tight text-gray-900">
+          <h3 className="text-2xl font-bold tracking-tight text-primary">
             {getFirstStringFromArray(data.content, "header")}
           </h3>
           <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3 3xl:line-clamp-4 ">

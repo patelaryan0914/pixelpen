@@ -1,4 +1,7 @@
 import { OutputData } from "@editorjs/editorjs";
+export interface Session {
+  userInfo: { id: string; username: string; email: string; avatar: string };
+}
 export interface User {
   id: string;
   username?: string | null;

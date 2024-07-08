@@ -250,11 +250,20 @@ export async function comment(formData: FormData) {
 export async function addFavoriteTopics(tags: Option[] | null) {
   try {
     const session = await getSession();
+    const tagsToCheck = await prisma.interestedTopics.findMany({
+      where: { userId: session.userInfo.id },
+    });
+    console.log(tagsToCheck);
+
     if (tags !== null)
       tags.forEach(async (val) => {
-        await prisma.interestedTopics.create({
-          data: { userId: session.userInfo.id, tagId: val.id as string },
-        });
+        if (
+          !tagsToCheck.some((tag) => tag.tagId === val.id) ||
+          tagsToCheck.length === 0
+        )
+          await prisma.interestedTopics.create({
+            data: { userId: session.userInfo.id, tagId: val.id as string },
+          });
       });
     revalidatePath("/");
     return {
