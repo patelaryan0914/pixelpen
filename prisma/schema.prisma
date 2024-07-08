@@ -9,19 +9,20 @@ datasource db {
 }
 
 model User {
-  id                       String         @id @default(uuid())
+  id                       String             @id @default(uuid())
   username                 String?
-  email                    String         @unique
+  email                    String             @unique
   password                 String
   avatar                   String?
-  createdAt                DateTime       @default(now())
-  updatedAt                DateTime       @updatedAt
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
   blogs                    Blog[]
   comments                 Comment[]
   images                   Image[]
   likes                    Like[]
-  subscriptionsAsPublisher Subscription[] @relation("publisher")
-  subscriptionsAsReader    Subscription[] @relation("reader")
+  subscriptionsAsPublisher Subscription[]     @relation("publisher")
+  subscriptionsAsReader    Subscription[]     @relation("reader")
+  InterestedTopics         InterestedTopics[]
 }
 
 model Blog {
@@ -40,10 +41,19 @@ model Blog {
 }
 
 model Tag {
+  id               String             @id @default(uuid())
+  blogId           String
+  tag              String
+  blog             Blog               @relation(fields: [blogId], references: [id])
+  InterestedTopics InterestedTopics[]
+}
+
+model InterestedTopics {
   id     String @id @default(uuid())
-  blogId String
-  tag    String
-  blog   Blog   @relation(fields: [blogId], references: [id])
+  tagId  String
+  userId String
+  tag    Tag    @relation(fields: [tagId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Comment {

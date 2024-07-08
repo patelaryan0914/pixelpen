@@ -6,16 +6,12 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
     const { content, status } = await req.json();
-    console.log(content.blocks);
-
     const title = content.blocks
       .filter((val: any) => val.type === "header")[0]
       .data.text.toLowerCase()
       .replaceAll(" ", "-");
     const image = content.blocks.filter((val: any) => val.type === "image")[0]
       .data.file.url;
-    console.log(title, image);
-
     const publish = await prisma.blog.create({
       data: {
         ownerId: session.userInfo.id,
@@ -30,7 +26,6 @@ export async function POST(req: NextRequest) {
         },
       },
     });
-    console.log(publish);
 
     return NextResponse.json({ message: "Publised" }, { status: 200 });
   } catch (error: any) {

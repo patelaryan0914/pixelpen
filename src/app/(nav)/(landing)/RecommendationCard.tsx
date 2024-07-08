@@ -1,5 +1,5 @@
 import { Blog, User } from "@/app/types";
-import { CircleUser, Heart, MessageSquareText } from "lucide-react";
+import { CircleUser, MessageSquareText } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import prisma from "@/lib/db";
@@ -61,7 +61,12 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
                   <CircleUser className="h-8 w-8 text-black " />
                 ) : (
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={owner?.avatar} alt="Image" />
+                    <AvatarImage
+                      src={owner?.avatar}
+                      width={500}
+                      height={500}
+                      alt="Image"
+                    />
                   </Avatar>
                 )}
                 <div>
@@ -79,7 +84,12 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
                       <CircleUser className="h-14 w-14 text-black " />
                     ) : (
                       <Avatar className="h-14 w-14">
-                        <AvatarImage src={owner?.avatar} alt="Image" />
+                        <AvatarImage
+                          src={owner?.avatar}
+                          width={500}
+                          height={500}
+                          alt="Image"
+                        />
                       </Avatar>
                     )}
                   </div>

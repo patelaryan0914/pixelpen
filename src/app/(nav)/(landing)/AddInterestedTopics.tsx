@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useFormStatus } from "react-dom";
 import { Icons } from "@/components/icons";
 import { findErrors } from "@/lib/utils";
-import { addTags } from "@/app/actions";
+import { addFavoriteTopics } from "@/app/actions";
 
 const Submit = () => {
   const { pending } = useFormStatus();
@@ -21,23 +21,11 @@ const Submit = () => {
     </Button>
   );
 };
-const options: Option[] = [
-  { label: "nextjs", value: "Nextjs" },
-  { label: "React", value: "react" },
-  { label: "Remix", value: "remix" },
-  { label: "Vite", value: "vite" },
-  { label: "Nuxt", value: "nuxt" },
-  { label: "Vue", value: "vue" },
-  { label: "Svelte", value: "svelte" },
-  { label: "Angular", value: "angular" },
-  { label: "Ember", value: "ember", disable: true },
-  { label: "Gatsby", value: "gatsby", disable: true },
-  { label: "Astro", value: "astro" },
-];
 
 const optionSchema = z.object({
   label: z.string(),
   value: z.string(),
+  id: z.string(),
   disable: z.boolean().optional(),
 });
 
@@ -45,21 +33,19 @@ const FormSchema = z.object({
   tags: z.array(optionSchema).min(1),
 });
 
-const AddTags = ({
-  blogId,
-  defaultTags,
+const AddInterestedTopics = ({
+  topics,
 }: {
-  blogId: string;
-  defaultTags: [{ tag: string }];
+  topics: { id: string; tag: string }[];
 }) => {
   const defaultvalues: Option[] = [];
-  defaultTags.forEach((vals) =>
+  topics.forEach((vals: { id: string; tag: string }) =>
     defaultvalues.push({
       label: vals.tag.charAt(0).toUpperCase() + vals.tag.slice(1),
       value: vals.tag,
+      id: vals.id,
     })
   );
-
   const [error, setError] = useState<any>([]);
   const [tags, setTags] = useState<Option[] | null>([]);
   async function onSubmit() {
@@ -70,8 +56,10 @@ const AddTags = ({
       return setError(result.error.issues);
     }
     if (result.success) {
-      const response = await addTags(tags, blogId);
-      if (response?.status === 200) toast({ title: "Tags Added" });
+      const response = await addFavoriteTopics(tags);
+      console.log(response);
+
+      if (response?.status === 200) toast({ title: "Topics Added" });
     }
   }
   const tagsError = findErrors("tags", error);
@@ -82,18 +70,11 @@ const AddTags = ({
         <ErrorMessages errors={tagsError} />
         <Submit />
         <MultipleSelector
-          defaultOptions={options}
+          defaultOptions={defaultvalues}
           onChange={(val: Option[]) => setTags(val)}
           placeholder="Select the blog related tags."
           hidePlaceholderWhenSelected
           triggerSearchOnFocus={true}
-          maxSelected={3}
-          onMaxSelected={(maxLimit) => {
-            toast({
-              title: `You have reached max selected: ${maxLimit}`,
-            });
-          }}
-          creatable
           emptyIndicator={
             <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
               No results found.
@@ -104,7 +85,7 @@ const AddTags = ({
     </>
   );
 };
-export default AddTags;
+export default AddInterestedTopics;
 
 const ErrorMessages = ({ errors }: { errors: string[] }) => {
   if (errors.length === 0) return null;

@@ -76,7 +76,12 @@ const Navbar = async () => {
                   <CircleUser className="h-6 w-6 text-white" />
                 ) : (
                   <Avatar className="h-6 w-6">
-                    <AvatarImage src={session.userInfo.avatar} alt="Image" />
+                    <AvatarImage
+                      src={session.userInfo.avatar}
+                      width={500}
+                      height={500}
+                      alt="Image"
+                    />
                   </Avatar>
                 )}
                 <span className="sr-only">Toggle user menu</span>

@@ -246,3 +246,21 @@ export async function comment(formData: FormData) {
     console.log(error);
   }
 }
+
+export async function addFavoriteTopics(tags: Option[] | null) {
+  try {
+    const session = await getSession();
+    if (tags !== null)
+      tags.forEach(async (val) => {
+        await prisma.interestedTopics.create({
+          data: { userId: session.userInfo.id, tagId: val.id as string },
+        });
+      });
+    revalidatePath("/");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
