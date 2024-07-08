@@ -3,7 +3,6 @@ import React from "react";
 import editorJsHtml from "editorjs-html";
 const EditorJsToHtml = editorJsHtml({
   delimiter: (block: OutputBlockData<string>) => {
-    console.log(block);
     return <p className="flex justify-center text-xl">* * *</p>;
   },
 });
