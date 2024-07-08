@@ -13,7 +13,7 @@ const Editor = () => {
   const saveBlogToDb = async (status: string) => {
     setLoading(true);
     const save = await axios.post(
-      `http://localhost:3000/api/blog`,
+      `/api/blog`,
       { content: data, status },
       { withCredentials: true }
     );
