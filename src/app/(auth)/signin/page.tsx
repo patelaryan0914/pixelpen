@@ -1,12 +1,12 @@
 import Image from "next/image";
 import SigninForm from "./SigninForm";
 
-const Signup = () => {
+const Page = () => {
   return (
     <div className="w-full h-screen lg:grid  lg:grid-cols-2 ">
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden bg-muted lg:block p-10">
         <Image
-          src="/placeholder.svg"
+          src="/images/Signup.svg"
           alt="Image"
           width="1920"
           height="1080"
@@ -28,4 +28,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Page;

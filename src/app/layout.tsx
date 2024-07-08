@@ -10,7 +10,7 @@ const fontSans = Roboto({
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Blend",
+  title: "Pixel Pen",
   description: "Bloging Platform",
 };
 

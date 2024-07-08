@@ -1,7 +1,7 @@
 import Image from "next/image";
 import SignupForm from "./SignupForm";
 
-const Signup = () => {
+const Page = () => {
   return (
     <div className="w-full h-screen lg:grid  lg:grid-cols-2 ">
       <div className="flex items-center justify-center py-12">
@@ -15,9 +15,9 @@ const Signup = () => {
           <SignupForm />
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden bg-muted lg:block p-10">
         <Image
-          src="/placeholder.svg"
+          src="/images/Signin.svg"
           alt="Image"
           width="1920"
           height="1080"
@@ -28,4 +28,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Page;

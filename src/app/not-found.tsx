@@ -1,6 +1,6 @@
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-const noFound = () => {
+const notFound = () => {
   return (
     <main className="grid min-h-screen place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center">
@@ -21,4 +21,4 @@ const noFound = () => {
   );
 };
 
-export default noFound;
+export default notFound;

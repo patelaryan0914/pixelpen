@@ -84,11 +84,17 @@ const ManageBlog = ({ data }: any) => {
                   <Badge variant="outline">{blog.status}</Badge>
                 </TableCell>
                 <TableCell>
-                  {blog.tags.map((tags: { tag: string }, index: number) => (
-                    <Badge variant="outline" key={index}>
-                      {tags.tag}
-                    </Badge>
-                  ))}
+                  {blog.tags.length > 0 ? (
+                    blog.tags.map((tags: { tag: string }, index: number) => (
+                      <Badge variant="outline" key={index}>
+                        {tags.tag}
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-sm font-medium text-indigo-600">
+                      No Tags Added
+                    </p>
+                  )}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {blog.createdAt.toJSON().slice(0, 10)}
@@ -147,7 +153,8 @@ const ManageBlog = ({ data }: any) => {
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Showing <strong>1</strong> of <strong>{data.length}</strong> Blogs
+          Showing <strong>{data.length}</strong> of{" "}
+          <strong>{data.length}</strong> Blogs
         </div>
       </CardFooter>
     </Card>
