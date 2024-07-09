@@ -1,13 +1,13 @@
 import prisma from "@/lib/db";
 import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
-export async function generateStaticParams() {
-  const blog = await prisma.blog.findMany({
-    select: { title: true },
-    cacheStrategy: { swr: 60, ttl: 60 },
-  });
-  return blog.map(({ title }) => title).slice(0, 3);
-}
+// export async function generateStaticParams() {
+//   const blog = await prisma.blog.findMany({
+//     select: { title: true },
+//     cacheStrategy: { swr: 60, ttl: 60 },
+//   });
+//   return blog.map(({ title }) => title).slice(0, 3);
+// }
 const getBlogDetails = cache(async (title: string) => {
   const blog: Blog | null = await prisma.blog.findFirst({
     where: { title: title },
