@@ -22,7 +22,7 @@ const Page = () => {
       </div>
       <div className="hidden bg-muted lg:block p-10">
         <Image
-          src="/images/Signin.svg"
+          src="/images/Signup.svg"
           alt="Image"
           width="1920"
           height="1080"

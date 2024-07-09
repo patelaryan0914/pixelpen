@@ -11,7 +11,7 @@ const Page = () => {
     <div className="w-full h-screen lg:grid  lg:grid-cols-2 ">
       <div className="hidden bg-muted lg:block p-10">
         <Image
-          src="/images/Signup.svg"
+          src="/images/Signin.svg"
           alt="Image"
           width="1920"
           height="1080"
