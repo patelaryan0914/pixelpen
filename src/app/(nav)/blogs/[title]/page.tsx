@@ -1,4 +1,65 @@
 import prisma from "@/lib/db";
+import { Metadata, ResolvingMetadata } from "next";
+import { cache } from "react";
+export async function generateStaticParams() {
+  const blog = await prisma.blog.findMany({
+    select: { title: true },
+    cacheStrategy: { swr: 60, ttl: 60 },
+  });
+  return blog.map(({ title }) => title).slice(0, 3);
+}
+const getBlogDetails = cache(async (title: string) => {
+  const blog: Blog | null = await prisma.blog.findFirst({
+    where: { title: title },
+    include: {
+      owner: true,
+      tags: true,
+      _count: {
+        select: {
+          likes: true,
+          comments: true,
+        },
+      },
+      images: {
+        select: {
+          imageUrl: true,
+        },
+      },
+      comments: {
+        select: {
+          owner: true,
+          comment: true,
+          id: true,
+        },
+      },
+    },
+    cacheStrategy: { swr: 60, ttl: 60 },
+  });
+  return blog;
+});
+
+export async function generateMetadata(
+  { params }: { params: { title: string } },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const title = params.title;
+
+  // fetch data
+  const blog = await getBlogDetails(title);
+
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || [];
+
+  return {
+    title:
+      blog?.title.charAt(0).toUpperCase()! +
+      blog?.title.slice(1).replaceAll("-", " ")!,
+    openGraph: {
+      images: [{ url: blog?.images[0].imageUrl! as string }, ...previousImages],
+    },
+  };
+}
 import dynamic from "next/dynamic";
 import { getSession, subscribe } from "@/app/actions";
 import { CircleUser, MessageSquareText } from "lucide-react";
@@ -6,7 +67,6 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Blog } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { BlogNotFound } from "@/lib/exceptions";
 import { Badge } from "@/components/ui/badge";
 import Like from "../../Like";
 import { formatedNumber } from "@/lib/numberFormater";
@@ -21,6 +81,8 @@ import {
 } from "@/components/ui/sheet";
 import { HoverCard } from "@/components/ui/hover-card";
 import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
+import { notFound } from "next/navigation";
+
 const ShareButton = dynamic(() => import("../Share"), {
   ssr: false,
   loading: () => (
@@ -40,37 +102,18 @@ const CommentForm = dynamic(() => import("../CommentForm"), {
 const Page = async ({ params }: { params: { title: string } }) => {
   const session = await getSession();
   const followAccess: boolean = session ? true : false;
-  const blogs: Blog | null = await prisma.blog.findFirst({
-    where: { title: params.title },
-    include: {
-      owner: true,
-      tags: true,
-      _count: {
-        select: {
-          likes: true,
-          comments: true,
-        },
-      },
-      comments: {
-        select: {
-          owner: true,
-          comment: true,
-          id: true,
-        },
-      },
-    },
-  });
-  const tags = blogs?.tags!;
-  const comments = blogs?.comments!;
+  const blog = await getBlogDetails(params.title);
+  const tags = blog?.tags!;
+  const comments = blog?.comments!;
   const title =
-    blogs?.title.charAt(0).toUpperCase()! +
-    blogs?.title.slice(1).replaceAll("-", " ")!;
-  if (!blogs) throw new BlogNotFound();
+    blog?.title.charAt(0).toUpperCase()! +
+    blog?.title.slice(1).replaceAll("-", " ")!;
+  if (!blog) notFound();
   let isSubscribed = false;
   if (session) {
     isSubscribed = !!(await prisma.subscription.findFirst({
       where: {
-        publisherId: blogs?.owner?.id!,
+        publisherId: blog?.owner?.id!,
         readerId: session.userInfo.id,
       },
     }));
@@ -79,19 +122,19 @@ const Page = async ({ params }: { params: { title: string } }) => {
     <div className="flex flex-col justify-center items-center ">
       <div className="mt-4 w-full lg:w-4/5 xl:w-2/5 h-[100px] flex items-center justify-between space-x-4 border border-slate-200 shadow-sm rounded-lg ">
         <div className="flex items-center space-x-4  px-4">
-          {blogs?.owner?.avatar! === null ? (
+          {blog?.owner?.avatar! === null ? (
             <CircleUser className="h-10 w-10 text-black " />
           ) : (
             <Avatar className="h-10 w-10">
-              <AvatarImage src={blogs?.owner?.avatar!} alt="Image" />
+              <AvatarImage src={blog?.owner?.avatar!} alt="Image" />
             </Avatar>
           )}
           <div>
             <p className="text-sm font-medium leading-none">
-              {blogs?.owner?.username!}
+              {blog?.owner?.username!}
             </p>
             <p className="text-sm text-muted-foreground">
-              {blogs?.owner?.email!}
+              {blog?.owner?.email!}
             </p>
           </div>
         </div>
@@ -99,7 +142,7 @@ const Page = async ({ params }: { params: { title: string } }) => {
           <form
             action={async () => {
               "use server";
-              await subscribe(blogs?.owner?.id!);
+              await subscribe(blog?.owner?.id!);
             }}
           >
             <Button type="submit" size="sm" disabled={!followAccess}>
@@ -109,7 +152,7 @@ const Page = async ({ params }: { params: { title: string } }) => {
         </div>
       </div>
       <div className="w-4/5 xl:w-2/5 mt-2 font-serif">
-        <EditorJsRenderer data={blogs?.content} title={title} />
+        <EditorJsRenderer data={blog?.content} title={title} />
       </div>
       <div className="w-4/5 xl:w-2/5 flex-col sm:flex justify-between">
         <div className="mb-5 flex justify-start space-x-1 mt-2">
@@ -127,10 +170,10 @@ const Page = async ({ params }: { params: { title: string } }) => {
           <div className="flex space-x-4">
             <div className="flex items-center text-sm font-medium leading-none space-x-1">
               <div>
-                <Like blogId={blogs?.id} />
+                <Like blogId={blog?.id} />
               </div>
               <p className="text-xs">
-                {formatedNumber.format(blogs?._count?.likes!)}
+                {formatedNumber.format(blog?._count?.likes!)}
               </p>
             </div>
             <div className="flex items-center text-sm font-medium leading-none space-x-1">
@@ -146,10 +189,10 @@ const Page = async ({ params }: { params: { title: string } }) => {
                       <SheetTitle>Comments</SheetTitle>
                       <SheetDescription>Share us a feedback!</SheetDescription>
                     </SheetHeader>
-                    <CommentForm disabled={followAccess} blogId={blogs?.id} />
+                    <CommentForm disabled={followAccess} blogId={blog?.id} />
                     <div className="flex flex-col">
                       {comments.length > 0 ? (
-                        blogs?.comments?.map((val) => (
+                        blog?.comments?.map((val) => (
                           <div key={val.id} className="flex mt-4 items-center">
                             {val.owner.avatar! === null ? (
                               <CircleUser className="h-10 w-10 text-black " />
@@ -172,7 +215,7 @@ const Page = async ({ params }: { params: { title: string } }) => {
                 </Sheet>
               </div>
               <p className="text-xs">
-                {formatedNumber.format(blogs?._count?.comments!)}
+                {formatedNumber.format(blog?._count?.comments!)}
               </p>
             </div>
           </div>
@@ -184,26 +227,26 @@ const Page = async ({ params }: { params: { title: string } }) => {
       <Separator className="w-4/5 xl:w-2/5 mb-5" />
       <div className="w-4/5 xl:w-2/5 flex justify-between items-center">
         <div className="flex justify-start items-center space-x-4 ">
-          {blogs?.owner?.avatar! === null ? (
+          {blog?.owner?.avatar! === null ? (
             <CircleUser className="h-14 w-14 text-black " />
           ) : (
             <Avatar className="h-14 w-14">
-              <AvatarImage src={blogs?.owner?.avatar!} alt="Image" />
+              <AvatarImage src={blog?.owner?.avatar!} alt="Image" />
             </Avatar>
           )}
           <div>
             <p className="text-sm font-medium leading-none">
-              {blogs?.owner?.username!}
+              {blog?.owner?.username!}
             </p>
             <p className="text-sm text-muted-foreground">
-              {blogs?.owner?.email!}
+              {blog?.owner?.email!}
             </p>
           </div>
         </div>
         <form
           action={async () => {
             "use server";
-            await subscribe(blogs?.owner?.id!);
+            await subscribe(blog?.owner?.id!);
           }}
           className="justify-items-end"
         >

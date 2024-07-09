@@ -19,7 +19,7 @@ export interface Blog {
   content?: any;
   title: string;
   status?: string;
-  images?: Images[] | null;
+  images: Images[];
   createdAt?: Date;
   updatedAt?: Date;
   owner?: User;
@@ -30,7 +30,7 @@ export interface Blog {
 }
 
 interface Images {
-  imageUrl?: string;
+  imageUrl: string;
 }
 
 interface subscribe {

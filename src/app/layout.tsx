@@ -12,8 +12,12 @@ const fontSans = Roboto({
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Pixel Pen",
-  description: "Bloging Platform",
+  title: { default: "Pixel Pen", template: "%s - Pixel Pen" },
+  description:
+    "Pixel Pen: Your ultimate blogging platform. Share your stories, insights, and creativity with a vibrant community. Discover diverse content and connect with like-minded individuals.",
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({

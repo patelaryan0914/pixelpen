@@ -57,8 +57,6 @@ const AddInterestedTopics = ({
     }
     if (result.success) {
       const response = await addFavoriteTopics(tags);
-      console.log(response);
-
       if (response?.status === 200) toast({ title: "Topics Added" });
     }
   }

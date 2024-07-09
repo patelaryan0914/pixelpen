@@ -31,6 +31,7 @@ const page = async () => {
         },
       },
     },
+    cacheStrategy: { swr: 60, ttl: 60 },
   });
   return (
     <div>

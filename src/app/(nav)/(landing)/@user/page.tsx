@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default async function page() {
   const blogs = await prisma.blog.findMany({
-    select: { id: true, title: true, owner: true },
+    select: { id: true, title: true, owner: true, images: true },
   });
   return (
     <div className="">
@@ -17,7 +17,7 @@ export default async function page() {
             <div key={val.id}>
               <div className="flex flex-col justify-center my-2">
                 <Link
-                  href={`${process.env.NEXT_PUBLIC_BASE_URL}/blog/${val.title}`}
+                  href={`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${val.title}`}
                   className="hover:underline underline-offset-2"
                 >
                   {displayTitle(val.title)}

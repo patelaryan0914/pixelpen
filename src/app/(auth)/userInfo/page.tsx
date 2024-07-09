@@ -1,3 +1,7 @@
+export const metadata: Metadata = {
+  title: "User Information",
+};
+
 import {
   Card,
   CardContent,
@@ -11,6 +15,7 @@ import { getSession } from "@/app/actions";
 import { AuthRequired } from "@/lib/exceptions";
 import UserInfoUpdate from "./UserInfoUpdate";
 import { CircleUser } from "lucide-react";
+import { Metadata } from "next";
 const Page = async () => {
   const session = await getSession();
   if (!session) throw new AuthRequired();

@@ -24,8 +24,6 @@ const Editor = () => {
       data,
       status,
     });
-    console.log(result);
-
     if (!result.success) {
       setStatus("");
       setLoading(false);

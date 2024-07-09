@@ -33,6 +33,7 @@ export default async function Page({ params }: { params: { tag: string } }) {
         },
       },
     },
+    cacheStrategy: { swr: 60, ttl: 60 },
   });
   return (
     <>

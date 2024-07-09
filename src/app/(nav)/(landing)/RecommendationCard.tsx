@@ -39,9 +39,10 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
   return (
     <div className=" mx-auto my-10 sm:col-span-1 w-4/5 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
       <div className="p-6 sm:p-8 w-full flex flex-col justify-between lg:w-3/5">
-        <Link href={`/blog/${data.title}`} className="w-full">
+        <Link href={`/blogs/${data.title}`} className="w-full">
           <h3 className="text-2xl font-bold tracking-tight text-primary">
-            {getFirstStringFromArray(data.content, "header")}
+            {data?.title?.charAt(0).toUpperCase()! +
+              data?.title?.slice(1).replaceAll("-", " ")!}
           </h3>
           <p className="mt-6 text-base leading-7 text-gray-600 line-clamp-3 3xl:line-clamp-4 ">
             {getFirstStringFromArray(data.content, "paragraph")}
@@ -129,14 +130,16 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
                 {formatedNumber.format(data?._count?.likes!)}
               </p>
             </div>
-            <div className="flex items-center text-sm font-medium leading-none space-x-1">
-              <div>
-                <MessageSquareText color="#374151" />
+            <Link href={`/blogs/${data.title}`}>
+              <div className="flex items-center text-sm font-medium leading-none space-x-1">
+                <div>
+                  <MessageSquareText color="#374151" />
+                </div>
+                <p className="text-xs">
+                  {formatedNumber.format(data?._count?.comments!)}
+                </p>
               </div>
-              <p className="text-xs">
-                {formatedNumber.format(data?._count?.comments!)}
-              </p>
-            </div>
+            </Link>
           </div>
         </div>
         <div className="flex justify-center space-x-1 mt-2">

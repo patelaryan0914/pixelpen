@@ -1,5 +1,10 @@
 import Image from "next/image";
 import SigninForm from "./SigninForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign In",
+};
 
 const Page = () => {
   return (
