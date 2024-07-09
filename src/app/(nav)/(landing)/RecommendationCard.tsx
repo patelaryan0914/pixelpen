@@ -150,13 +150,13 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
         </div>
       </div>
       <div className="p-6 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
-        <div className="h-full rounded-2xl text-center flex items-center">
+        <div className="h-48 w-48 lg:h-64 lg:w-64 rounded-sm text-center flex items-center justify-center overflow-hidden">
           <Image
             src={getFirstImageUrl(data.content)}
-            width={500}
-            height={500}
+            width={256}
+            height={256}
             alt="Image"
-            className="rounded-sm "
+            className="rounded-sm"
           />
         </div>
       </div>

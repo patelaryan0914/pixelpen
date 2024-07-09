@@ -21,7 +21,7 @@ export const editorConfig = {
     // tunes: ["anyTuneName"],
     config: {
       placeholder: "Enter a header",
-      levels: [1, 2, 3, 4, 5, 6],
+      levels: [2, 3, 4, 5, 6],
       defaultLevel: 2,
     },
   },

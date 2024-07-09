@@ -47,4 +47,6 @@ export interface EditorProps {
   data?: OutputData;
   onChange(val: OutputData): void;
   holder: string;
+  setTitle(val: string): void;
+  error: [];
 }

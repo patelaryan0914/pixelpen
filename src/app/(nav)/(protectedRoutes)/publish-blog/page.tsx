@@ -21,9 +21,18 @@ const Page = async () => {
     redirect("/");
   }
   return (
-    <div className="flex flex-col justify-center items-center">
-      <EditorJs />
-    </div>
+    <>
+      <div className=" w-screen h-screen  lg:hidden">
+        <h1 className="h-screen w-full flex justify-center items-center px-4 text-red-700">
+          *Access This page using Laptop or screen size greater than 1024px.
+        </h1>
+      </div>
+      <div className="hidden lg:block">
+        <div className="h-screen flex flex-col justify-center items-center ">
+          <EditorJs />
+        </div>
+      </div>
+    </>
   );
 };
 

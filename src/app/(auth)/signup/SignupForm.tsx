@@ -11,6 +11,7 @@ import { userSchema } from "@/lib/zod-schema";
 import { useToast } from "@/components/ui/use-toast";
 import { Icons } from "@/components/icons";
 import { useRouter } from "next/navigation";
+import { ErrorMessages } from "@/components/error-message";
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
@@ -89,9 +90,3 @@ const SignupForm = () => {
 };
 
 export default SignupForm;
-
-const ErrorMessages = ({ errors }: { errors: string[] }) => {
-  if (errors.length === 0) return null;
-  const text = errors[0];
-  return <div className="text-red-600 peer">{text}</div>;
-};

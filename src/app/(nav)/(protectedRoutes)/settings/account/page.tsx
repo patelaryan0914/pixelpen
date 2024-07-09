@@ -14,7 +14,7 @@ export default async function SettingsAccountPage() {
         </p>
       </div>
       <Separator />
-      <AccountForm userInfo={session.userInfo} />
+      <AccountForm />
     </div>
   );
 }

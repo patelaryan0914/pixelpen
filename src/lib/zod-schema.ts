@@ -1,3 +1,4 @@
+import { OutputBlockData } from "@editorjs/editorjs";
 import { number, string, z } from "zod";
 
 export const userSchema = z
@@ -48,3 +49,35 @@ export const commentSchema = z.object({
     string().max(200, { message: "username can not exceed 200 characters." })
   ),
 });
+
+const STATUS = ["Draft", "Published"] as const;
+export const BlogDataSchema = z
+  .object({
+    title: z
+      .string({ required_error: "Title is Must" })
+      .max(40, "Must no exceed 40 characters"),
+    data: z.any(),
+    status: z.enum(STATUS),
+  })
+  .superRefine((data, ctx) => {
+    const images = data.data?.blocks?.filter(
+      (val: OutputBlockData) => val.type === "image"
+    );
+    if (
+      data.data === null ||
+      data.data === undefined ||
+      data.data.blocks.length === 0
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There Must be some data.",
+        path: ["data"],
+      });
+    } else if (images.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "There Must be a image even Random",
+        path: ["image"],
+      });
+    }
+  });

@@ -9,11 +9,22 @@ import { Option } from "@/components/ui/multiple-selector";
 import { revalidatePath } from "next/cache";
 const secretKey = "secret";
 const key = new TextEncoder().encode(secretKey);
+export async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+}
 
+// A server-side function to compare a password with a hashed password
+export async function comparePassword(
+  password: string,
+  hashedPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(password, hashedPassword);
+}
 export default async function signUp(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const hashpassword = bcrypt.hashSync(password, 10);
+  const hashpassword = await hashPassword(password);
   const response = await prisma.user.create({
     data: {
       email,
@@ -67,7 +78,7 @@ export async function signIn(formData: FormData) {
     return {
       error: "User doesn't exist with this email.",
     };
-  if (!(await bcrypt.compare(password, getUser.password!))) {
+  if (!(await comparePassword(password, getUser.password!))) {
     return {
       error: "Password entered is Incorrect",
     };

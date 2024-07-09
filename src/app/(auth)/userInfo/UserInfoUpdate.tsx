@@ -11,6 +11,7 @@ import { UserCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import { ErrorMessages } from "@/components/error-message";
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
@@ -110,9 +111,3 @@ const UserInfoUpdate = () => {
 };
 
 export default UserInfoUpdate;
-
-const ErrorMessages = ({ errors }: { errors: string[] }) => {
-  if (errors.length === 0) return null;
-  const text = errors[0];
-  return <div className="text-red-600 peer">{text}</div>;
-};

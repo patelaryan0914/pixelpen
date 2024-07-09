@@ -1,23 +1,22 @@
 import { getSession } from "@/app/actions";
 import prisma from "@/lib/db";
+import { OutputBlockData } from "@editorjs/editorjs";
 import { NextRequest, NextResponse } from "next/server";
 export const runtime = "edge";
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    const { content, status } = await req.json();
-    const title = content.blocks
-      .filter((val: any) => val.type === "header")[0]
-      .data.text.toLowerCase()
-      .replaceAll(" ", "-");
-    const image = content.blocks.filter((val: any) => val.type === "image")[0]
-      .data.file.url;
+    const { result } = await req.json();
+    const title = result.title.toLowerCase().replaceAll(" ", "-");
+    const image = result.data.blocks.filter(
+      (val: OutputBlockData) => val.type === "image"
+    )[0].data.file.url;
     const publish = await prisma.blog.create({
       data: {
         ownerId: session.userInfo.id,
-        content,
+        content: result.data,
         title,
-        status,
+        status: result.status,
         images: {
           create: {
             imageUrl: image,

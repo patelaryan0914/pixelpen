@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { OutputData } from "@editorjs/editorjs";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
@@ -7,16 +7,33 @@ import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import EditorJsRenderer from "../EditorJsRenderer";
 import EditorBlock from "./EditorBlock";
-import { useTheme } from "next-themes";
+import { BlogDataSchema } from "@/lib/zod-schema";
+import { findErrors } from "@/lib/utils";
 const Editor = () => {
-  const { theme } = useTheme();
   const [loading, setLoading] = useState<Boolean>(false);
+  const [status, setStatus] = useState<string>();
+  const [error, setError] = useState<any>([]);
   const [data, setData] = useState<OutputData>();
+  const [title, setTitle] = useState<string>();
   const saveBlogToDb = async (status: string) => {
     setLoading(true);
+    setStatus(status);
+
+    const result = await BlogDataSchema.safeParseAsync({
+      title,
+      data,
+      status,
+    });
+    console.log(result);
+
+    if (!result.success) {
+      setStatus("");
+      setLoading(false);
+      return setError(result.error.issues);
+    }
     const save = await axios.post(
       `/api/blog`,
-      { content: data, status },
+      { result: result.data },
       { withCredentials: true }
     );
     if (save.status == 200) setLoading(false);
@@ -28,6 +45,7 @@ const Editor = () => {
       title: "Your Blog is Published Viewers can View your blog",
     });
   };
+  useEffect(() => {}, [title]);
 
   return (
     <>
@@ -36,18 +54,26 @@ const Editor = () => {
           *The Text written in the first block will be considered as Title.
         </h1>
         <div className="flex justify-between sm:justify-center gap-2">
-          <Button size={"sm"} onClick={() => saveBlogToDb("Draft")}>
-            {!loading ? (
-              "Save"
-            ) : (
+          <Button
+            size={"sm"}
+            onClick={() => saveBlogToDb("Draft")}
+            className="text-center"
+          >
+            {loading && status == "Draft" ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Save"
             )}
           </Button>
-          <Button size={"sm"} onClick={() => saveBlogToDb("Published")}>
-            {!loading ? (
-              "Published"
-            ) : (
+          <Button
+            size={"sm"}
+            onClick={() => saveBlogToDb("Published")}
+            className="text-center"
+          >
+            {loading && status == "Published" ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Published"
             )}
           </Button>
         </div>
@@ -59,14 +85,16 @@ const Editor = () => {
             data={data}
             onChange={setData}
             holder="editorjs-container"
+            setTitle={setTitle}
+            error={error}
           />
         </div>
         <div className="w-full flex flex-col items-center border rounded-lg">
           <p className="text-xl font-bold my-2 ">Preview</p>
 
           {data && (
-            <div className="w-full px-4">
-              <EditorJsRenderer data={data} />
+            <div className="w-full px-4 mt-8">
+              <EditorJsRenderer data={data} title={title!} />
             </div>
           )}
         </div>

@@ -1,4 +1,4 @@
-import { BlockToolData, OutputBlockData, OutputData } from "@editorjs/editorjs";
+import { OutputBlockData, OutputData } from "@editorjs/editorjs";
 import React from "react";
 import editorJsHtml from "editorjs-html";
 const EditorJsToHtml = editorJsHtml({
@@ -9,13 +9,15 @@ const EditorJsToHtml = editorJsHtml({
 
 type Props = {
   data: OutputData;
+  title: string;
 };
 type ParsedContent = string | JSX.Element;
 
-const EditorJsRenderer = ({ data }: Props) => {
+const EditorJsRenderer = ({ data, title }: Props) => {
   const html = EditorJsToHtml.parse(data) as ParsedContent[];
   return (
-    <div className="prose max-w-full text-primary">
+    <div className="prose max-w-full text-primary font-serif ">
+      <h1 className="text-4xl">{title}</h1>
       {html.map((item, index) => {
         if (typeof item === "string") {
           return (

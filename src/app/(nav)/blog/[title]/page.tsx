@@ -62,6 +62,9 @@ const Page = async ({ params }: { params: { title: string } }) => {
   });
   const tags = blogs?.tags!;
   const comments = blogs?.comments!;
+  const title =
+    blogs?.title.charAt(0).toUpperCase()! +
+    blogs?.title.slice(1).replaceAll("-", " ")!;
   if (!blogs) throw new BlogNotFound();
   let isSubscribed = false;
   if (session) {
@@ -106,7 +109,7 @@ const Page = async ({ params }: { params: { title: string } }) => {
         </div>
       </div>
       <div className="w-4/5 xl:w-2/5 mt-2 font-serif">
-        <EditorJsRenderer data={blogs?.content} />
+        <EditorJsRenderer data={blogs?.content} title={title} />
       </div>
       <div className="w-4/5 xl:w-2/5 flex-col sm:flex justify-between">
         <div className="mb-5 flex justify-start space-x-1 mt-2">
