@@ -4,7 +4,7 @@ import { cache } from "react";
 export async function generateStaticParams() {
   const blog = await prisma.blog.findMany({
     select: { title: true },
-    cacheStrategy: { swr: 60, ttl: 60 },
+    cacheStrategy: { swr: 300, ttl: 300 },
   });
   return blog.map(({ title }) => title).slice(0, 3);
 }
@@ -33,7 +33,7 @@ const getBlogDetails = cache(async (title: string) => {
         },
       },
     },
-    cacheStrategy: { swr: 60, ttl: 60 },
+    cacheStrategy: { swr: 300, ttl: 300 },
   });
   return blog;
 });
