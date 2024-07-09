@@ -47,7 +47,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full mt-4" aria-disabled={pending}>
+    <Button type="submit" className="w-full mt-4" disabled={pending}>
       {!pending ? (
         "Save"
       ) : (

@@ -15,7 +15,7 @@ import { ErrorMessages } from "@/components/error-message";
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full" aria-disabled={pending}>
+    <Button type="submit" className="w-full" disabled={pending}>
       {!pending ? (
         "Sign Up"
       ) : (
@@ -75,9 +75,9 @@ const SignupForm = () => {
           </div>
           <Submit />
         </form>
-        <Button variant="outline" className="w-full">
+        {/* <Button variant="outline" className="w-full">
           Login with Google
-        </Button>
+        </Button> */}
       </div>
       <div className="mt-4 text-center text-sm">
         Already have an Account?{" "}

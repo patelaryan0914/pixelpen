@@ -12,7 +12,7 @@ import { addFavoriteTopics } from "@/app/actions";
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full" aria-disabled={pending}>
+    <Button type="submit" className="w-full" disabled={pending}>
       {!pending ? (
         "Add"
       ) : (

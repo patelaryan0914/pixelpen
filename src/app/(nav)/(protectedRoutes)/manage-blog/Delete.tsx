@@ -12,7 +12,7 @@ const Delete = () => {
       variant="destructive"
       size="sm"
       className="w-full"
-      aria-disabled={pending}
+      disabled={pending}
     >
       {!pending ? (
         "Delete"
