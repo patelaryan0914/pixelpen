@@ -3,7 +3,6 @@ import { MetadataRoute } from "next";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blog = await prisma.blog.findMany({
     select: { title: true, updatedAt: true },
-    cacheStrategy: { swr: 300, ttl: 300 },
   });
   const blogPost: MetadataRoute.Sitemap = blog.map(({ title, updatedAt }) => ({
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${title}`,
@@ -11,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   return [
+    { url: `${process.env.NEXT_PUBLIC_BASE_URL}`, priority: 100 },
     { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signin` },
     { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signup` },
     { url: `${process.env.NEXT_PUBLIC_BASE_URL}/userInfo` },

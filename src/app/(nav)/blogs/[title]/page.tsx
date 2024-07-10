@@ -1,65 +1,6 @@
 import prisma from "@/lib/db";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { cache } from "react";
-// export async function generateStaticParams() {
-//   const blog = await prisma.blog.findMany({
-//     select: { title: true },
-//     cacheStrategy: { swr: 300, ttl: 300 },
-//   });
-//   return blog.map(({ title }) => title).slice(0, 3);
-// }
-const getBlogDetails = cache(async (title: string) => {
-  const blog: Blog | null = await prisma.blog.findFirst({
-    where: { title: title },
-    include: {
-      owner: true,
-      tags: true,
-      _count: {
-        select: {
-          likes: true,
-          comments: true,
-        },
-      },
-      images: {
-        select: {
-          imageUrl: true,
-        },
-      },
-      comments: {
-        select: {
-          owner: true,
-          comment: true,
-          id: true,
-        },
-      },
-    },
-    cacheStrategy: { swr: 300, ttl: 300 },
-  });
-  return blog;
-});
-
-export async function generateMetadata(
-  { params }: { params: { title: string } },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  // read route params
-  const title = params.title;
-
-  // fetch data
-  const blog = await getBlogDetails(title);
-
-  // optionally access and extend (rather than replace) parent metadata
-  const previousImages = (await parent).openGraph?.images || [];
-
-  return {
-    title:
-      blog?.title.charAt(0).toUpperCase()! +
-      blog?.title.slice(1).replaceAll("-", " ")!,
-    openGraph: {
-      images: [{ url: blog?.images[0].imageUrl! as string }, ...previousImages],
-    },
-  };
-}
 import dynamic from "next/dynamic";
 import { getSession, subscribe } from "@/app/actions";
 import { CircleUser, MessageSquareText } from "lucide-react";
@@ -99,6 +40,56 @@ const CommentForm = dynamic(() => import("../CommentForm"), {
     </div>
   ),
 });
+const getBlogDetails = cache(async (title: string) => {
+  const blog: Blog | null = await prisma.blog.findFirst({
+    where: { title: title },
+    include: {
+      owner: true,
+      tags: true,
+      _count: {
+        select: {
+          likes: true,
+          comments: true,
+        },
+      },
+      images: {
+        select: {
+          imageUrl: true,
+        },
+      },
+      comments: {
+        select: {
+          owner: true,
+          comment: true,
+          id: true,
+        },
+      },
+    },
+  });
+  return blog;
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { title: string };
+}): Promise<Metadata> {
+  // read route params
+  const title = params.title;
+
+  // fetch data
+  const blog = await getBlogDetails(title);
+
+  return {
+    title:
+      blog?.title.charAt(0).toUpperCase()! +
+      blog?.title.slice(1).replaceAll("-", " ")!,
+    openGraph: {
+      images: [{ url: blog?.images[0].imageUrl! as string }],
+    },
+  };
+}
+
 const Page = async ({ params }: { params: { title: string } }) => {
   const session = await getSession();
   const followAccess: boolean = session ? true : false;

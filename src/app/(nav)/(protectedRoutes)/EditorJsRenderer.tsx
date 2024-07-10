@@ -6,17 +6,6 @@ const EditorJsToHtml = editorJsHtml({
   delimiter: (block: OutputBlockData<string>) => {
     return <p className="flex justify-center text-xl">* * *</p>;
   },
-  image: (block: OutputBlockData<string>) => {
-    return (
-      <img
-        height={500}
-        width={500}
-        src={block.data.file.url!}
-        alt={block.type}
-        className="mx-auto"
-      />
-    );
-  },
 });
 
 type Props = {
