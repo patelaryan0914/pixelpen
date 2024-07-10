@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   return [
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}`, priority: 100 },
+    { url: `${process.env.NEXT_PUBLIC_BASE_URL}` },
     { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signin` },
     { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signup` },
     { url: `${process.env.NEXT_PUBLIC_BASE_URL}/userInfo` },
