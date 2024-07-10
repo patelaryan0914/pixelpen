@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { User } from "./types";
 import { Option } from "@/components/ui/multiple-selector";
 import { revalidatePath } from "next/cache";
+import { deleteFile } from "@/lib/uploadFile";
 const secretKey = "secret";
 const key = new TextEncoder().encode(secretKey);
 export async function hashPassword(password: string): Promise<string> {
@@ -177,6 +178,7 @@ export async function addTags(tags: Option[] | null, blogId: string) {
 
 export async function deleteBlog(blogId: string) {
   try {
+    const images = await prisma.image.findMany({ where: { blogId } });
     const deleteBlog = await prisma.$transaction([
       prisma.tag.deleteMany({ where: { blogId } }),
       prisma.comment.deleteMany({ where: { blogId } }),
@@ -184,7 +186,16 @@ export async function deleteBlog(blogId: string) {
       prisma.image.deleteMany({ where: { blogId } }),
       prisma.blog.delete({ where: { id: blogId } }),
     ]);
-    if (deleteBlog) revalidatePath("/manage-blog");
+
+    if (deleteBlog)
+      if (images.length == 0) {
+        revalidatePath("/manage-blog");
+        return {
+          status: 200,
+        };
+      }
+    images.forEach(async (val) => await deleteFile({ fileUrl: val.imageUrl }));
+    revalidatePath("/manage-blog");
     return {
       status: 200,
     };

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const Page = () => {
   return (
     <div className="w-full h-screen lg:grid  lg:grid-cols-2 ">
-      <div className="hidden bg-muted lg:block p-10">
+      <div className="hidden bg-muted lg:block p-30">
         <Image
           src="/images/Signin.svg"
           alt="Image"

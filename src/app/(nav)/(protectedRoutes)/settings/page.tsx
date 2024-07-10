@@ -1,6 +1,7 @@
-import { Separator } from "@/components//ui/separator";
+import { Separator } from "@/components/ui/separator";
 import { ProfileForm } from "./profile-form";
 import { getSession } from "@/app/actions";
+import { redirect } from "next/navigation";
 export default async function SettingsProfilePage() {
   const session = await getSession();
   return (

@@ -12,13 +12,13 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { getSession } from "@/app/actions";
-import { AuthRequired } from "@/lib/exceptions";
+import { AuthRequiredError } from "@/lib/exceptions";
 import UserInfoUpdate from "./UserInfoUpdate";
 import { CircleUser } from "lucide-react";
 import { Metadata } from "next";
 const Page = async () => {
   const session = await getSession();
-  if (!session) throw new AuthRequired();
+  if (!session) throw new AuthRequiredError();
   return (
     <Card className="w-[380px] sm:w-[450px] ">
       <CardHeader>

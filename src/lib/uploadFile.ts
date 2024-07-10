@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  PutObjectCommand,
+  DeleteObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 //uploadFile.ts
 
 const s3Client = new S3Client({
@@ -21,7 +25,7 @@ export const uploadFile = async ({
     const sendRes = await s3Client.send(
       new PutObjectCommand({
         Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
-        Key: `${object}/${fileName}`,
+        Key: `${object}/${fileName.replaceAll(" ", "").toLowerCase()}`,
         Body: file,
       })
     );
@@ -32,6 +36,28 @@ export const uploadFile = async ({
       );
 
     return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.amazonaws.com/${object}/${fileName}`;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const deleteFile = async ({ fileUrl }: { fileUrl: string }) => {
+  try {
+    const toReturn = fileUrl.split("/");
+    const key = toReturn[toReturn.length - 1];
+    const object = toReturn[toReturn.length - 2];
+    const sendRes = await s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
+        Key: `${object}/${key}`,
+      })
+    );
+    const meta = sendRes.$metadata;
+    if (meta.httpStatusCode !== 200)
+      throw new Error(
+        `Error Deleting file, with status: ${meta.httpStatusCode}`
+      );
+    return { status: meta.httpStatusCode };
   } catch (err) {
     console.log(err);
   }

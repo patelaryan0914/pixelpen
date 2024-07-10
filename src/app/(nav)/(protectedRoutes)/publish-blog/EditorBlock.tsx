@@ -2,10 +2,10 @@ import React, { memo, useEffect, useRef } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { editorConfig } from "@/lib/editorJsPlugins";
 import { EditorProps } from "@/app/types";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@radix-ui/react-label";
 import { findErrors } from "@/lib/utils";
+import { ErrorMessages } from "@/components/error-message";
 
 const Editor = ({ data, onChange, holder, setTitle, error }: EditorProps) => {
   const ref = useRef<EditorJS>();
@@ -38,7 +38,7 @@ const Editor = ({ data, onChange, holder, setTitle, error }: EditorProps) => {
       <div className="w-4/5">
         <Label
           htmlFor="title"
-          className="justify-self-start flex justify-between"
+          className="justify-self-start flex justify-between font-serif"
         >
           Title
           <ErrorMessages errors={titleErrors} />
@@ -51,15 +51,9 @@ const Editor = ({ data, onChange, holder, setTitle, error }: EditorProps) => {
       </div>
       <ErrorMessages errors={dataErrors} />
       <ErrorMessages errors={imageErrors} />
-      <div id={holder} className="w-full prose font-serif" />
+      <div id={holder} className="mt-4 w-full prose font-serif" />
     </>
   );
 };
 
 export default memo(Editor);
-
-const ErrorMessages = ({ errors }: { errors: string[] }) => {
-  if (errors.length === 0) return null;
-  const text = errors[0];
-  return <div className="text-red-600 peer">{text}</div>;
-};

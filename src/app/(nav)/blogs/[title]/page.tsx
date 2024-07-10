@@ -6,7 +6,7 @@ export async function generateStaticParams() {
     select: { title: true },
     cacheStrategy: { swr: 300, ttl: 300 },
   });
-  return blog.map(({ title }) => title).slice(0, 3);
+  return blog.slice(0, 3);
 }
 const getBlogDetails = cache(async (title: string) => {
   const blog: Blog | null = await prisma.blog.findFirst({
@@ -35,6 +35,7 @@ const getBlogDetails = cache(async (title: string) => {
     },
     cacheStrategy: { swr: 300, ttl: 300 },
   });
+  if (!blog) throw new BlogNotFound();
   return blog;
 });
 
@@ -82,6 +83,7 @@ import {
 import { HoverCard } from "@/components/ui/hover-card";
 import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
 import { notFound } from "next/navigation";
+import { BlogNotFound } from "@/lib/exceptions";
 
 const ShareButton = dynamic(() => import("../Share"), {
   ssr: false,
@@ -145,7 +147,12 @@ const Page = async ({ params }: { params: { title: string } }) => {
               await subscribe(blog?.owner?.id!);
             }}
           >
-            <Button type="submit" size="sm" disabled={!followAccess}>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={!followAccess}
+              aria-label="followAccess"
+            >
               {isSubscribed ? "Unfollow" : "Follow"}
             </Button>
           </form>
@@ -180,7 +187,7 @@ const Page = async ({ params }: { params: { title: string } }) => {
               <div>
                 <Sheet>
                   <SheetTrigger className="flex items-center" asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" aria-label="comment">
                       <MessageSquareText color="#374151" />
                     </Button>
                   </SheetTrigger>
@@ -250,7 +257,12 @@ const Page = async ({ params }: { params: { title: string } }) => {
           }}
           className="justify-items-end"
         >
-          <Button type="submit" size="sm" disabled={!followAccess}>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={!followAccess}
+            aria-label="follow"
+          >
             <HoverCard>{isSubscribed ? "Unfollow" : "Follow"}</HoverCard>
           </Button>
         </form>

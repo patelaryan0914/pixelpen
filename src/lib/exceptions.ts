@@ -1,13 +1,12 @@
-export class AuthRequired extends Error {
-  constructor(message = "Authenticated User Can Only Excess This Page") {
+export class AuthRequiredError extends Error {
+  constructor(message = "Auth is required to access this page") {
     super(message);
-    this.message = message;
+    this.name = "AuthRequiredError";
   }
 }
-
 export class BlogNotFound extends Error {
   constructor(message = "Blog Not Found!") {
     super(message);
-    this.message = message;
+    this.message = "BlogNotFound";
   }
 }

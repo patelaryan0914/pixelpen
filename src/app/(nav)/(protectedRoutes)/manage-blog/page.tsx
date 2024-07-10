@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { getSession } from "@/app/actions";
 import ManageBlog from "./ManageBlog";
 import { redirect } from "next/navigation";
+import { AuthRequiredError } from "@/lib/exceptions";
 
 export const metadata: Metadata = {
   title: "Manage Blog",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const session = await getSession();
-  if (!session) redirect("/");
+  if (!session) throw new AuthRequiredError();
   const blogs = await prisma.blog.findMany({
     where: { ownerId: session.userInfo.id },
     select: {

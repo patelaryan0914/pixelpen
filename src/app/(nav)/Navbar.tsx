@@ -38,7 +38,12 @@ const Navbar = async () => {
       </nav>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="shrink-0 lg:hidden">
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0 lg:hidden"
+            aria-label="navbar"
+          >
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
@@ -71,7 +76,11 @@ const Navbar = async () => {
         {session ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="default" className="gap-x-2">
+              <Button
+                variant="default"
+                className="gap-x-2"
+                aria-label="userprofile"
+              >
                 {session.userInfo.avatar === null ? (
                   <CircleUser className="h-6 w-6 text-white" />
                 ) : (
@@ -103,7 +112,9 @@ const Navbar = async () => {
                   }}
                   className="w-full"
                 >
-                  <button type="submit">Logout</button>
+                  <button type="submit" aria-label="logout">
+                    Logout
+                  </button>
                 </form>
               </DropdownMenuItem>
             </DropdownMenuContent>

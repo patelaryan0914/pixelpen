@@ -8,24 +8,28 @@ export async function POST(req: NextRequest) {
     const session = await getSession();
     const { result } = await req.json();
     const title = result.title.toLowerCase().replaceAll(" ", "-");
-    const image = result.data.blocks.filter(
+    const images = result.data.blocks.filter(
       (val: OutputBlockData) => val.type === "image"
-    )[0].data.file.url;
+    )[0];
     const publish = await prisma.blog.create({
       data: {
         ownerId: session.userInfo.id,
         content: result.data,
         title,
         status: result.status,
-        images: {
-          create: {
-            imageUrl: image,
-            ownerId: session.userInfo.id,
-          },
-        },
       },
     });
-
+    if (publish)
+      images.forEach(
+        async (val: any) =>
+          await prisma.image.create({
+            data: {
+              imageUrl: val.data.file.url as string,
+              ownerId: session.userInfo.id,
+              blogId: publish.id,
+            },
+          })
+      );
     return NextResponse.json({ message: "Publised" }, { status: 200 });
   } catch (error: any) {
     console.error(`Error during compilation: ${error.message}`);

@@ -29,8 +29,9 @@ export interface Blog {
   blocks?: OutputData;
 }
 
-interface Images {
+export interface Images {
   imageUrl: string;
+  ownerId?: string;
 }
 
 interface subscribe {

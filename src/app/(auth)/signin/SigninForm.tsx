@@ -15,7 +15,12 @@ import { ErrorMessages } from "@/components/error-message";
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
+    <Button
+      type="submit"
+      className="w-full"
+      disabled={pending}
+      aria-label="signin"
+    >
       {!pending ? (
         "Sign In"
       ) : (
