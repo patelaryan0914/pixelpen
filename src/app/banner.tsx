@@ -11,7 +11,7 @@ const Banner = () => {
         className="absolute left-[max(45rem,calc(50%+8rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl"
       ></div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <p className="text-sm leading-6 text-gray-900">
+        <p className="text-sm leading-6 text-gray-900 text-center">
           <strong className="font-semibold">Pixel Pen </strong>- Site is
           currently in development phase you may experience some bug.
         </p>

@@ -23,22 +23,23 @@ model User {
   subscriptionsAsPublisher Subscription[]     @relation("publisher")
   subscriptionsAsReader    Subscription[]     @relation("reader")
   InterestedTopics         InterestedTopics[]
-  Notifications            Notifications?  @relation("notifications")
+  Notifications            Notifications?     @relation("notifications")
 }
 
 model Blog {
-  id        String    @id @default(uuid())
+  id        String      @id @default(uuid())
   ownerId   String
   content   Json
   title     String
   status    Status
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  owner     User      @relation(fields: [ownerId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  owner     User        @relation(fields: [ownerId], references: [id])
   comments  Comment[]
   images    Image[]
   likes     Like[]
   tags      Tag[]
+  blogvisit BlogVisit[]
 }
 
 model Tag {
@@ -98,16 +99,31 @@ model Image {
 }
 
 model Notifications {
-  id       String @id @default(uuid())
-  userId  String @unique
+  id              String  @id @default(uuid())
+  userId          String  @unique
   publisherEmails Boolean @default(true)
-  socialEmails Boolean @default(false)
+  socialEmails    Boolean @default(false)
   marketingEmails Boolean @default(true)
-  securityEmails Boolean @default(true)
-  user    User   @relation("notifications",fields: [userId], references: [id])
+  securityEmails  Boolean @default(true)
+  user            User    @relation("notifications", fields: [userId], references: [id])
 }
 
 enum Status {
   Published
   Draft
+}
+
+model ContactUs {
+  id        String   @id @default(uuid())
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogVisit {
+  id        String   @id @default(uuid())
+  blogId    String
+  visitedAt DateTime @default(now())
+  blog      Blog     @relation(fields: [blogId], references: [id])
 }

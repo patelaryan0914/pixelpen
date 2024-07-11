@@ -260,7 +260,7 @@ export async function comment(formData: FormData) {
         ownerId: session.userInfo.id,
       },
     });
-    revalidatePath("/");
+    if (comment) revalidatePath("/");
     return {
       status: 200,
     };
@@ -304,8 +304,24 @@ export async function updateNotifications(result: Notifications) {
       update: result,
       create: { userId: session.userInfo.id, ...result },
     });
-    console.log(notifications);
     if (notifications) revalidatePath("/");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function contactUs(formData: FormData) {
+  try {
+    const message = await prisma.contactUs.create({
+      data: {
+        email: formData.get("email") as string,
+        message: formData.get("message") as string,
+      },
+    });
+    if (message) revalidatePath("/");
     return {
       status: 200,
     };
