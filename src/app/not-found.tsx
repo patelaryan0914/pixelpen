@@ -9,7 +9,11 @@ const notFound = () => {
           No matching Routes Found
         </h1>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Link href="/" className={buttonVariants({ variant: "outline" })}>
+          <Link
+            href="/"
+            className={buttonVariants({ variant: "outline" })}
+            aria-label="homepage"
+          >
             Go to Home Page{" "}
             <span aria-hidden="true" className="ml-2">
               &rarr;

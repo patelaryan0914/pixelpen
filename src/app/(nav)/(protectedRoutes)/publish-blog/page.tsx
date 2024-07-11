@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { Metadata } from "next";
 import { Icons } from "@/components/icons";
 import { redirect } from "next/navigation";
+import { AuthRequiredError } from "@/lib/exceptions";
 export const metadata: Metadata = {
   title: "Publish Blog",
   description: "Publish Your own blog.",
@@ -17,9 +18,7 @@ const EditorJs = dynamic(() => import("./Editor"), {
 });
 const Page = async () => {
   const session = await getSession();
-  if (!session) {
-    redirect("/");
-  }
+  if (!session) throw new AuthRequiredError();
   return (
     <>
       <div className=" w-screen h-screen  lg:hidden">

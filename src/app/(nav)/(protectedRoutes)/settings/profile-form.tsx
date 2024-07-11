@@ -1,38 +1,7 @@
 "use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { cn, findErrors } from "@/lib/utils";
+import { findErrors } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "next/navigation";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { toast } from "@/components/ui/use-toast";
 import { useFormStatus } from "react-dom";
 import { Icons } from "@/components/icons";
 import { useState } from "react";
@@ -43,13 +12,19 @@ import { Label } from "@/components/ui/label";
 import { UserCircle2 } from "lucide-react";
 import { Session } from "@/app/types";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { redirect } from "next/navigation";
 
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full mt-4" disabled={pending}>
+    <Button
+      type="submit"
+      className="w-full mt-4"
+      disabled={pending}
+      aria-label="saveinfo"
+    >
       {!pending ? (
-        "Save"
+        "Update Profile"
       ) : (
         <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
       )}
@@ -83,7 +58,12 @@ export function ProfileForm({ session }: { session: Session }) {
         });
         if (fileUrl) {
           setUrl(fileUrl);
+          await userInfo({
+            username: result.data.username,
+            avatarUrl: fileUrl,
+          });
           formdata.append("fileUrl", fileUrl);
+          return;
         }
       }
       await userInfo(result.data);

@@ -107,6 +107,7 @@ const ManageBlog = ({ data }: any) => {
                           aria-haspopup="true"
                           size="icon"
                           variant="ghost"
+                          aria-label="menu"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Toggle menu</span>
@@ -150,6 +151,9 @@ const ManageBlog = ({ data }: any) => {
             ))}
           </TableBody>
         </Table>
+        <div className="w-full flex justify-center mt-2 text-indigo-600">
+          {data.length == 0 ? "No Blogs Published" : ""}
+        </div>
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">

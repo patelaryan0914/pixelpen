@@ -81,3 +81,29 @@ export const BlogDataSchema = z
       });
     }
   });
+
+// const accountFormSchema = z.object({
+//   email: z
+//     .string()
+//     .min(2, {
+//       message: "Name must be at least 2 characters.",
+//     })
+//     .max(30, {
+//       message: "Name must not be longer than 30 characters.",
+//     }),
+// });
+
+export const notificationsFormSchema = z.object({
+  publisherEmails: z.boolean().default(true).optional(),
+  socialEmails: z.boolean().default(false).optional(),
+  marketingEmails: z.boolean().default(true).optional(),
+  securityEmails: z.boolean().default(false),
+});
+
+export const appearanceFormSchema = z.object({
+  theme: z
+    .enum(["light", "dark"], {
+      required_error: "Please select a theme.",
+    })
+    .default("light"),
+});

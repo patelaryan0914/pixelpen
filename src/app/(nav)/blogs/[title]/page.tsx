@@ -1,45 +1,12 @@
 import prisma from "@/lib/db";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
-import dynamic from "next/dynamic";
-import { getSession, subscribe } from "@/app/actions";
-import { CircleUser, MessageSquareText } from "lucide-react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Blog } from "@/app/types";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import Like from "../../Like";
-import { formatedNumber } from "@/lib/numberFormater";
-import { Icons } from "@/components/icons";
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { HoverCard } from "@/components/ui/hover-card";
-import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
-import { notFound } from "next/navigation";
-
-const ShareButton = dynamic(() => import("../Share"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
-    </div>
-  ),
-});
-const CommentForm = dynamic(() => import("../CommentForm"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
-    </div>
-  ),
-});
+export async function generateStaticParams() {
+  const blog = await prisma.blog.findMany({
+    select: { title: true },
+  });
+  return blog.slice(0, 3);
+}
 const getBlogDetails = cache(async (title: string) => {
   const blog: Blog | null = await prisma.blog.findFirst({
     where: { title: title },
@@ -65,30 +32,74 @@ const getBlogDetails = cache(async (title: string) => {
         },
       },
     },
+    cacheStrategy: { swr: 300, ttl: 300 },
   });
+  if (!blog) throw new BlogNotFound();
   return blog;
 });
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { title: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: { params: { title: string } },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   // read route params
   const title = params.title;
 
   // fetch data
   const blog = await getBlogDetails(title);
 
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || [];
+
   return {
     title:
       blog?.title.charAt(0).toUpperCase()! +
       blog?.title.slice(1).replaceAll("-", " ")!,
     openGraph: {
-      images: [{ url: blog?.images[0].imageUrl! as string }],
+      images: [{ url: blog?.images[0].imageUrl! as string }, ...previousImages],
     },
   };
 }
+import dynamic from "next/dynamic";
+import { getSession, subscribe } from "@/app/actions";
+import { CircleUser, MessageSquareText } from "lucide-react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Blog } from "@/app/types";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import Like from "../../Like";
+import { formatedNumber } from "@/lib/numberFormater";
+import { Icons } from "@/components/icons";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { HoverCard } from "@/components/ui/hover-card";
+import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
+import { notFound } from "next/navigation";
+import { BlogNotFound } from "@/lib/exceptions";
+
+const ShareButton = dynamic(() => import("../Share"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-screen w-screen flex justify-center items-center">
+      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
+    </div>
+  ),
+});
+const CommentForm = dynamic(() => import("../CommentForm"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-screen w-screen flex justify-center items-center">
+      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
+    </div>
+  ),
+});
 
 const Page = async ({ params }: { params: { title: string } }) => {
   const session = await getSession();
@@ -136,7 +147,12 @@ const Page = async ({ params }: { params: { title: string } }) => {
               await subscribe(blog?.owner?.id!);
             }}
           >
-            <Button type="submit" size="sm" disabled={!followAccess}>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={!followAccess}
+              aria-label="followAccess"
+            >
               {isSubscribed ? "Unfollow" : "Follow"}
             </Button>
           </form>
@@ -171,7 +187,7 @@ const Page = async ({ params }: { params: { title: string } }) => {
               <div>
                 <Sheet>
                   <SheetTrigger className="flex items-center" asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" aria-label="comment">
                       <MessageSquareText color="#374151" />
                     </Button>
                   </SheetTrigger>
@@ -241,7 +257,12 @@ const Page = async ({ params }: { params: { title: string } }) => {
           }}
           className="justify-items-end"
         >
-          <Button type="submit" size="sm" disabled={!followAccess}>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={!followAccess}
+            aria-label="follow"
+          >
             <HoverCard>{isSubscribed ? "Unfollow" : "Follow"}</HoverCard>
           </Button>
         </form>

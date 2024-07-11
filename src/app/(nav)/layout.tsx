@@ -1,3 +1,4 @@
+import Banner from "../banner";
 import Navbar from "./Navbar";
 
 export default function NavbarLayout({
@@ -8,6 +9,7 @@ export default function NavbarLayout({
   return (
     <>
       <Navbar />
+      <Banner />
       {children}
     </>
   );

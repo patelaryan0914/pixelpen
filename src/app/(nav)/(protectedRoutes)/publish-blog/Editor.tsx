@@ -8,7 +8,6 @@ import axios from "axios";
 import EditorJsRenderer from "../EditorJsRenderer";
 import EditorBlock from "./EditorBlock";
 import { BlogDataSchema } from "@/lib/zod-schema";
-import { findErrors } from "@/lib/utils";
 const Editor = () => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [status, setStatus] = useState<string>();
@@ -56,6 +55,7 @@ const Editor = () => {
             size={"sm"}
             onClick={() => saveBlogToDb("Draft")}
             className="text-center"
+            aria-label="saveblog"
           >
             {loading && status == "Draft" ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -67,11 +67,12 @@ const Editor = () => {
             size={"sm"}
             onClick={() => saveBlogToDb("Published")}
             className="text-center"
+            aria-label="publiseblog"
           >
-            {loading && status == "Published" ? (
+            {loading && status == "Publise" ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              "Published"
+              "Publise"
             )}
           </Button>
         </div>

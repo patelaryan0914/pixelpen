@@ -4,9 +4,10 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { User } from "./types";
+import { Notifications, User } from "./types";
 import { Option } from "@/components/ui/multiple-selector";
 import { revalidatePath } from "next/cache";
+import { deleteFile } from "@/lib/uploadFile";
 const secretKey = "secret";
 const key = new TextEncoder().encode(secretKey);
 export async function hashPassword(password: string): Promise<string> {
@@ -177,6 +178,7 @@ export async function addTags(tags: Option[] | null, blogId: string) {
 
 export async function deleteBlog(blogId: string) {
   try {
+    const images = await prisma.image.findMany({ where: { blogId } });
     const deleteBlog = await prisma.$transaction([
       prisma.tag.deleteMany({ where: { blogId } }),
       prisma.comment.deleteMany({ where: { blogId } }),
@@ -184,7 +186,16 @@ export async function deleteBlog(blogId: string) {
       prisma.image.deleteMany({ where: { blogId } }),
       prisma.blog.delete({ where: { id: blogId } }),
     ]);
-    if (deleteBlog) revalidatePath("/manage-blog");
+
+    if (deleteBlog)
+      if (images.length == 0) {
+        revalidatePath("/manage-blog");
+        return {
+          status: 200,
+        };
+      }
+    images.forEach(async (val) => await deleteFile({ fileUrl: val.imageUrl }));
+    revalidatePath("/manage-blog");
     return {
       status: 200,
     };
@@ -277,6 +288,24 @@ export async function addFavoriteTopics(tags: Option[] | null) {
           });
       });
     revalidatePath("/");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function updateNotifications(result: Notifications) {
+  try {
+    const session = await getSession();
+    const notifications = await prisma.notifications.upsert({
+      where: { userId: session.userInfo.id },
+      update: result,
+      create: { userId: session.userInfo.id, ...result },
+    });
+    console.log(notifications);
+    if (notifications) revalidatePath("/");
     return {
       status: 200,
     };

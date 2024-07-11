@@ -100,7 +100,12 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
                       await subscribe(owner?.id!);
                     }}
                   >
-                    <Button type="submit" size="sm" disabled={!followAccess}>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={!followAccess}
+                      aria-label="followAccess"
+                    >
                       {isSubscribed ? "Unfollow" : "Follow"}
                     </Button>
                   </form>

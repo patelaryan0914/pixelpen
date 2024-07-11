@@ -1,4 +1,5 @@
 import { OutputData } from "@editorjs/editorjs";
+import { string } from "zod";
 export interface Session {
   userInfo: { id: string; username: string; email: string; avatar: string };
 }
@@ -29,8 +30,9 @@ export interface Blog {
   blocks?: OutputData;
 }
 
-interface Images {
+export interface Images {
   imageUrl: string;
+  ownerId?: string;
 }
 
 interface subscribe {
@@ -49,4 +51,11 @@ export interface EditorProps {
   holder: string;
   setTitle(val: string): void;
   error: [];
+}
+
+export interface Notifications {
+  publisherEmails?: boolean;
+  socialEmails?: boolean;
+  marketingEmails?: boolean;
+  securityEmails: boolean;
 }

@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-import Image from "next/image";
-
-import { Separator } from "@/components//ui/separator";
+import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from "./components/sidebar-nav";
+import { getSession } from "@/app/actions";
+import { AuthRequiredError } from "@/lib/exceptions";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -14,10 +14,10 @@ const sidebarNavItems = [
     title: "Profile",
     href: "/settings",
   },
-  {
-    title: "Account",
-    href: "/settings/account",
-  },
+  // {
+  //   title: "Account",
+  //   href: "/settings/account",
+  // },
   {
     title: "Appearance",
     href: "/settings/appearance",
@@ -26,17 +26,17 @@ const sidebarNavItems = [
     title: "Notifications",
     href: "/settings/notifications",
   },
-  {
-    title: "Display",
-    href: "/settings/display",
-  },
 ];
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
 }
 
-export default function SettingsLayout({ children }: SettingsLayoutProps) {
+export default async function SettingsLayout({
+  children,
+}: SettingsLayoutProps) {
+  const session = await getSession();
+  if (!session) throw new AuthRequiredError();
   return (
     <>
       <div className=" space-y-6 p-10 pb-16">

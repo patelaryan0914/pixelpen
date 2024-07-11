@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/use-toast";
 const ShareButton = () => {
   const pathname = usePathname();
   return (
-    <Button variant="ghost" size="icon">
+    <Button variant="ghost" size="icon" aria-label="share">
       <Share
         color="#374151"
         onClick={(e) => {

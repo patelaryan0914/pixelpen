@@ -15,7 +15,12 @@ import { ErrorMessages } from "@/components/error-message";
 const Submit = () => {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" className="w-full mt-4" disabled={pending}>
+    <Button
+      type="submit"
+      className="w-full mt-4"
+      disabled={pending}
+      aria-label="saveuserinfo"
+    >
       {!pending ? (
         "Save"
       ) : (
@@ -49,7 +54,14 @@ const UserInfoUpdate = () => {
           file,
           object: "avatar",
         });
-        if (fileUrl) formdata.append("fileUrl", fileUrl);
+        if (fileUrl) {
+          await userInfo({
+            username: result.data.username,
+            avatarUrl: fileUrl,
+          });
+          formdata.append("fileUrl", fileUrl);
+          return;
+        }
       }
       await userInfo(result.data);
       router.push("/");

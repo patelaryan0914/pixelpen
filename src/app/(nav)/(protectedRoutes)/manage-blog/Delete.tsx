@@ -13,6 +13,7 @@ const Delete = () => {
       size="sm"
       className="w-full"
       disabled={pending}
+      aria-label="deleteblog"
     >
       {!pending ? (
         "Delete"

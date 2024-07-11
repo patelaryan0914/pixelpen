@@ -31,7 +31,12 @@ const Like = async ({ blogId }: { blogId: string }) => {
       >
         <HoverCard>
           {likeAccess ? (
-            <Button size="icon" variant="ghost" disabled={!likeAccess}>
+            <Button
+              size="icon"
+              variant="ghost"
+              disabled={!likeAccess}
+              aria-label="likeaccess"
+            >
               {isLiked ? (
                 <Heart color="#ff0000" fill="red" />
               ) : (
@@ -40,7 +45,12 @@ const Like = async ({ blogId }: { blogId: string }) => {
             </Button>
           ) : (
             <HoverCardTrigger>
-              <Button size="icon" variant="ghost" disabled={!likeAccess}>
+              <Button
+                size="icon"
+                variant="ghost"
+                disabled={!likeAccess}
+                aria-label="likeaccess"
+              >
                 {isLiked ? (
                   <Heart color="#ff0000" fill="red" />
                 ) : (
