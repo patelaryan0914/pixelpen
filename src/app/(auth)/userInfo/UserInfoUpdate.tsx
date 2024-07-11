@@ -54,7 +54,14 @@ const UserInfoUpdate = () => {
           file,
           object: "avatar",
         });
-        if (fileUrl) formdata.append("fileUrl", fileUrl);
+        if (fileUrl) {
+          await userInfo({
+            username: result.data.username,
+            avatarUrl: fileUrl,
+          });
+          formdata.append("fileUrl", fileUrl);
+          return;
+        }
       }
       await userInfo(result.data);
       router.push("/");

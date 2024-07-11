@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { User } from "./types";
+import { Notifications, User } from "./types";
 import { Option } from "@/components/ui/multiple-selector";
 import { revalidatePath } from "next/cache";
 import { deleteFile } from "@/lib/uploadFile";
@@ -288,6 +288,24 @@ export async function addFavoriteTopics(tags: Option[] | null) {
           });
       });
     revalidatePath("/");
+    return {
+      status: 200,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function updateNotifications(result: Notifications) {
+  try {
+    const session = await getSession();
+    const notifications = await prisma.notifications.upsert({
+      where: { userId: session.userInfo.id },
+      update: result,
+      create: { userId: session.userInfo.id, ...result },
+    });
+    console.log(notifications);
+    if (notifications) revalidatePath("/");
     return {
       status: 200,
     };

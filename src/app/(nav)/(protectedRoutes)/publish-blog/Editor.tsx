@@ -8,7 +8,6 @@ import axios from "axios";
 import EditorJsRenderer from "../EditorJsRenderer";
 import EditorBlock from "./EditorBlock";
 import { BlogDataSchema } from "@/lib/zod-schema";
-import { findErrors } from "@/lib/utils";
 const Editor = () => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [status, setStatus] = useState<string>();
@@ -68,7 +67,7 @@ const Editor = () => {
             size={"sm"}
             onClick={() => saveBlogToDb("Published")}
             className="text-center"
-            aria-label="publise"
+            aria-label="publiseblog"
           >
             {loading && status == "Publise" ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

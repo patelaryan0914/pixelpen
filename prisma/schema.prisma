@@ -23,6 +23,7 @@ model User {
   subscriptionsAsPublisher Subscription[]     @relation("publisher")
   subscriptionsAsReader    Subscription[]     @relation("reader")
   InterestedTopics         InterestedTopics[]
+  Notifications            Notifications?  @relation("notifications")
 }
 
 model Blog {
@@ -94,6 +95,16 @@ model Image {
   blogId   String
   blog     Blog   @relation(fields: [blogId], references: [id])
   owner    User   @relation(fields: [ownerId], references: [id])
+}
+
+model Notifications {
+  id       String @id @default(uuid())
+  userId  String @unique
+  publisherEmails Boolean @default(true)
+  socialEmails Boolean @default(false)
+  marketingEmails Boolean @default(true)
+  securityEmails Boolean @default(true)
+  user    User   @relation("notifications",fields: [userId], references: [id])
 }
 
 enum Status {

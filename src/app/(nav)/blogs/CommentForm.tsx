@@ -14,6 +14,7 @@ const CommentButton = ({ disabled }: { disabled: boolean }) => {
       type="submit"
       className="mt-2 w-full"
       disabled={!disabled || pending}
+      aria-label="comment"
     >
       {!pending ? (
         "Comment"

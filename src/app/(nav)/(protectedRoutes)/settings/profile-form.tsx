@@ -24,7 +24,7 @@ const Submit = () => {
       aria-label="saveinfo"
     >
       {!pending ? (
-        "Save"
+        "Update Profile"
       ) : (
         <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
       )}
@@ -58,7 +58,12 @@ export function ProfileForm({ session }: { session: Session }) {
         });
         if (fileUrl) {
           setUrl(fileUrl);
+          await userInfo({
+            username: result.data.username,
+            avatarUrl: fileUrl,
+          });
           formdata.append("fileUrl", fileUrl);
+          return;
         }
       }
       await userInfo(result.data);
