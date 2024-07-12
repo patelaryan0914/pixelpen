@@ -21,6 +21,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const userAgent = request.headers.get("user-agent");
+
     if (process.env.NEXT_ENV === "production") {
       const blogId = await prisma.blog.findFirst({
         where: { title },
