@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
     console.log("IP Address:", ipAddress);
     console.log("User Agent:", userAgent);
 
-    if (process.env.NEXT_ENV === "production") {
+    if (process.env.NEXT_ENV == "production") {
       console.log("Running in production environment");
 
       try {
