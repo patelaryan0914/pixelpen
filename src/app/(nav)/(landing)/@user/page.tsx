@@ -17,7 +17,7 @@ export default async function page() {
             <div key={val.id}>
               <div className="flex flex-col justify-center my-2">
                 <Link
-                  href={`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${val.title}`}
+                  href={`/blogs/${val.title}`}
                   className="hover:underline underline-offset-2"
                 >
                   {displayTitle(val.title)}
