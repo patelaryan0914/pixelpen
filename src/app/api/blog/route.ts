@@ -2,7 +2,6 @@ import { getSession } from "@/app/actions";
 import prisma from "@/lib/db";
 import { OutputBlockData } from "@editorjs/editorjs";
 import { NextRequest, NextResponse } from "next/server";
-export const runtime = "edge";
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();

@@ -4,13 +4,9 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: `${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.amazonaws.com`,
       },
     ],
-  },
-  webpack: (config) => {
-    config.externals = [...config.externals, "bcrypt"];
-    return config;
   },
 };
 
