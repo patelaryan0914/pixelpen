@@ -4,8 +4,13 @@ import { AuthRequiredError } from "./lib/exceptions";
 import prisma from "./lib/db";
 
 export async function middleware(request: NextRequest) {
+  console.log("Middleware invoked");
+
   const session = getSession();
-  if (!session) throw new AuthRequiredError("Session Experied Login Again");
+  if (!session) {
+    console.error("Session expired");
+    throw new AuthRequiredError("Session Expired. Login Again");
+  }
 
   const { pathname } = request.nextUrl;
 
@@ -22,21 +27,47 @@ export async function middleware(request: NextRequest) {
 
     const userAgent = request.headers.get("user-agent");
 
+    console.log("Pathname:", pathname);
+    console.log("Title:", title);
+    console.log("IP Address:", ipAddress);
+    console.log("User Agent:", userAgent);
+
     if (process.env.NEXT_ENV === "production") {
-      const blogId = await prisma.blog.findFirst({
-        where: { title },
-        select: { id: true },
-      });
-      await prisma.blogVisit.create({
-        data: {
-          blogId: blogId?.id!,
-          ipAddress: ipAddress as string,
-          userAgent: userAgent as string,
-        },
-      });
+      console.log("Running in production environment");
+
+      try {
+        const blog = await prisma.blog.findFirst({
+          where: { title },
+          select: { id: true },
+        });
+
+        if (blog) {
+          console.log("Blog found:", blog);
+          await prisma.blogVisit.create({
+            data: {
+              blogId: blog.id,
+              ipAddress: ipAddress || "unknown",
+              userAgent: userAgent || "unknown",
+            },
+          });
+          console.log("Blog visit recorded");
+        } else {
+          console.error("Blog not found for title:", title);
+        }
+      } catch (error) {
+        console.error("Error recording blog visit:", error);
+      }
+    } else {
+      console.log("Not running in production environment");
     }
   }
-  return await updateSession(request);
+
+  try {
+    return await updateSession(request);
+  } catch (error) {
+    console.error("Error updating session:", error);
+    throw error;
+  }
 }
 
 export const config = {
