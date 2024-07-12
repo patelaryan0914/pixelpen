@@ -25,10 +25,10 @@ export default function NavbarLayout({
             <MessageSquare />
           </span>
         </PopoverTrigger>
-        <PopoverContent className="rounded-lg bg-foreground text-secondary">
+        <PopoverContent className="rounded-lg ">
           <div className="mt-2 mb-7 h-full w-full flex flex-col items-center justify-center ">
             <h1 className=" text-3xl font-black">Feedback</h1>
-            <span className="text-xs text-muted">
+            <span className="text-xs mt-1">
               Your valueable feedback or feature request are always welcomed.
             </span>
           </div>

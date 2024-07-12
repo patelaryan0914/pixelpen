@@ -124,6 +124,8 @@ model ContactUs {
 model BlogVisit {
   id        String   @id @default(uuid())
   blogId    String
+  ipAddress String
+  userAgent String
   visitedAt DateTime @default(now())
   blog      Blog     @relation(fields: [blogId], references: [id])
 }

@@ -102,13 +102,7 @@ const CommentForm = dynamic(() => import("../CommentForm"), {
     </div>
   ),
 });
-const Page = async ({
-  params,
-  req,
-}: {
-  params: { title: string };
-  req: NextRequest;
-}) => {
+const Page = async ({ params }: { params: { title: string } }) => {
   const session = await getSession();
   const followAccess: boolean = session ? true : false;
   const blog = await getBlogDetails(params.title);
@@ -119,12 +113,6 @@ const Page = async ({
     blog?.title.slice(1).replaceAll("-", " ")!;
   if (!blog) notFound();
   let isSubscribed = false;
-  const blogId = blog.id;
-  const ipAddress =
-    req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip");
-  const userAgent = req.headers.get("user-agent");
-  console.log(blogId, ipAddress, userAgent);
-
   if (session) {
     isSubscribed = !!(await prisma.subscription.findFirst({
       where: {

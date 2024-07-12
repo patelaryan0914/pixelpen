@@ -16,9 +16,9 @@ const Submit = () => {
   const { pending } = useFormStatus();
   return (
     <Button
-      variant="outline"
+      variant="default"
       type="submit"
-      className="w-full text-foreground"
+      className="w-full"
       disabled={pending}
       aria-label="signin"
     >
