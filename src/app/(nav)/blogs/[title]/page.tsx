@@ -32,7 +32,6 @@ const getBlogDetails = cache(async (title: string) => {
         },
       },
     },
-    cacheStrategy: { swr: 300, ttl: 300 },
   });
   if (!blog) throw new BlogNotFound();
   return blog;
@@ -83,7 +82,6 @@ import { HoverCard } from "@/components/ui/hover-card";
 import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
 import { notFound } from "next/navigation";
 import { BlogNotFound } from "@/lib/exceptions";
-import { NextRequest } from "next/server";
 
 const ShareButton = dynamic(() => import("../Share"), {
   ssr: false,

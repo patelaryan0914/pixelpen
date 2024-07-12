@@ -12,6 +12,7 @@ const fontSans = Roboto({
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(`${process.env.NEXT_PUBLIC_BASE_URL}`),
   title: { default: "Pixel Pen", template: "%s - Pixel Pen" },
   description:
     "Pixel Pen: Your ultimate blogging platform. Share your stories, insights, and creativity with a vibrant community. Discover diverse content and connect with like-minded individuals.",
