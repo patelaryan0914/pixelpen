@@ -107,3 +107,11 @@ export const appearanceFormSchema = z.object({
     })
     .default("light"),
 });
+
+export const contactFormScehma = z.object({
+  email: z
+    .string()
+    .min(1, "Email is reqiured")
+    .email({ message: "Must be an email" }),
+  message: z.string().min(30, { message: "Minimum 30 characters are must." }),
+});

@@ -37,7 +37,7 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
     }));
   }
   return (
-    <div className=" mx-auto my-10 sm:col-span-1 w-4/5 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
+    <div className="mx-auto my-10 sm:col-span-1 w-5/6 sm:w-4/5 rounded-3xl ring-1 ring-gray-200 md:col-span-2 flex flex-col lg:flex-row lg:justify-between">
       <div className="p-6 sm:p-8 w-full flex flex-col justify-between lg:w-3/5">
         <Link href={`/blogs/${data.title}`} className="w-full">
           <h3 className="text-2xl font-bold tracking-tight text-primary">
@@ -157,8 +157,8 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
             : ""}
         </div>
       </div>
-      <div className="p-6 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
-        <div className="h-48 w-48 lg:h-64 lg:w-64 rounded-sm text-center flex items-center justify-center overflow-hidden">
+      <div className="px-6 pb-6 pt-2 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
+        <div className="h-48 w-64 lg:h-64 lg:w-64 rounded-sm text-center flex items-center justify-center overflow-hidden">
           <Image
             src={getFirstImageUrl(data.content)}
             width={256}

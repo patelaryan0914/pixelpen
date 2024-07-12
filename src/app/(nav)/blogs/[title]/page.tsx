@@ -83,6 +83,7 @@ import { HoverCard } from "@/components/ui/hover-card";
 import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
 import { notFound } from "next/navigation";
 import { BlogNotFound } from "@/lib/exceptions";
+import { NextRequest } from "next/server";
 
 const ShareButton = dynamic(() => import("../Share"), {
   ssr: false,
