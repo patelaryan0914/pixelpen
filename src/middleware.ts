@@ -4,11 +4,8 @@ import { AuthRequiredError } from "./lib/exceptions";
 import prisma from "./lib/db";
 
 export async function middleware(request: NextRequest) {
-  console.log("Middleware invoked");
-
   const session = getSession();
   if (!session) {
-    console.error("Session expired");
     throw new AuthRequiredError("Session Expired. Login Again");
   }
 
@@ -20,29 +17,17 @@ export async function middleware(request: NextRequest) {
       request.headers.get("x-forwarded-for") ||
       request.headers.get("x-real-ip") ||
       request.ip;
-
     if (ipAddress && ipAddress.includes(",")) {
       ipAddress = ipAddress.split(",").find((ip) => ip.includes("."));
     }
-
     const userAgent = request.headers.get("user-agent");
-
-    console.log("Pathname:", pathname);
-    console.log("Title:", title);
-    console.log("IP Address:", ipAddress);
-    console.log("User Agent:", userAgent);
-
     if (process.env.NEXT_ENV == "production") {
-      console.log("Running in production environment");
-
       try {
         const blog = await prisma.blog.findFirst({
           where: { title },
           select: { id: true },
         });
-
         if (blog) {
-          console.log("Blog found:", blog);
           await prisma.blogVisit.create({
             data: {
               blogId: blog.id,
@@ -50,9 +35,6 @@ export async function middleware(request: NextRequest) {
               userAgent: userAgent || "unknown",
             },
           });
-          console.log("Blog visit recorded");
-        } else {
-          console.error("Blog not found for title:", title);
         }
       } catch (error) {
         console.error("Error recording blog visit:", error);
