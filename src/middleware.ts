@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getSession, updateSession } from "./app/actions";
 import { AuthRequiredError } from "./lib/exceptions";
 import prisma from "./lib/db";
+
 export async function middleware(request: NextRequest) {
   const session = getSession();
   if (!session) throw new AuthRequiredError("Session Experied Login Again");
@@ -20,7 +21,6 @@ export async function middleware(request: NextRequest) {
     }
 
     const userAgent = request.headers.get("user-agent");
-
     if (process.env.NEXT_ENV === "production") {
       const blogId = await prisma.blog.findFirst({
         where: { title },
