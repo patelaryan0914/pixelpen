@@ -1,22 +1,44 @@
 import prisma from "@/lib/db";
 import { MetadataRoute } from "next";
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const blog = await prisma.blog.findMany({
-    select: { title: true, updatedAt: true },
-  });
-  const blogPost: MetadataRoute.Sitemap = blog.map(({ title, updatedAt }) => ({
-    url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${title}`,
-    lastModified: new Date(updatedAt),
-  }));
+import NodeCache from "node-cache";
 
-  return [
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}` },
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signin` },
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signup` },
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}/userInfo` },
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}/manage-blog` },
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}/publish-blog` },
-    { url: `${process.env.NEXT_PUBLIC_BASE_URL}/settings` },
-    ...blogPost,
-  ];
+const sitemapCache = new NodeCache({ stdTTL: 600 });
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const cacheKey = "sitemap";
+  const cachedSitemap = sitemapCache.get<MetadataRoute.Sitemap>(cacheKey);
+
+  if (cachedSitemap) {
+    return cachedSitemap;
+  }
+
+  try {
+    const blog = await prisma.blog.findMany({
+      select: { title: true, updatedAt: true },
+    });
+
+    const blogPost: MetadataRoute.Sitemap = blog.map(
+      ({ title, updatedAt }) => ({
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${title}`,
+        lastModified: new Date(updatedAt),
+      })
+    );
+
+    const sitemap: MetadataRoute.Sitemap = [
+      { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signin` },
+      { url: `${process.env.NEXT_PUBLIC_BASE_URL}/signup` },
+      { url: `${process.env.NEXT_PUBLIC_BASE_URL}/userInfo` },
+      { url: `${process.env.NEXT_PUBLIC_BASE_URL}/manage-blog` },
+      { url: `${process.env.NEXT_PUBLIC_BASE_URL}/publish-blog` },
+      { url: `${process.env.NEXT_PUBLIC_BASE_URL}/settings` },
+      ...blogPost,
+    ];
+
+    sitemapCache.set(cacheKey, sitemap);
+
+    return sitemap;
+  } catch (error) {
+    console.error("Failed to generate sitemap:", error);
+    throw new Error("Failed to generate sitemap");
+  }
 }

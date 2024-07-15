@@ -5,16 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: [
-        "/posgres",
-        "/settings",
-        "/settings/account",
-        "/settings/appearance",
-        "/settings/notifications",
-        "/settings/display",
-        "/api",
-        "/_next",
-      ],
+      disallow: ["/postgres", "/api", "/_next"],
     },
     sitemap: `${process.env.NEXT_PUBLIC_BASE_URL}/sitemap.xml`,
   };
