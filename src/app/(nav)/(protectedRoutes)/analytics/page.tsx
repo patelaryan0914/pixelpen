@@ -31,8 +31,16 @@ import {
 } from "@/components/ui/chart";
 import { ArrowLeftIcon, CalendarClockIcon } from "lucide-react";
 import { LineChartLabel } from "./components/line-chart";
-
-export default function Page() {
+import { getSession } from "@/app/actions";
+import { AuthRequiredError } from "@/lib/exceptions";
+import prisma from "@/lib/db";
+export default async function Page() {
+  const session = await getSession();
+  if (!session) throw new AuthRequiredError();
+  const data = await prisma.blog.findMany({
+    where: { ownerId: session.userInfo.id },
+  });
+  console.log(data);
   return (
     <div className="flex flex-col min-h-dvh">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
@@ -42,7 +50,7 @@ export default function Page() {
             <span className="sr-only">Back</span>
           </Button>
           <h1 className="font-semibold text-lg md:text-xl">Blog Analytics</h1>
-          <div className="ml-auto flex items-center gap-2">
+          {/* <div className="ml-auto flex items-center gap-2">
             <Button variant="outline" className="hidden sm:flex">
               Today
             </Button>
@@ -67,7 +75,7 @@ export default function Page() {
                 <Calendar initialFocus mode="range" numberOfMonths={2} />
               </PopoverContent>
             </Popover>
-          </div>
+          </div> */}
         </div>
         <div className="grid gap-6">
           <div className="grid md:grid-cols-3 gap-6">
