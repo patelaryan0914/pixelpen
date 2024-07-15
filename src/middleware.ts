@@ -39,8 +39,6 @@ export async function middleware(request: NextRequest) {
       } catch (error) {
         console.error("Error recording blog visit:", error);
       }
-    } else {
-      console.log("Not running in production environment");
     }
   }
 

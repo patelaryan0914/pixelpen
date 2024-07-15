@@ -49,33 +49,33 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           </p>
         </Link>
         <div className="mt-10 flex items-center gap-x-4">
-          <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
-            Author
-          </h4>
+          <h4 className="flex-none text-sm font-semibold leading-6">Author</h4>
           <div className="h-px flex-auto bg-gray-100" />
         </div>
         <div className="mt-4 flex items-center justify-between space-x-4">
           <HoverCard>
-            <HoverCardTrigger>
-              <div className="flex items-center space-x-4">
-                {owner?.avatar === null ? (
-                  <CircleUser className="h-8 w-8 text-black " />
-                ) : (
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={owner?.avatar}
-                      width={500}
-                      height={500}
-                      alt="Image"
-                    />
-                  </Avatar>
-                )}
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    {owner?.username}
-                  </p>
+            <HoverCardTrigger className="cursor-pointer" asChild>
+              <Link href={`/profile/${owner?.id!}`}>
+                <div className="flex items-center space-x-4">
+                  {owner?.avatar === null ? (
+                    <CircleUser className="h-8 w-8 text-black " />
+                  ) : (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={owner?.avatar}
+                        width={500}
+                        height={500}
+                        alt="Image"
+                      />
+                    </Avatar>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium leading-none">
+                      {owner?.username}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </HoverCardTrigger>
             <HoverCardContent side="top">
               <div className="flex flex-col justify-center items-start">
@@ -111,9 +111,12 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
                   </form>
                 </div>
                 <div>
-                  <p className="mt-2 text-sm font-medium text-left">
+                  <Link
+                    href={`/profile/${owner?.id!}`}
+                    className="mt-2 text-sm font-medium text-left"
+                  >
                     {owner?.username}
-                  </p>
+                  </Link>
                 </div>
                 <div>
                   <p className="mt-2 text-sm font-medium text-left">

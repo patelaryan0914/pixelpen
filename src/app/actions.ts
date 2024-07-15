@@ -184,8 +184,8 @@ export async function deleteBlog(blogId: string) {
       prisma.comment.deleteMany({ where: { blogId } }),
       prisma.like.deleteMany({ where: { blogId } }),
       prisma.image.deleteMany({ where: { blogId } }),
+      prisma.blogVisit.deleteMany({ where: { blogId } }),
       prisma.blog.delete({ where: { id: blogId } }),
-      prisma.blogVisit.delete({ where: { id: blogId } }),
     ]);
 
     if (deleteBlog)

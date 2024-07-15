@@ -22,26 +22,28 @@ export default async function page() {
                 >
                   {displayTitle(val.title)}
                 </Link>
-                <div className="flex flex-row items-center mt-2">
-                  <div>
-                    <Avatar className="h-6 w-6 mr-2">
-                      <AvatarImage
-                        src={val?.owner?.avatar!}
-                        width={500}
-                        height={500}
-                        alt="Avatar"
-                      />
-                      <AvatarFallback>
-                        {val?.owner?.username![0]}
-                      </AvatarFallback>
-                    </Avatar>
+                <Link href={`/profile/${val.owner?.id!}`}>
+                  <div className="flex flex-row items-center mt-2">
+                    <div>
+                      <Avatar className="h-6 w-6 mr-2">
+                        <AvatarImage
+                          src={val?.owner?.avatar!}
+                          width={500}
+                          height={500}
+                          alt="Avatar"
+                        />
+                        <AvatarFallback>
+                          {val?.owner?.username![0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium leading-none">
+                        {val?.owner?.username!}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium leading-none">
-                      {val?.owner?.username!}
-                    </p>
-                  </div>
-                </div>
+                </Link>
               </div>
             </div>
           ))}

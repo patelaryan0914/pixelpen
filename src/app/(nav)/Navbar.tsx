@@ -62,7 +62,7 @@ const Navbar = async () => {
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="flex w-full sm:w-2/5 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+      <div className="flex space-x-2">
         <form className="ml-auto flex-1 sm:flex-initial">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -101,7 +101,9 @@ const Navbar = async () => {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/settings">Settings</Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <form

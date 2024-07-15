@@ -26,19 +26,6 @@ const Submit = () => {
     </Button>
   );
 };
-const options: Option[] = [
-  { label: "nextjs", value: "Nextjs" },
-  { label: "React", value: "react" },
-  { label: "Remix", value: "remix" },
-  { label: "Vite", value: "vite" },
-  { label: "Nuxt", value: "nuxt" },
-  { label: "Vue", value: "vue" },
-  { label: "Svelte", value: "svelte" },
-  { label: "Angular", value: "angular" },
-  { label: "Ember", value: "ember", disable: true },
-  { label: "Gatsby", value: "gatsby", disable: true },
-  { label: "Astro", value: "astro" },
-];
 
 const optionSchema = z.object({
   label: z.string(),
@@ -53,13 +40,22 @@ const FormSchema = z.object({
 const AddTags = ({
   blogId,
   defaultTags,
+  options,
 }: {
   blogId: string;
-  defaultTags: [{ tag: string }];
+  defaultTags: { tag: string }[];
+  options: { tag: string }[];
 }) => {
   const defaultvalues: Option[] = [];
   defaultTags.forEach((vals) =>
     defaultvalues.push({
+      label: vals.tag.charAt(0).toUpperCase() + vals.tag.slice(1),
+      value: vals.tag,
+    })
+  );
+  const defaultoptions: Option[] = [];
+  options.forEach((vals) =>
+    defaultoptions.push({
       label: vals.tag.charAt(0).toUpperCase() + vals.tag.slice(1),
       value: vals.tag,
     })
@@ -87,7 +83,7 @@ const AddTags = ({
         <ErrorMessages errors={tagsError} />
         <Submit />
         <MultipleSelector
-          defaultOptions={options}
+          defaultOptions={defaultoptions}
           onChange={(val: Option[]) => setTags(val)}
           placeholder="Select the blog related tags."
           hidePlaceholderWhenSelected

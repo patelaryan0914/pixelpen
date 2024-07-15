@@ -3,10 +3,17 @@ import RecommendationCard from "../RecommendationCard";
 import prisma from "@/lib/db";
 import NavigationBarForBlogs from "../NavigationBarForBlogs";
 import { Separator } from "@/components/ui/separator";
+
+// Helper function to shuffle and get a random subset of blogs
+const getRandomBlogs = (blogs: Blog[], count: number) => {
+  const shuffled = blogs.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
 const page = async () => {
-  const findBlogs = await prisma.blog.findMany({
+  // Fetch all published blogs
+  const allBlogs = await prisma.blog.findMany({
     where: { status: "Published" },
-    take: 4,
     select: {
       id: true,
       title: true,
@@ -32,6 +39,10 @@ const page = async () => {
       },
     },
   });
+
+  // Get a random subset of 4 blogs
+  const findBlogs = getRandomBlogs(allBlogs, 4);
+
   return (
     <div>
       <NavigationBarForBlogs />

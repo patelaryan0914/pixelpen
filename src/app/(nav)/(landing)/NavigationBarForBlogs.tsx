@@ -10,14 +10,17 @@ import {
 } from "@/components/ui/dialog";
 import AddInterestedTopics from "./AddInterestedTopics";
 import prisma from "@/lib/db";
+import { getSession } from "@/app/actions";
+import { Button } from "@/components/ui/button";
 const NavigationBarForBlogs = async () => {
+  const session = await getSession();
   const tags = await prisma.tag.findMany({ select: { id: true, tag: true } });
   return (
-    <div className="w-full my-5 flex sticky">
+    <div className="w-full my-5 flex justify-between sticky">
       <div className="w-2/5 hidden xl:block px-4 font-serif">
         Explore The World of Pixle Pen
       </div>
-      <div className="w-full xl:w-3/5 flex justify-evenly items-center font-serif">
+      <div className="w-full xl:w-3/5 flex justify-end items-center font-serif space-x-4 px-4">
         <Dialog>
           <DialogTrigger>
             <Plus />
@@ -32,12 +35,11 @@ const NavigationBarForBlogs = async () => {
             <AddInterestedTopics topics={tags} />
           </DialogContent>
         </Dialog>
-
-        <Link href="/forYou">For You</Link>
-        <Link href="/following">Following</Link>
-        <Link href="/nextjs">NextJs</Link>
-        <Link href="/docker">Docker</Link>
-        <Link href="/postgres">Postgres</Link>
+        {session ? (
+          <Link href="/following">Following</Link>
+        ) : (
+          <span className="text-gray-500 cursor-pointer">Following</span>
+        )}
       </div>
     </div>
   );

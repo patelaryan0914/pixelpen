@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const title = result.title.toLowerCase().replaceAll(" ", "-");
     const images = result.data.blocks.filter(
       (val: OutputBlockData) => val.type === "image"
-    )[0];
+    );
     const publish = await prisma.blog.create({
       data: {
         ownerId: session.userInfo.id,

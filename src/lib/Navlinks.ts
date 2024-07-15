@@ -8,6 +8,7 @@ export const navbarLinks = [
     label: "Manage Blog",
     route: "/manage-blog",
   },
+  { label: "Analytics", route: "/analytics" },
   {
     label: "Settings",
     route: "/settings",

@@ -22,10 +22,11 @@ export const uploadFile = async ({
   object: string;
 }) => {
   try {
+    const clearFileName = fileName.replaceAll(" ", "").toLowerCase();
     const sendRes = await s3Client.send(
       new PutObjectCommand({
         Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
-        Key: `${object}/${fileName.replaceAll(" ", "").toLowerCase()}`,
+        Key: `${object}/${clearFileName}`,
         Body: file,
       })
     );
@@ -35,7 +36,7 @@ export const uploadFile = async ({
         `Error uploading file, with status: ${meta.httpStatusCode}`
       );
 
-    return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.amazonaws.com/${object}/${fileName}`;
+    return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.amazonaws.com/${object}/${clearFileName}`;
   } catch (err) {
     console.log(err);
   }
