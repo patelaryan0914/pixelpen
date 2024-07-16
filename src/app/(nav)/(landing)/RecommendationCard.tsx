@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import Like from "../Like";
 import { formatedNumber } from "@/lib/numberFormater";
 import { getFirstImageUrl, getFirstStringFromArray } from "@/lib/utils";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 const RecommendationCard = async ({ data }: { data: Blog }) => {
   const session = await getSession();
   const followAccess: boolean = session ? true : false;
@@ -49,33 +50,33 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
           </p>
         </Link>
         <div className="mt-10 flex items-center gap-x-4">
-          <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
-            Author
-          </h4>
+          <h4 className="flex-none text-sm font-semibold leading-6">Author</h4>
           <div className="h-px flex-auto bg-gray-100" />
         </div>
         <div className="mt-4 flex items-center justify-between space-x-4">
           <HoverCard>
-            <HoverCardTrigger>
-              <div className="flex items-center space-x-4">
-                {owner?.avatar === null ? (
-                  <CircleUser className="h-8 w-8 text-black " />
-                ) : (
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={owner?.avatar}
-                      width={500}
-                      height={500}
-                      alt="Image"
-                    />
-                  </Avatar>
-                )}
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    {owner?.username}
-                  </p>
+            <HoverCardTrigger className="cursor-pointer" asChild>
+              <Link href={`/profile/${owner?.id!}`}>
+                <div className="flex items-center space-x-4">
+                  {owner?.avatar === null ? (
+                    <CircleUser className="h-8 w-8 text-black " />
+                  ) : (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={owner?.avatar}
+                        width={500}
+                        height={500}
+                        alt="Image"
+                      />
+                    </Avatar>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium leading-none">
+                      {owner?.username}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </HoverCardTrigger>
             <HoverCardContent side="top">
               <div className="flex flex-col justify-center items-start">
@@ -111,9 +112,12 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
                   </form>
                 </div>
                 <div>
-                  <p className="mt-2 text-sm font-medium text-left">
+                  <Link
+                    href={`/profile/${owner?.id!}`}
+                    className="mt-2 text-sm font-medium text-left"
+                  >
                     {owner?.username}
-                  </p>
+                  </Link>
                 </div>
                 <div>
                   <p className="mt-2 text-sm font-medium text-left">
@@ -159,13 +163,15 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
       </div>
       <div className="px-6 pb-6 pt-2 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
         <div className="h-48 w-64 lg:h-64 lg:w-64 rounded-sm text-center flex items-center justify-center overflow-hidden">
-          <Image
-            src={getFirstImageUrl(data.content)}
-            width={256}
-            height={256}
-            alt="Image"
-            className="rounded-sm"
-          />
+          <AspectRatio ratio={12 / 5}>
+            <Image
+              src={getFirstImageUrl(data.content)}
+              width={256}
+              height={256}
+              alt="Image"
+              className="rounded-sm h-auto w-auto"
+            />
+          </AspectRatio>
         </div>
       </div>
     </div>

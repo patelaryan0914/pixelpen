@@ -99,6 +99,7 @@ async function uploadFileForBlog(file: File) {
       file,
       object: "blog-images",
     });
+    console.log(fileUrl);
     return {
       success: 1,
       file: {

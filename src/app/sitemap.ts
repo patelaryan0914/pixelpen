@@ -16,11 +16,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const blog = await prisma.blog.findMany({
       select: { title: true, updatedAt: true },
     });
-
+    const users = await prisma.blog.findMany({
+      select: { id: true, createdAt: true },
+    });
     const blogPost: MetadataRoute.Sitemap = blog.map(
       ({ title, updatedAt }) => ({
         url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${title}`,
         lastModified: new Date(updatedAt),
+      })
+    );
+    const userProfile: MetadataRoute.Sitemap = users.map(
+      ({ id, createdAt }) => ({
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/profile/${id}`,
+        lastModified: new Date(createdAt),
       })
     );
 
@@ -32,6 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: `${process.env.NEXT_PUBLIC_BASE_URL}/publish-blog` },
       { url: `${process.env.NEXT_PUBLIC_BASE_URL}/settings` },
       ...blogPost,
+      ...userProfile,
     ];
 
     sitemapCache.set(cacheKey, sitemap);

@@ -55,7 +55,7 @@ export const BlogDataSchema = z
   .object({
     title: z
       .string({ required_error: "Title is Must" })
-      .max(40, "Must no exceed 40 characters"),
+      .max(60, "Must no exceed 60 characters"),
     data: z.any(),
     status: z.enum(STATUS),
   })

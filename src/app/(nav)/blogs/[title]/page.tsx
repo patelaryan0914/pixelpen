@@ -1,12 +1,6 @@
 import prisma from "@/lib/db";
 import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
-export async function generateStaticParams() {
-  const blog = await prisma.blog.findMany({
-    select: { title: true },
-  });
-  return blog.slice(0, 3);
-}
 const getBlogDetails = cache(async (title: string) => {
   const blog: Blog | null = await prisma.blog.findFirst({
     where: { title: title },

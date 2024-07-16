@@ -39,7 +39,14 @@ import { deleteBlog } from "@/app/actions";
 import { toast } from "@/components/ui/use-toast";
 import Delete from "./Delete";
 import Link from "next/link";
-const ManageBlog = ({ data }: any) => {
+import { Blog } from "@/app/types";
+const ManageBlog = ({
+  data,
+  options,
+}: {
+  data: Blog[];
+  options: { tag: string }[];
+}) => {
   return (
     <Card>
       <CardHeader>
@@ -91,9 +98,7 @@ const ManageBlog = ({ data }: any) => {
                       </Badge>
                     ))
                   ) : (
-                    <p className="text-sm font-medium text-indigo-600">
-                      No Tags Added
-                    </p>
+                    <p className="text-sm font-medium ">No Tags Added</p>
                   )}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
@@ -126,8 +131,10 @@ const ManageBlog = ({ data }: any) => {
                             action={async () => {
                               "use server";
                               const res = await deleteBlog(blog.id);
-                              if (res?.status === 200)
-                                return toast({ title: "Blog Post Deleted" });
+                              if (res?.status === 200) {
+                                toast({ title: "Blog Post Deleted" });
+                                return;
+                              }
                             }}
                             className="w-full"
                           >
@@ -143,7 +150,11 @@ const ManageBlog = ({ data }: any) => {
                           Tags makes user to find there interest related blogs.
                         </DialogDescription>
                       </DialogHeader>
-                      <AddTags blogId={blog.id} defaultTags={blog.tags} />
+                      <AddTags
+                        blogId={blog.id}
+                        defaultTags={blog.tags}
+                        options={options}
+                      />
                     </DialogContent>
                   </Dialog>
                 </TableCell>
@@ -151,7 +162,7 @@ const ManageBlog = ({ data }: any) => {
             ))}
           </TableBody>
         </Table>
-        <div className="w-full flex justify-center mt-2 text-indigo-600">
+        <div className="w-full flex justify-center mt-2">
           {data.length == 0 ? "No Blogs Published" : ""}
         </div>
       </CardContent>

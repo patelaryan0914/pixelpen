@@ -8,6 +8,7 @@ import axios from "axios";
 import EditorJsRenderer from "../EditorJsRenderer";
 import EditorBlock from "./EditorBlock";
 import { BlogDataSchema } from "@/lib/zod-schema";
+import { revalidatePath } from "next/cache";
 const Editor = () => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [status, setStatus] = useState<string>();
@@ -15,9 +16,8 @@ const Editor = () => {
   const [data, setData] = useState<OutputData>();
   const [title, setTitle] = useState<string>();
   const saveBlogToDb = async (status: string) => {
-    setLoading(true);
     setStatus(status);
-
+    setLoading(true);
     const result = await BlogDataSchema.safeParseAsync({
       title,
       data,
@@ -38,6 +38,7 @@ const Editor = () => {
       return toast({
         title: "Blog is saved as Draft you can edit it in Manage Blog Section",
       });
+    revalidatePath("/");
     return toast({
       title: "Your Blog is Published Viewers can View your blog",
     });
@@ -69,7 +70,7 @@ const Editor = () => {
             className="text-center"
             aria-label="publiseblog"
           >
-            {loading && status == "Publise" ? (
+            {loading && status == "Published" ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               "Publise"
