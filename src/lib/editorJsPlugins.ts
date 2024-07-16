@@ -64,13 +64,6 @@ export const editorConfig = {
     },
   },
   embed: Embed,
-  table: {
-    class: Table,
-    config: {
-      rows: 2,
-      cols: 3,
-    },
-  },
   code: Code,
   Marker: Marker,
   inlineCode: InlineCode,
