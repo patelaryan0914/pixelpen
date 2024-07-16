@@ -61,7 +61,6 @@ const page = async ({ params }: { params: { userId: string } }) => {
       },
     }));
   }
-  console.log(userInfo);
 
   return (
     <div className="flex flex-col items-center gap-6 py-8 px-4 lg:px-6">
