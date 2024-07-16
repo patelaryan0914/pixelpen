@@ -101,6 +101,7 @@ const page = async ({ params }: { params: { userId: string } }) => {
               href={`/blogs/${val.title}`}
               className="group flex flex-col md:flex-row items-center gap-4 rounded-lg bg-muted p-4 transition-colors hover:bg-muted/50"
               prefetch={false}
+              key={val.id}
             >
               <Image
                 src={val.images[0].imageUrl}
