@@ -1,13 +1,10 @@
 import { OutputBlockData, OutputData } from "@editorjs/editorjs";
 import React from "react";
 import editorJsHtml from "editorjs-html";
-import DynamicImage from "@/components/dynamic-image";
+import Image from "next/image";
 const EditorJsToHtml = editorJsHtml({
-  delimiter: () => {
+  delimiter: (block: OutputBlockData<string>) => {
     return <p className="flex justify-center text-xl">* * *</p>;
-  },
-  image: (block: OutputBlockData<string>) => {
-    return <DynamicImage url={block.data.file.url} />;
   },
 });
 
