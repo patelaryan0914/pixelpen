@@ -98,6 +98,7 @@ const page = async ({ params }: { params: { userId: string } }) => {
         <div className="grid gap-4 md:grid-cols-1">
           {userInfo?.blogs.map((val: Blog) => (
             <Link
+              key={val.id}
               href={`/blogs/${val.title}`}
               className="group flex flex-col md:flex-row items-center gap-4 rounded-lg bg-muted p-4 transition-colors hover:bg-muted/50"
               prefetch={false}
