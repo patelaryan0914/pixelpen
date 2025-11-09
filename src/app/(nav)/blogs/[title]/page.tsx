@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
+export const revalidate = 60;
 const getBlogDetails = cache(async (title: string) => {
   const blog: Blog | null = await prisma.blog.findFirst({
     where: { title: title },
@@ -30,7 +31,10 @@ const getBlogDetails = cache(async (title: string) => {
   if (!blog) throw new BlogNotFound();
   return blog;
 });
-
+export async function generateStaticParams() {
+  const blogs = await prisma.blog.findMany({ select: { title: true } });
+  return blogs.map((b) => ({ title: b.title }));
+}
 export async function generateMetadata(
   { params }: { params: { title: string } },
   parent: ResolvingMetadata
