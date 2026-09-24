@@ -87,7 +87,7 @@ const page = async () => {
     <PageShell>
       <PageHeader
         title="Analytics"
-        description="A quiet view of how your stories are landing with readers."
+        description="A read is one IP address that stays on a story for 30 seconds. The same address counts once a day."
       />
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (

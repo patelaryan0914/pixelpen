@@ -14,6 +14,15 @@ export async function POST(req: NextRequest) {
         ipAddress.split(",").find((ip) => ip.includes(".")) || ipAddress;
     }
 
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const existing = await prisma.blogVisit.findFirst({
+      where: { blogId, ipAddress, visitedAt: { gte: since } },
+      select: { id: true },
+    });
+    if (existing) {
+      return NextResponse.json({ ok: true, counted: false });
+    }
+
     await prisma.blogVisit.create({
       data: {
         blogId,

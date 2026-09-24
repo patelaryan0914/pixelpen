@@ -1,9 +1,10 @@
-const MODEL = "llama-3.3-70b-versatile";
+const MODEL = "openai/gpt-oss-120b";
 
 export async function groqComplete(
   system: string,
   user: string,
-  json = false
+  json = false,
+  maxTokens?: number
 ) {
   const key = process.env.GROQ_API_KEY;
   if (!key) {
@@ -21,7 +22,8 @@ export async function groqComplete(
       body: JSON.stringify({
         model: MODEL,
         temperature: json ? 0.4 : 0.7,
-        max_tokens: json ? 400 : 700,
+        max_tokens: maxTokens ?? (json ? 400 : 700),
+        reasoning_effort: "low",
         response_format: json ? { type: "json_object" } : undefined,
         messages: [
           { role: "system", content: system },
