@@ -1,11 +1,11 @@
 export const navbarLinks = [
   { label: "Home", route: "/" },
   {
-    label: "Publish Your Own Blog",
+    label: "Publish",
     route: "/publish-blog",
   },
   {
-    label: "Manage Blog",
+    label: "Manage",
     route: "/manage-blog",
   },
   { label: "Analytics", route: "/analytics" },

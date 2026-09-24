@@ -1,4 +1,3 @@
-import Banner from "../banner";
 import Navbar from "./Navbar";
 import {
   Popover,
@@ -16,7 +15,6 @@ export default function NavbarLayout({
   return (
     <>
       <Navbar />
-      <Banner />
       <Popover>
         <PopoverTrigger className="fixed bottom-6 right-6 ">
           <span
@@ -25,12 +23,12 @@ export default function NavbarLayout({
             <MessageSquare />
           </span>
         </PopoverTrigger>
-        <PopoverContent className="rounded-lg ">
-          <div className="mt-2 mb-7 h-full w-full flex flex-col items-center justify-center ">
-            <h1 className=" text-3xl font-black">Feedback</h1>
-            <span className="text-xs mt-1">
-              Your valueable feedback or feature request are always welcomed.
-            </span>
+        <PopoverContent className="w-80 rounded-xl">
+          <div className="mb-4">
+            <h2 className="font-serif text-2xl font-medium">Feedback</h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Feature requests and notes are always welcome.
+            </p>
           </div>
           <ContactUsForm />
         </PopoverContent>

@@ -1,75 +1,70 @@
 "use client";
-import { TrendingUp } from "lucide-react";
+
 import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardContent, CardFooter } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
+
+export type ReadsPoint = {
+  label: string;
+  reads: number;
+};
+
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
+  reads: {
+    label: "Reads",
+    color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig;
-export function LineChartLabel() {
+
+export function LineChartLabel({
+  data,
+  total,
+}: {
+  data: ReadsPoint[];
+  total: number;
+}) {
+  if (data.length === 0 || data.every((d) => d.reads === 0)) {
+    return (
+      <CardContent>
+        <p className="py-10 text-center text-sm text-muted-foreground">
+          No reads yet. They will show up here as people open your stories.
+        </p>
+      </CardContent>
+    );
+  }
+
   return (
     <>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
-            margin={{
-              top: 20,
-              left: 12,
-              right: 12,
-            }}
+            data={data}
+            margin={{ top: 20, left: 12, right: 12 }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="label"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
             <Line
-              dataKey="desktop"
-              type="natural"
-              stroke="black"
+              dataKey="reads"
+              type="monotone"
+              stroke="hsl(var(--primary))"
               strokeWidth={2}
-              dot={{
-                fill: "var(--color-desktop)",
-              }}
-              activeDot={{
-                r: 6,
-              }}
+              dot={{ fill: "hsl(var(--primary))" }}
+              activeDot={{ r: 6 }}
             >
               <LabelList
                 position="top"
@@ -81,13 +76,8 @@ export function LineChartLabel() {
           </LineChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
+      <CardFooter className="text-sm text-muted-foreground">
+        {total} {total === 1 ? "read" : "reads"} in the last 14 days
       </CardFooter>
     </>
   );

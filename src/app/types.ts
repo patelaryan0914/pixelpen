@@ -1,4 +1,3 @@
-import { OutputData } from "@editorjs/editorjs";
 import { string } from "zod";
 export interface Session {
   userInfo: { id: string; username: string; email: string; avatar: string };
@@ -9,6 +8,7 @@ export interface User {
   email: string;
   password?: string;
   avatar?: string | null;
+  bio?: string | null;
   createdAt: Date;
   updatedAt: Date;
   _count?: subscribe;
@@ -19,15 +19,21 @@ export interface Blog {
   ownerId?: string;
   content?: any;
   title: string;
+  headline?: string | null;
+  slug?: string | null;
+  description?: string | null;
+  coverUrl?: string | null;
+  publishAt?: Date | null;
   status?: string;
   images: Images[];
   createdAt?: Date;
   updatedAt?: Date;
   owner?: User;
+  series?: { id: string; title: string } | null;
   tags?: { tag: string }[];
   comments?: { owner: User; comment: string; id: string }[];
   _count?: countForBlog;
-  blocks?: OutputData;
+  blocks?: any;
 }
 
 export interface Images {
@@ -43,14 +49,6 @@ interface subscribe {
 interface countForBlog {
   likes?: number;
   comments?: number;
-}
-
-export interface EditorProps {
-  data?: OutputData;
-  onChange(val: OutputData): void;
-  holder: string;
-  setTitle(val: string): void;
-  error: [];
 }
 
 export interface Notifications {

@@ -16,29 +16,44 @@ const NavigationBarForBlogs = async () => {
   const session = await getSession();
   const tags = await prisma.tag.findMany({ select: { id: true, tag: true } });
   return (
-    <div className="w-full my-5 flex justify-between sticky">
-      <div className="w-2/5 hidden xl:block px-4 font-serif">
-        Explore The World of Pixle Pen
-      </div>
-      <div className="w-full xl:w-3/5 flex justify-end items-center font-serif space-x-4 px-4">
+    <div className="flex w-full items-center justify-between gap-4 px-4 py-4">
+      <h2 className="hidden font-serif text-lg font-medium tracking-tight text-foreground xl:block">
+        Explore the world of PixelPen
+      </h2>
+      <div className="flex items-center gap-2">
         <Dialog>
-          <DialogTrigger>
-            <Plus />
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 rounded-full"
+              aria-label="Add a favorite topic"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Topics</span>
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Your Favorite Topic.</DialogTitle>
+              <DialogTitle>Add your favorite topics</DialogTitle>
               <DialogDescription>
-                This can help us to recommend you the blogs.
+                This helps us recommend stories you&apos;ll enjoy.
               </DialogDescription>
             </DialogHeader>
             <AddInterestedTopics topics={tags} />
           </DialogContent>
         </Dialog>
         {session ? (
-          <Link href="/following">Following</Link>
+          <Link
+            href="/following"
+            className="rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            Following
+          </Link>
         ) : (
-          <span className="text-gray-500 cursor-pointer">Following</span>
+          <span className="cursor-not-allowed rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground/50">
+            Following
+          </span>
         )}
       </div>
     </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +28,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   Dialog,
   DialogTrigger,
@@ -36,10 +38,11 @@ import {
 } from "@/components/ui/dialog";
 import AddTags from "./AddTags";
 import { deleteBlog } from "@/app/actions";
-import { toast } from "@/components/ui/use-toast";
 import Delete from "./Delete";
 import Link from "next/link";
 import { Blog } from "@/app/types";
+import { cn, storyPath, storyTitle } from "@/lib/utils";
+
 const ManageBlog = ({
   data,
   options,
@@ -47,13 +50,35 @@ const ManageBlog = ({
   data: Blog[];
   options: { tag: string }[];
 }) => {
+  const [filter, setFilter] = useState("All");
+  const filters = ["All", "Draft", "Published", "Scheduled"] as const;
+  const rows =
+    filter === "All" ? data : data.filter((blog) => blog.status === filter);
+
   return (
-    <Card>
+    <Card className="border-border/70 shadow-none">
       <CardHeader>
-        <CardTitle>Blogs</CardTitle>
+        <CardTitle className="text-xl">Library</CardTitle>
         <CardDescription>
-          Manage your Blogs add tags,images to increase the viewer rate.
+          Continue a draft, edit a live story, or check what is scheduled.
         </CardDescription>
+        <div className="flex flex-wrap gap-2 pt-2">
+          {filters.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setFilter(item)}
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-semibold",
+                filter === item
+                  ? "bg-primary text-primary-foreground"
+                  : "border bg-muted/60 text-muted-foreground"
+              )}
+            >
+              {item === "All" ? "All" : item === "Draft" ? "Drafts" : item}
+            </button>
+          ))}
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -65,112 +90,144 @@ const ManageBlog = ({
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Tags</TableHead>
-              <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead className="hidden md:table-cell">Created</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((blog: any) => (
-              <TableRow key={blog.id}>
-                <TableCell className="hidden sm:table-cell">
-                  <Image
-                    alt="Product image"
-                    className="aspect-square rounded-md object-cover"
-                    height="64"
-                    src={blog.images[0].imageUrl}
-                    width="64"
-                  />
-                </TableCell>
-                <TableCell className="font-medium">
-                  {blog.title.charAt(0).toUpperCase() +
-                    blog.title.slice(1).replaceAll("-", " ")}
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">{blog.status}</Badge>
-                </TableCell>
-                <TableCell>
-                  {blog.tags.length > 0 ? (
-                    blog.tags.map((tags: { tag: string }, index: number) => (
-                      <Badge variant="outline" key={index}>
-                        {tags.tag}
-                      </Badge>
-                    ))
-                  ) : (
-                    <p className="text-sm font-medium ">No Tags Added</p>
-                  )}
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {blog.createdAt.toJSON().slice(0, 10)}
-                </TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          aria-haspopup="true"
-                          size="icon"
-                          variant="ghost"
-                          aria-label="menu"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                          <Link href={`/edit-blog/${blog.title}`}>Edit</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <DialogTrigger>Add Tags</DialogTrigger>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <form
-                            action={async () => {
-                              "use server";
-                              const res = await deleteBlog(blog.id);
-                              if (res?.status === 200) {
-                                toast({ title: "Blog Post Deleted" });
-                                return;
-                              }
-                            }}
-                            className="w-full"
-                          >
-                            <Delete />
-                          </form>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add Tags.</DialogTitle>
-                        <DialogDescription>
-                          Tags makes user to find there interest related blogs.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <AddTags
-                        blogId={blog.id}
-                        defaultTags={blog.tags}
-                        options={options}
+            {rows.map((blog: Blog) => {
+              const cover = blog.coverUrl || blog.images?.[0]?.imageUrl;
+              const label = storyTitle(blog);
+              return (
+                <TableRow key={blog.id}>
+                  <TableCell className="hidden sm:table-cell">
+                    {cover ? (
+                      <Image
+                        alt={label}
+                        className="aspect-square rounded-md object-cover"
+                        height={64}
+                        src={cover}
+                        width={64}
                       />
-                    </DialogContent>
-                  </Dialog>
-                </TableCell>
-              </TableRow>
-            ))}
+                    ) : (
+                      <div className="flex h-16 w-16 items-center justify-center rounded-md bg-muted text-[10px] text-muted-foreground">
+                        No image
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-serif text-base font-medium">
+                    <Link
+                      href={storyPath(blog)}
+                      className="hover:text-primary"
+                    >
+                      {label}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {blog.status === "Scheduled" && blog.publishAt
+                        ? `${new Date(blog.publishAt).getTime() <= Date.now() ? "Live" : "Scheduled"} · ${new Date(blog.publishAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+                        : blog.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {blog.tags && blog.tags.length > 0 ? (
+                        blog.tags.map((tags: { tag: string }, index: number) => (
+                          <Badge variant="outline" key={index}>
+                            {tags.tag}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-sm text-muted-foreground">
+                          No tags
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden text-muted-foreground md:table-cell">
+                    {blog.createdAt
+                      ? new Date(blog.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "—"}
+                  </TableCell>
+                  <TableCell>
+                    <Dialog>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            aria-haspopup="true"
+                            size="icon"
+                            variant="ghost"
+                            aria-label="menu"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem asChild>
+                            <Link href={`/edit-blog/${blog.id}`}>
+                              {blog.status === "Draft"
+                                ? "Continue writing"
+                                : "Edit story"}
+                            </Link>
+                          </DropdownMenuItem>
+                          {blog.status !== "Draft" && (
+                            <DropdownMenuItem asChild>
+                              <Link href={storyPath(blog)}>View</Link>
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem>
+                            <DialogTrigger>Add tags</DialogTrigger>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <form
+                              action={deleteBlog.bind(null, blog.id)}
+                              className="w-full"
+                            >
+                              <Delete />
+                            </form>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Add tags</DialogTitle>
+                          <DialogDescription>
+                            Tags help readers find stories they care about.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <AddTags
+                          blogId={blog.id}
+                          defaultTags={blog.tags ?? []}
+                          options={options}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
-        <div className="w-full flex justify-center mt-2">
-          {data.length == 0 ? "No Blogs Published" : ""}
-        </div>
+        {rows.length === 0 && (
+          <p className="py-10 text-center text-sm text-muted-foreground">
+            No stories yet. Publish your first one from Write.
+          </p>
+        )}
       </CardContent>
       <CardFooter>
-        <div className="text-xs text-muted-foreground">
-          Showing <strong>{data.length}</strong> of{" "}
-          <strong>{data.length}</strong> Blogs
-        </div>
+        <p className="text-xs text-muted-foreground">
+          Showing <strong>{rows.length}</strong>{" "}
+          {rows.length === 1 ? "story" : "stories"}
+        </p>
       </CardFooter>
     </Card>
   );

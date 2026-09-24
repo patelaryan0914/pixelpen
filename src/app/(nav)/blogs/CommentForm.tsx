@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { comment } from "@/app/actions";
 import { commentSchema } from "@/lib/zod-schema";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { findErrors } from "@/lib/utils";
 import { useFormStatus } from "react-dom";
 import { Icons } from "@/components/icons";
@@ -25,14 +25,22 @@ const CommentButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
-const CommentForm = ({
-  disabled,
-  blogId,
-}: {
-  disabled: boolean;
-  blogId: string;
-}) => {
+const CommentForm = ({ blogId }: { blogId: string }) => {
+  const [signedIn, setSignedIn] = useState(false);
   const [error, setError] = useState<any>([]);
+
+  useEffect(() => {
+    let ignore = false;
+    fetch("/api/session")
+      .then((response) => response.json())
+      .then((data: { user?: unknown }) => {
+        if (!ignore) setSignedIn(Boolean(data.user));
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+  }, []);
   const validateData = async (formData: FormData) => {
     const result = await commentSchema.safeParseAsync({
       comment: formData.get("comment"),
@@ -49,9 +57,9 @@ const CommentForm = ({
       <form action={validateData}>
         <div className="flex justify-start">
           <ErrorMessages errors={commentErrors} />
-          <Textarea className="mt-2" name="comment" disabled={!disabled} />
+          <Textarea className="mt-2" name="comment" disabled={!signedIn} />
         </div>
-        <CommentButton disabled={disabled} />
+        <CommentButton disabled={signedIn} />
       </form>
     </>
   );

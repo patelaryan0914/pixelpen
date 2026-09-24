@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const ActiveNavbarRoute = () => {
   const pathname = usePathname();
   return (
-    <div className="flex flex-col gap-y-6 lg:flex-row items-center gap-x-4 ">
+    <div className="flex flex-col items-start gap-y-6 lg:flex-row lg:items-center lg:gap-x-5">
       {navbarLinks.map((link) => {
         const isActive = pathname === link.route;
         return (
@@ -15,11 +15,11 @@ const ActiveNavbarRoute = () => {
             href={link.route}
             key={link.label}
             className={cn(
-              "text-muted-foreground transition-colors hover:text-foreground",
+              "whitespace-nowrap font-medium text-muted-foreground transition-colors hover:text-foreground",
               { "text-foreground": isActive }
             )}
           >
-            <p className="font-medium ">{link.label}</p>
+            {link.label}
           </Link>
         );
       })}

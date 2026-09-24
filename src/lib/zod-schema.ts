@@ -1,5 +1,5 @@
-import { OutputBlockData } from "@editorjs/editorjs";
 import { number, string, z } from "zod";
+import { getAllImageUrls } from "@/lib/utils";
 
 export const userSchema = z
   .object({
@@ -33,6 +33,11 @@ export const userInfoSchema = z
     ),
     avatarUrl: z.nullable(string().url({ message: "Must be an Url" })),
     fileSize: z.nullable(number()),
+    bio: z
+      .string()
+      .max(160, { message: "Bio can not exceed 160 characters." })
+      .nullable()
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.fileSize !== null && data.fileSize > 2 * 1024 * 1024) {
@@ -50,35 +55,54 @@ export const commentSchema = z.object({
   ),
 });
 
-const STATUS = ["Draft", "Published"] as const;
+const STATUS = ["Draft", "Published", "Scheduled"] as const;
 export const BlogDataSchema = z
   .object({
+    id: z.string().optional(),
     title: z
       .string({ required_error: "Title is Must" })
       .max(60, "Must no exceed 60 characters"),
+    slug: z.string().max(80).optional(),
+    description: z
+      .string()
+      .max(160, "Keep the description under 160 characters.")
+      .optional(),
+    coverUrl: z.string().optional().nullable(),
+    seriesTitle: z.string().max(60).optional(),
+    publishAt: z.string().optional().nullable(),
+    customSlug: z.boolean().optional(),
+    tags: z.array(z.string().max(24)).max(5).optional(),
     data: z.any(),
     status: z.enum(STATUS),
   })
   .superRefine((data, ctx) => {
-    const images = data.data?.blocks?.filter(
-      (val: OutputBlockData) => val.type === "image"
-    );
-    if (
-      data.data === null ||
-      data.data === undefined ||
-      data.data.blocks.length === 0
-    ) {
+    const doc = data.data;
+    const hasContent =
+      doc && Array.isArray(doc.content) && doc.content.length > 0;
+    if (!hasContent) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "There Must be some data.",
+        message: "There must be some content.",
         path: ["data"],
       });
-    } else if (images.length === 0) {
+      return;
+    }
+    if (data.status !== "Draft" && getAllImageUrls(doc).length === 0 && !data.coverUrl) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "There Must be a image even Random",
+        message: "Add at least one image before publishing.",
         path: ["image"],
       });
+    }
+    if (data.status === "Scheduled") {
+      const when = data.publishAt ? new Date(data.publishAt) : null;
+      if (!when || Number.isNaN(when.getTime()) || when.getTime() <= Date.now()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Pick a future date and time to schedule.",
+          path: ["publishAt"],
+        });
+      }
     }
   });
 

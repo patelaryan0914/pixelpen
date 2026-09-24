@@ -1,15 +1,20 @@
 "use server";
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
 import { Notifications, User } from "./types";
 import { Option } from "@/components/ui/multiple-selector";
 import { revalidatePath } from "next/cache";
-import { deleteFile } from "@/lib/uploadFile";
-const secretKey = "secret";
-const key = new TextEncoder().encode(secretKey);
+import { deleteObject } from "@/lib/s3";
+import {
+  encrypt,
+  decrypt,
+  getSession,
+  updateSession,
+  SESSION_DURATION_MS,
+} from "@/lib/session";
+
+export { encrypt, decrypt, getSession, updateSession };
 export async function hashPassword(password: string): Promise<string> {
   const saltRounds = 10;
   return await bcrypt.hash(password, saltRounds);
@@ -53,21 +58,6 @@ export default async function signUp(formData: FormData) {
   };
 }
 
-export async function encrypt(payload: any) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("1 hour from now")
-    .sign(key);
-}
-
-export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ["HS256"],
-  });
-  return payload;
-}
-
 export async function signIn(formData: FormData) {
   // Verify credentials && get the user
   const email = formData.get("email") as string;
@@ -91,7 +81,7 @@ export async function signIn(formData: FormData) {
     avatar: getUser.avatar,
   };
   // Create the session
-  const expires = new Date(Date.now() + 3600 * 1000);
+  const expires = new Date(Date.now() + SESSION_DURATION_MS);
   const session = await encrypt({ userInfo, expires });
 
   // Save the session in a cookie
@@ -106,32 +96,10 @@ export async function logout() {
   cookies().set("session", "", { expires: new Date(0) });
 }
 
-export async function getSession() {
-  const session = cookies().get("session")?.value;
-  if (!session) return null;
-  return await decrypt(session);
-}
-
-export async function updateSession(request: NextRequest) {
-  const session = request.cookies.get("session")?.value;
-  if (!session) return;
-
-  // Refresh the session so it doesn't expire
-  const parsed = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 3600 * 1000);
-  const res = NextResponse.next();
-  res.cookies.set({
-    name: "session",
-    value: await encrypt(parsed),
-    httpOnly: true,
-    expires: parsed.expires,
-  });
-  return res;
-}
-
 export async function userInfo(result: {
   username: string | null;
   avatarUrl: string | null;
+  bio?: string | null;
 }) {
   const currentSession = await getSession();
   const username = result.username ?? currentSession.userInfo.username;
@@ -141,6 +109,7 @@ export async function userInfo(result: {
     data: {
       username,
       avatar: avatarUrl,
+      ...(result.bio !== undefined ? { bio: result.bio } : {}),
     },
   });
   const userInfo = {
@@ -150,7 +119,7 @@ export async function userInfo(result: {
     avatar: updateuserInfo.avatar,
   };
   // Create the session
-  const expires = new Date(Date.now() + 3600 * 1000);
+  const expires = new Date(Date.now() + SESSION_DURATION_MS);
   const session = await encrypt({ userInfo, expires });
 
   // Save the session in a cookie
@@ -178,25 +147,27 @@ export async function addTags(tags: Option[] | null, blogId: string) {
 
 export async function deleteBlog(blogId: string) {
   try {
+    const existing = await prisma.blog.findUnique({
+      where: { id: blogId },
+      select: { slug: true, title: true },
+    });
     const images = await prisma.image.findMany({ where: { blogId } });
     const deleteBlog = await prisma.$transaction([
       prisma.tag.deleteMany({ where: { blogId } }),
       prisma.comment.deleteMany({ where: { blogId } }),
       prisma.like.deleteMany({ where: { blogId } }),
+      prisma.bookmark.deleteMany({ where: { blogId } }),
       prisma.image.deleteMany({ where: { blogId } }),
       prisma.blogVisit.deleteMany({ where: { blogId } }),
       prisma.blog.delete({ where: { id: blogId } }),
     ]);
 
-    if (deleteBlog)
-      if (images.length == 0) {
-        revalidatePath("/manage-blog");
-        return {
-          status: 200,
-        };
-      }
-    images.forEach(async (val) => await deleteFile({ fileUrl: val.imageUrl }));
+    if (deleteBlog && images.length > 0) {
+      await Promise.all(images.map((val) => deleteObject(val.imageUrl)));
+    }
     revalidatePath("/manage-blog");
+    revalidatePath("/");
+    if (existing) revalidatePath(`/blogs/${existing.slug || existing.title}`);
     return {
       status: 200,
     };
@@ -231,6 +202,7 @@ export async function subscribe(publisherId: string) {
 export async function likes(blogId: string) {
   try {
     const session = await getSession();
+    if (!session) return { status: 401, liked: false };
     const isLiked = await prisma.like.findFirst({
       where: { blogId, ownerId: session.userInfo.id },
     });
@@ -238,16 +210,41 @@ export async function likes(blogId: string) {
       await prisma.like.create({
         data: { blogId, ownerId: session.userInfo.id },
       });
-    } else
-      await prisma.like.delete({
-        where: { id: isLiked.id },
-      });
-    revalidatePath("/");
-    return {
-      status: 200,
-    };
+      return { status: 200, liked: true };
+    }
+    await prisma.like.delete({
+      where: { id: isLiked.id },
+    });
+    return { status: 200, liked: false };
   } catch (error) {
     console.log(error);
+    return { status: 500, liked: false };
+  }
+}
+
+export async function toggleBookmark(blogId: string) {
+  try {
+    const session = await getSession();
+    if (!session) return { status: 401, bookmarked: false };
+
+    const existing = await prisma.bookmark.findFirst({
+      where: { blogId, ownerId: session.userInfo.id },
+    });
+    if (!existing) {
+      await prisma.bookmark.create({
+        data: { blogId, ownerId: session.userInfo.id },
+      });
+      revalidatePath("/");
+      revalidatePath("/saved");
+      return { status: 200, bookmarked: true };
+    }
+    await prisma.bookmark.delete({ where: { id: existing.id } });
+    revalidatePath("/");
+    revalidatePath("/saved");
+    return { status: 200, bookmarked: false };
+  } catch (error) {
+    console.log(error);
+    return { status: 500, bookmarked: false };
   }
 }
 

@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -13,32 +13,65 @@ model User {
   email                    String             @unique
   password                 String
   avatar                   String?
+  bio                      String?
   createdAt                DateTime           @default(now())
   updatedAt                DateTime           @updatedAt
   blogs                    Blog[]
+  series                   Series[]
   comments                 Comment[]
   images                   Image[]
   likes                    Like[]
+  bookmarks                Bookmark[]
   subscriptionsAsPublisher Subscription[]     @relation("publisher")
   subscriptionsAsReader    Subscription[]     @relation("reader")
   InterestedTopics         InterestedTopics[]
   Notifications            Notifications?     @relation("notifications")
 }
 
-model Blog {
-  id        String      @id @default(uuid())
+model Series {
+  id        String   @id @default(uuid())
   ownerId   String
-  content   Json
   title     String
-  status    Status
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  owner     User        @relation(fields: [ownerId], references: [id])
-  comments  Comment[]
-  images    Image[]
-  likes     Like[]
-  tags      Tag[]
-  blogvisit BlogVisit[]
+  createdAt DateTime @default(now())
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  blogs     Blog[]
+
+  @@unique([ownerId, title])
+}
+
+model Blog {
+  id          String      @id @default(uuid())
+  ownerId     String
+  content     Json
+  title       String
+  headline    String?
+  slug        String?     @unique
+  description String?
+  coverUrl    String?
+  publishAt   DateTime?
+  seriesId    String?
+  status      Status
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  owner       User        @relation(fields: [ownerId], references: [id])
+  series      Series?     @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  comments    Comment[]
+  images      Image[]
+  likes       Like[]
+  bookmarks   Bookmark[]
+  tags        Tag[]
+  blogvisit   BlogVisit[]
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  ownerId   String
+  blogId    String
+  createdAt DateTime @default(now())
+  owner     User     @relation(fields: [ownerId], references: [id])
+  blog      Blog     @relation(fields: [blogId], references: [id])
+
+  @@unique([ownerId, blogId])
 }
 
 model Tag {
@@ -110,6 +143,7 @@ model Notifications {
 enum Status {
   Published
   Draft
+  Scheduled
 }
 
 model ContactUs {

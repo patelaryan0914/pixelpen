@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PixelPen — Editorial Publishing Platform</title>
+<!-- Typography & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS Engine -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary-fixed": "#eae1dc",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#002113",
+            "on-surface": "#1a1c1a",
+            "surface-container-high": "#e9e8e5",
+            "on-tertiary-fixed-variant": "#4a4641",
+            "error": "#ba1a1a",
+            "surface": "#faf9f6",
+            "on-background": "#1a1c1a",
+            "on-primary-fixed-variant": "#005236",
+            "secondary": "#635d59",
+            "primary-container": "#00855b",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed": "#e9e1da",
+            "on-surface-variant": "#3d4a42",
+            "surface-container": "#efeeeb",
+            "inverse-surface": "#2f312f",
+            "tertiary": "#605b56",
+            "surface-tint": "#006c49",
+            "surface-bright": "#faf9f6",
+            "secondary-fixed-dim": "#cdc5c0",
+            "inverse-primary": "#63dca6",
+            "tertiary-fixed-dim": "#ccc5be",
+            "on-primary": "#ffffff",
+            "outline-variant": "#bccac0",
+            "background": "#faf9f6",
+            "on-error-container": "#93000a",
+            "on-tertiary-container": "#fffbff",
+            "on-tertiary-fixed": "#1e1b17",
+            "on-secondary-container": "#69635f",
+            "surface-container-low": "#f4f3f1",
+            "on-error": "#ffffff",
+            "secondary-container": "#eae1dc",
+            "primary-fixed-dim": "#63dca6",
+            "inverse-on-surface": "#f1f1ee",
+            "primary-fixed": "#81f9c1",
+            "error-container": "#ffdad6",
+            "outline": "#6d7a71",
+            "primary": "#006947",
+            "surface-dim": "#dbdad7",
+            "on-secondary-fixed-variant": "#4b4642",
+            "tertiary-container": "#79746e",
+            "on-primary-container": "#f5fff6",
+            "surface-container-highest": "#e3e2e0",
+            "on-secondary-fixed": "#1f1b18",
+            "surface-variant": "#e3e2e0"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "space-md": "1rem",
+            "margin": "2rem",
+            "gutter-mobile": "1rem",
+            "space-xs": "0.25rem",
+            "space-lg": "1.5rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1.25rem",
+            "space-xl": "2.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Newsreader", "serif"],
+            "display-lg": ["Newsreader", "serif"],
+            "body-xl": ["Newsreader", "serif"],
+            "label-md": ["Plus Jakarta Sans", "sans-serif"],
+            "display-md-mobile": ["Newsreader", "serif"],
+            "display-md": ["Newsreader", "serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"],
+            "display-lg-mobile": ["Newsreader", "serif"],
+            "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Newsreader", "serif"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "body-xl": ["21px", { "lineHeight": "34px", "fontWeight": "400" }],
+            "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "display-md-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "display-md": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "body-md": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "display-lg-mobile": ["38px", { "lineHeight": "46px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-lg": ["17px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "headline-sm": ["24px", { "lineHeight": "32px", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed min-h-screen flex flex-col justify-between">
+<!-- Micro Read Progress Indicator -->
+<div class="fixed top-0 left-0 right-0 h-[2px] bg-surface-container z-[60]">
+<div class="h-full bg-primary w-1/4 transition-all duration-300"></div>
+</div>
+<!-- SECTION 1: STICKY TOP NAV (Anchored from TopNavBar JSON) -->
+<header class="docked full-width top sticky z-50 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flat no shadows">
+<div class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin flex items-center justify-between h-16 gap-space-md">
+<!-- Brand & Search Left Cluster -->
+<div class="flex items-center gap-space-lg flex-1 max-w-xl">
+<a class="font-headline-sm text-headline-sm font-medium text-on-surface dark:text-inverse-on-surface tracking-tight flex items-center gap-space-xs shrink-0" href="#">
+<span class="material-symbols-outlined text-primary text-[26px]">edit_note</span>
+<span>PixelPen</span>
+</a>
+<!-- Search Bar with Shortcut -->
+<div class="relative w-full max-w-md hidden sm:block">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[19px]">search</span>
+</div>
+<input class="w-full pl-9 pr-12 py-1.5 bg-surface-container-lowest border border-outline-variant/60 rounded-xl font-body-md text-body-md placeholder:text-secondary/70 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors duration-150" placeholder="Search stories, topics, authors" type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<kbd class="px-1.5 py-0.5 text-[10px] font-label-sm font-semibold text-secondary bg-surface-container border border-outline-variant/40 rounded">⌘K</kbd>
+</div>
+</div>
+</div>
+<!-- Trailing Primary & Actions Cluster -->
+<div class="flex items-center gap-space-md shrink-0">
+<!-- Theme Switcher -->
+<button aria-label="Toggle dark mode" class="p-2 text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-xl hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors duration-150" type="button">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<!-- Notification Trigger -->
+<button aria-label="Notifications" class="p-2 text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-inverse-on-surface rounded-xl hover:bg-surface-container dark:hover:bg-surface-container-high transition-colors duration-150 relative" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 w-1.5 h-1.5 bg-primary rounded-full ring-2 ring-surface"></span>
+</button>
+<!-- Primary Write CTA Button -->
+<a class="inline-flex items-center gap-space-xs bg-primary text-on-primary font-label-lg text-label-lg px-4 py-2 rounded-xl hover:bg-primary-container transition-colors duration-150 shadow-none" href="#">
+<span class="material-symbols-outlined text-[18px]">drive_file_rename_outline</span>
+<span>Write</span>
+</a>
+<!-- User Profile Avatar with Online Status Indicator -->
+<div class="relative ml-1 cursor-pointer">
+<img alt="User profile avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant/60" data-alt="Editorial portrait of a refined creative director and author in a minimalist natural-light studio setting with calm, focused demeanor, wearing muted linen clothing against a neutral paper white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIoCcBzso76AtipYDOLwYGkiL0qeIddTLrly5CaA-6WXd71PaLoL8_3G_x3e_KaG5EPbS9pl0MxS3VsvlUk2P8WftWxHJvohIxaNV1nBFMohy8RpRXOo71cBo2O71v2VRUxiy485WNLL68Bb7u_vaP0CiZY5zuV24ugRbqyT68AiPS7tBmIojLCBnDaohP4uM8e-cmNNy58VUyO3_hYC8JxELK3lVa9tm91LS9vNmK4U0fSZaswEWNKo1_n_Lcnv2v3oaqkSZFCiO2"/>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-primary rounded-full border-2 border-surface"></span>
+</div>
+</div>
+</div>
+</header>
+<!-- SECTION 2: TOPIC FILTER RIBBON -->
+<section class="border-b border-outline-variant/40 bg-surface/80 backdrop-none sticky top-16 z-40">
+<div class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin py-2.5 flex items-center justify-between gap-space-md">
+<div class="flex items-center gap-2 overflow-x-auto custom-scroll w-full py-0.5">
+<!-- Active Topic Chip -->
+<button class="bg-primary text-on-primary font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150">
+          For You
+        </button>
+<!-- Inactive Topic Chips -->
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          Technology
+        </button>
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          Design
+        </button>
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          Programming
+        </button>
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          Startups
+        </button>
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          AI
+        </button>
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          Life
+        </button>
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          Writing
+        </button>
+<button class="bg-surface-container-low text-secondary hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm px-3.5 py-1.5 rounded-full shrink-0 transition-colors duration-150 border border-outline-variant/30">
+          Architecture
+        </button>
+</div>
+<div class="hidden sm:flex items-center gap-1 shrink-0 text-secondary pl-2 border-l border-outline-variant/40">
+<button aria-label="Browse more categories" class="p-1 hover:text-on-surface rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+</div>
+</section>
+<!-- SECTION 3: MAIN EDITORIAL FEED & CURATION SIDEBAR -->
+<main class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin py-space-lg flex-1">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- LEFT COLUMN (~68% width: 8 of 12 columns) -->
+<section class="lg:col-span-8 flex flex-col">
+<!-- Feed View Tabs -->
+<div class="flex items-center justify-between border-b border-outline-variant/40 pb-3 mb-space-lg">
+<div class="flex items-center gap-space-lg">
+<button class="font-label-lg text-label-lg font-semibold text-primary border-b-2 border-primary pb-3 -mb-[13px] transition-colors">
+              Trending
+            </button>
+<button class="font-label-lg text-label-lg text-secondary hover:text-on-surface pb-3 -mb-[13px] transition-colors">
+              Latest
+            </button>
+<button class="font-label-lg text-label-lg text-secondary hover:text-on-surface pb-3 -mb-[13px] transition-colors">
+              Staff Picks
+            </button>
+</div>
+<div class="text-secondary font-label-sm text-label-sm hidden md:flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Refine Feed</span>
+</div>
+</div>
+<!-- Story Stream -->
+<div class="divide-y divide-outline-variant/40 flex flex-col">
+<!-- Editorial Story Card 1 -->
+<article class="py-space-lg group transition-colors duration-150">
+<div class="flex flex-col-reverse md:flex-row gap-space-lg justify-between items-start">
+<div class="flex-1 flex flex-col justify-between">
+<!-- Author Header -->
+<div class="flex items-center gap-space-sm mb-2.5">
+<img alt="Elena Rostova avatar" class="w-6 h-6 rounded-full object-cover border border-outline-variant/40" data-alt="Monochrome cinematic portrait of Elena Rostova, a design systems architect, positioned against an airy gallery wall bathed in natural diffused daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuy5ZuOpmlAUDLadDWBfRxaDilUyim3E21dnBN34XeD9OajfPfGmSJnVS_rBB99wVb_ZQxEhAhNrDXLDVAYxZWpVVH6_DrxCo6hL1QjLfeviI-rd2xvLfwSxZNP946PbQg4cf49VP05yCCZIBg8OJIVRVqjNLufl-IoVvuIuQhk_cevKSdLbZpTTpMJEv79VeGrMBb2Njuozi9fxbnt5W3hjP87YA6EIrEwzavuRDKkcll2AhimpKDE7q1ruB8dKK5LOw4YTUSYWJm"/>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Elena Rostova</span>
+<span class="font-label-sm text-label-sm text-secondary">in</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Design Systems</span>
+<span class="text-secondary text-xs">•</span>
+<span class="font-label-sm text-label-sm text-secondary">Oct 24, 2024</span>
+<span class="material-symbols-outlined text-[14px] text-primary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<!-- Story Title & Excerpt -->
+<a class="block group" href="#">
+<h2 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors duration-150 mb-2 font-medium">
+                    The Architecture of Quiet Software: Rediscovering Subtlety in High-Density Tooling
+                  </h2>
+<p class="font-body-md text-body-md text-secondary line-clamp-2 mb-4 leading-relaxed">
+                    Why modern interfaces have mistaken relentless animation for clarity, and how returning to the restrained discipline of classic editorial craft builds enduring trust with professional users.
+                  </p>
+</a>
+<!-- Metadata & Interaction Row -->
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                      6 min read
+                    </span>
+<span class="font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+                      Design Systems
+                    </span>
+</div>
+<div class="flex items-center gap-3">
+<button aria-label="Applause" class="hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">pan_tool_alt</span>
+<span class="font-label-sm text-label-sm">482</span>
+</button>
+<button aria-label="Bookmark story" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">bookmark_border</span>
+</button>
+<button aria-label="Share" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+<button aria-label="Show less like this" class="hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">do_not_disturb_on</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Thumbnail Media -->
+<div class="w-full md:w-44 md:h-32 shrink-0 rounded-xl overflow-hidden bg-surface-container border border-outline-variant/40">
+<img alt="Architecture of quiet software thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Minimalist architectural composition of raw sand-cast concrete intersecting with soft warm timber details under serene indirect daylight. The framing emphasizes tactile purity, disciplined line work, and an understated peaceful interior atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfln4uwHnulux-5GIRX7rbzKl_1j-tuEk5TPRbPto4pX67hRi4MTE_b39FzL9gkElGHkx0f9kdedf5A8aiUcbjLYZPP4dKaa2LHsvhucyB4khYZy29Yoo5acxbesfOxECKCe_qAi_nbEbxb1l6KwNpt4a-gwApj5ME-r8LSiX6D0Nz7SX3GhWLXrCJpgjs08BvNpaLJ0ES2KW-dLOYWJaog_ZD55_43k57zutk2hsF35ndafMYtXqprDf0RJPUEAzZ3y9Et2oziH7F"/>
+</div>
+</div>
+</article>
+<!-- Editorial Story Card 2 -->
+<article class="py-space-lg group transition-colors duration-150">
+<div class="flex flex-col-reverse md:flex-row gap-space-lg justify-between items-start">
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex items-center gap-space-sm mb-2.5">
+<img alt="Marcus Sterling avatar" class="w-6 h-6 rounded-full object-cover border border-outline-variant/40" data-alt="Close-up environmental headshot of Marcus Sterling, typography researcher, in a warm library background surrounded by archived editorial folios and letterpress plates." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9_QQrkb5W2s0zaDVth-R-N3laaAAPv8qVWmzgJ8Q9n26Nnm8c540S4j8diE6--moDQkzJCgKRR_N7t9qtbwY1JZQt0OLBA6RM6HF8Aem9rtQxHaxhLwc__E2Mt2tUP1THr1yvRt5wm5vru2uDz_bkfj47fxFqjW37iiVM9hpOvWnWzzTtLPg5svMvIMjU_p4eM-HOEUtB6VUSBxI06tVlTWyGGQM3zTuQjrgQkrNX5cwGxnpSfCsQMVKrxzsZo1K27_8LQaFHtvlU"/>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Marcus Sterling</span>
+<span class="font-label-sm text-label-sm text-secondary">in</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Typography</span>
+<span class="text-secondary text-xs">•</span>
+<span class="font-label-sm text-label-sm text-secondary">Oct 23, 2024</span>
+</div>
+<a class="block group" href="#">
+<h2 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors duration-150 mb-2 font-medium">
+                    Why Typography Still Carries the Weight of the Internet
+                  </h2>
+<p class="font-body-md text-body-md text-secondary line-clamp-2 mb-4 leading-relaxed">
+                    Long before responsive layouts, the printed broadsheet solved readability under severe physical constraints. How contemporary web layout algorithms can learn from 18th-century punch-cutters.
+                  </p>
+</a>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                      4 min read
+                    </span>
+<span class="font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+                      Typography
+                    </span>
+</div>
+<div class="flex items-center gap-3">
+<button aria-label="Applause" class="hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">pan_tool_alt</span>
+<span class="font-label-sm text-label-sm">819</span>
+</button>
+<button aria-label="Bookmark story" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">bookmark_border</span>
+</button>
+<button aria-label="Share" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+<button aria-label="Show less like this" class="hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">do_not_disturb_on</span>
+</button>
+</div>
+</div>
+</div>
+<div class="w-full md:w-44 md:h-32 shrink-0 rounded-xl overflow-hidden bg-surface-container border border-outline-variant/40">
+<img alt="Typography craft story thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Vintage lead letterpress type blocks laid out across warm ivory rag paper, casting soft deliberate shadows with clean black ink traces and fine metallic patina in ambient studio light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB71lGc9OmzKZXA0-PrGbUpXUX75OwB7kQmhFXVOYQi9SZXVl0B5NXGVPOqTk8l3r3OMFQLLOiy_G49OtruGNrLidzuMpc9baZ_rwyqK8kHe_7aP6c9aoOqYRYL2a8etqVh63CWTdQ1AcSH909IT5Nk7TWzHCGeWisHL5PmChGsorX8f_vg_HXsH44cI79hYPY0a51xa9N-MpEISQiKr9FvMExkd55HNyNCNU1KkvII8PZcPx0aTvDNV7cp6si89AK5S7J5ato-8dVK"/>
+</div>
+</div>
+</article>
+<!-- Editorial Story Card 3 -->
+<article class="py-space-lg group transition-colors duration-150">
+<div class="flex flex-col-reverse md:flex-row gap-space-lg justify-between items-start">
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex items-center gap-space-sm mb-2.5">
+<img alt="Julian Vane avatar" class="w-6 h-6 rounded-full object-cover border border-outline-variant/40" data-alt="Editorial headshot of Julian Vane, spatial computing designer, shot with clean chiaroscuro lighting on warm bone-white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0cADs7jifwSurs9_XeUkx-76NHtjmwdui8Yz505BeqGZVXU55ZwOrm1LbM-RTOvmgB19j6nIDyg9OPw2-FgK0L2aBquA0qk2nAegPZ081P2gyO2YBWcP5Bu5aZ6qcYWVHTit850pFTPEoZh2HA1qstaQIlLojiskL17cgva8QZKbkYeaQkmhSa2FOROEGgCf6F8B1Kop37gYdQEh_IiDzA9MCR84wfRECM1fYO_NmLaQgPKCZYXocV7yth-RGQVoNPIsqKjC3w0zL"/>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Julian Vane</span>
+<span class="font-label-sm text-label-sm text-secondary">in</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Spatial Computing</span>
+<span class="text-secondary text-xs">•</span>
+<span class="font-label-sm text-label-sm text-secondary">Oct 21, 2024</span>
+<span class="material-symbols-outlined text-[14px] text-primary" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<a class="block group" href="#">
+<h2 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors duration-150 mb-2 font-medium">
+                    Designing Beyond Screens: Spatial Computing &amp; Editorial Intimacy
+                  </h2>
+<p class="font-body-md text-body-md text-secondary line-clamp-2 mb-4 leading-relaxed">
+                    When the bounding box vanishes, does reading become performance or sanctuary? Examining how physical gaze triggers narrative immersion without overwhelming sensory limits.
+                  </p>
+</a>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                      8 min read
+                    </span>
+<span class="font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+                      Technology
+                    </span>
+</div>
+<div class="flex items-center gap-3">
+<button aria-label="Applause" class="hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">pan_tool_alt</span>
+<span class="font-label-sm text-label-sm">1.4k</span>
+</button>
+<button aria-label="Bookmark story" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">bookmark_border</span>
+</button>
+<button aria-label="Share" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+<button aria-label="Show less like this" class="hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">do_not_disturb_on</span>
+</button>
+</div>
+</div>
+</div>
+<div class="w-full md:w-44 md:h-32 shrink-0 rounded-xl overflow-hidden bg-surface-container border border-outline-variant/40">
+<img alt="Spatial computing editorial visual" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Abstract sculptural representation of light refracting through monolithic glass prisms onto an off-white paper canvas, evoking modern optics and serene spatial depth without digital noise or synthetic glow." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOlK9ayXyiPbYobXe41zLWQLC6DsQeWNlokFGIM6aZJNAEyHtwsR7kiTmwwlgI3SjMAdE3mpt8ye0MsZ_yg-CGPJh1ayGocPlF4uR8CD3gfbADPo7np3GdQb0RLxy4aoXTojDJqPrd9GoFYLf1D2zitsa73wVjAUyw0-lYYQgpqr9jsrT8WCUtghIIH-IMIsw8cbuSuqG0GYxf8bR8oCrTiw4TBiAwEF_j9Yg2iFNGOyxEGC2uVpx-VEvz4E_jAQzJaNX_UGPMkWpx"/>
+</div>
+</div>
+</article>
+<!-- Editorial Story Card 4 -->
+<article class="py-space-lg group transition-colors duration-150">
+<div class="flex flex-col-reverse md:flex-row gap-space-lg justify-between items-start">
+<div class="flex-1 flex flex-col justify-between">
+<div class="flex items-center gap-space-sm mb-2.5">
+<img alt="Claire Vance avatar" class="w-6 h-6 rounded-full object-cover border border-outline-variant/40" data-alt="Thoughtful profile photo of Dr. Claire Vance, cognitive scientist, lit softly with organic daylight reflecting against an oak tabletop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuuqZF0pElC-btJNSn0VmfVS54U7ZmFuxloffssmE1wlMS3Xy3rP5iLHWlY8jpopVML4Ab5fxr_CCotYLnoHQA7hkGqz8SVRpqA3CwiTMUdgKGTn2auhntRcln0YVU8h2spzsiX1-wEknD3nLTg6ZRfQFtxVKgTU1S2G5etSMRGgqRN3BS8xk9cJEqsncEa_kjhFtbbRmOD_7ablJ7ERJtDyAtOa6Hh9IVExvY1Z5RLgEXHBNMKS8qzzxkrCuqgKOAXlyIWRsneUGd"/>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Dr. Claire Vance</span>
+<span class="font-label-sm text-label-sm text-secondary">in</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Cognitive Flow</span>
+<span class="text-secondary text-xs">•</span>
+<span class="font-label-sm text-label-sm text-secondary">Oct 19, 2024</span>
+</div>
+<a class="block group" href="#">
+<h2 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors duration-150 mb-2 font-medium">
+                    The Cognitive Tax of Infinite Scroll: Why We Are Returning to Pages
+                  </h2>
+<p class="font-body-md text-body-md text-secondary line-clamp-2 mb-4 leading-relaxed">
+                    A clinical analysis of reading retention between boundless feeds and bounded pages. The case for intentional pagination as an antidote to cognitive fragmentation.
+                  </p>
+</a>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                      5 min read
+                    </span>
+<span class="font-label-sm text-label-sm bg-surface-container-low px-2.5 py-1 rounded-full text-secondary border border-outline-variant/30">
+                      Philosophy
+                    </span>
+</div>
+<div class="flex items-center gap-3">
+<button aria-label="Applause" class="hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">pan_tool_alt</span>
+<span class="font-label-sm text-label-sm">620</span>
+</button>
+<button aria-label="Bookmark story" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">bookmark_border</span>
+</button>
+<button aria-label="Share" class="hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+<button aria-label="Show less like this" class="hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">do_not_disturb_on</span>
+</button>
+</div>
+</div>
+</div>
+<div class="w-full md:w-44 md:h-32 shrink-0 rounded-xl overflow-hidden bg-surface-container border border-outline-variant/40">
+<img alt="Bound pages cognitive tax visual" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Still life photograph of an opened hardcover book laid flat on a bleached ash desk beside an ink dip pen, lit by soft afternoon sunlight casting delicate elongated shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1k3-_TCVpnhTg6cQgOyN9ZuzzAK8NkKJ3jPX4GIoeM3GUCwL2AwJ1AaNbcRSWzgn-QJ-MBHX5Cnd9hFgqTLnWDw0ObaaRi1ykub3pMD9FAeIsOj2VLhn6vIddHVHd2CX12NaRVZZ12pGT6Llm8852sqQnSLx5ABpbR5NFVCboko71z-OSJH3ZcwmpHCOO0bRyKYqrPbA6x0VS6STaxNUSOK-lqapbJkDH-L5OGaguExNbZ3D6MQAfTEHjseW4cZ_laErkIdZhKsYf"/>
+</div>
+</div>
+</article>
+</div>
+<!-- Load More Section -->
+<div class="pt-space-lg pb-space-xl flex justify-center">
+<button class="font-label-lg text-label-lg px-6 py-2.5 rounded-xl border border-outline-variant text-on-surface hover:border-primary hover:text-primary hover:bg-surface-container-low transition-colors duration-150 inline-flex items-center gap-2">
+<span>Load more stories</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+</section>
+<!-- RIGHT COLUMN (~32% width: 4 of 12 columns, Sticky Sidebar) -->
+<aside class="lg:col-span-4 flex flex-col gap-space-lg sticky top-28">
+<!-- Editor's Desk / Staff Picks -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md">
+<div class="flex items-center gap-2 mb-space-md pb-2 border-b border-outline-variant/30">
+<span class="material-symbols-outlined text-primary text-[20px]">auto_awesome</span>
+<h3 class="font-label-lg text-label-lg font-semibold text-on-surface">Staff Picks</h3>
+</div>
+<div class="space-y-4">
+<div class="group cursor-pointer">
+<div class="flex items-center gap-2 mb-1">
+<img alt="Siobhan Roy thumbnail" class="w-4 h-4 rounded-full object-cover" data-alt="Portrait of Siobhan Roy, literary critic, set against textured neutral canvas background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCn7F2cat6iFAO8IFaPoEdbN9NCTnfNhlGUIW2aY4CxGCzmc4kZsIZ0WiNiV99AqYjNCXXs92gFJ7dIVjzDkrNUjai447k2luzLTozP8anurCmyB_x_4FKn6MDTaOHQtt3IO4i5cSwKP0rbZHna_O8y9MawynPAImTK3DbWG4p4L_gncetD7Qf-xM_iSrCVulDbqjnIGBW4YlYIVxnQobDOnEEFnJoTHeFQ9NPHyKCELraAE-Hxsgfr2h4AHY1b11nPuc_ERYfM29L"/>
+<span class="font-label-sm text-label-sm text-secondary">Siobhan Roy</span>
+</div>
+<h4 class="font-headline-sm text-[16px] leading-[22px] text-on-surface group-hover:text-primary transition-colors font-medium">
+                The Quiet Revolution of Non-Linear Narrative Design
+              </h4>
+</div>
+<div class="group cursor-pointer">
+<div class="flex items-center gap-2 mb-1">
+<img alt="Alex Moros thumbnail" class="w-4 h-4 rounded-full object-cover" data-alt="Headshot of Alex Moros, principal type designer, in warm muted tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB47lMf-XN68iSb4__O6aFm4tK08a87Jc9_ZZ7NgclTaSJflxH_d_PLQ-7dQBxCsvHkw_h_oQJgkF_F6vaqQTXLZxt2ROhUviTKV_s29hN5wil45_BB1CJM8uccr52dlJXI-cXF0O3XTbImHc6jh82uiTQe7ACHKgMRVvncUtCeC9lLiDOGCr2WBeJnHfquvARk2hHDuxO7rTx4A62OlzXMernRgXlXkpgIgBgIcnRyw_SxXlo_F5gnSif0QSLsYFdnbOhbZjfyDhV"/>
+<span class="font-label-sm text-label-sm text-secondary">Alex Moros</span>
+</div>
+<h4 class="font-headline-sm text-[16px] leading-[22px] text-on-surface group-hover:text-primary transition-colors font-medium">
+                Designing for the Reader's Eye: Tracking &amp; Optical Densities
+              </h4>
+</div>
+<div class="group cursor-pointer">
+<div class="flex items-center gap-2 mb-1">
+<img alt="Mira Kael thumbnail" class="w-4 h-4 rounded-full object-cover" data-alt="Editorial photo of Mira Kael, essayist, photographed in soft overcast lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZzzBRjo0qo7IuwKdiFc60_4xEh2oC-c-WaMdLR1uramO3A_Uw5SU1zxkUNmlUYZ3ZKIoH_mMcaQhod9eLjExjsVMCi6L0vUXVf8pXO-Zh9nggqr5u26wS09LGIpSFb8FExfEM20HFc_tin_7AFp3OGty36NkQ6hVN0xevu-TfQSUYqYTHDwdi1em5AIEy1LyCCIERPxXItpxuvIra5NRQnCDc7VzwhdtxamIe4kK97Aa3MmD422qHU31UFjVW3D79E9U3EI9FL5XZ"/>
+<span class="font-label-sm text-label-sm text-secondary">Mira Kael</span>
+</div>
+<h4 class="font-headline-sm text-[16px] leading-[22px] text-on-surface group-hover:text-primary transition-colors font-medium">
+                Notes on Solitude and the Digital Paragraph
+              </h4>
+</div>
+</div>
+<a class="inline-block mt-4 font-label-sm text-label-sm text-primary hover:underline" href="#">
+            View full reading list →
+          </a>
+</div>
+<!-- Recommended Topics Cloud -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md">
+<h3 class="font-label-lg text-label-lg font-semibold text-on-surface mb-space-md">
+            Recommended Topics
+          </h3>
+<div class="flex flex-wrap gap-2">
+<a class="font-label-sm text-label-sm bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high px-3 py-1.5 rounded-full transition-colors border border-outline-variant/30" href="#">
+              #DataVisualization
+            </a>
+<a class="font-label-sm text-label-sm bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high px-3 py-1.5 rounded-full transition-colors border border-outline-variant/30" href="#">
+              #CreativeCode
+            </a>
+<a class="font-label-sm text-label-sm bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high px-3 py-1.5 rounded-full transition-colors border border-outline-variant/30" href="#">
+              #ProductDesign
+            </a>
+<a class="font-label-sm text-label-sm bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high px-3 py-1.5 rounded-full transition-colors border border-outline-variant/30" href="#">
+              #MachineLearning
+            </a>
+<a class="font-label-sm text-label-sm bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high px-3 py-1.5 rounded-full transition-colors border border-outline-variant/30" href="#">
+              #Typography
+            </a>
+<a class="font-label-sm text-label-sm bg-surface-container text-secondary hover:text-on-surface hover:bg-surface-container-high px-3 py-1.5 rounded-full transition-colors border border-outline-variant/30" href="#">
+              #Philosophy
+            </a>
+</div>
+</div>
+<!-- Who to Follow -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md">
+<h3 class="font-label-lg text-label-lg font-semibold text-on-surface mb-space-md">
+            Who to Follow
+          </h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<img alt="Nadia Chen avatar" class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Studio portrait of Nadia Chen, design philosopher and researcher, wearing a dark minimal jacket against a muted warm plaster background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAr4wuUdJwZ3L-ya7yUAn06CaVxi0O3kYzZoluY7qWB2PFwef3rC3Xm1uPKoJIViauU6hVBrvyojuiGsIhrv3fJ5fVV4-Lm997t71NV7-SkjnCTCca-cgdm6V3_F2WtrRHYnQMKIrkXgFg_b7cqHVSNATU-Yw8IkuPvJU9l33eU_FJ0rwz55F1taP-3TtOV28olxYTsnNcTlc6A4ujwy6y2JJCwLCYnJNLQ8KkKd2x4dU_ykVdeG7FihY-MeugupRzfWSzvW1PvyI6q"/>
+<div class="truncate">
+<p class="font-label-md text-label-md font-semibold text-on-surface truncate">Nadia Chen</p>
+<p class="font-label-sm text-label-sm text-secondary truncate">Design Philosopher &amp; Critic</p>
+</div>
+</div>
+<button class="font-label-sm text-label-sm px-3 py-1 rounded-xl border border-outline-variant text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary transition-colors shrink-0">
+                Follow
+              </button>
+</div>
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<img alt="Soren Kierk avatar" class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Editorial profile of Soren Kierk, architectural essayist, natural side lighting, black turtleneck, beige studio wall." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5ASeabbRPZcR6q6dFmnCy4aaz2BxZEd3Zov9LTFlru6SOS0hLEzb5_uL8li64RC7EbdaXf6fBEyWBL4qwam6u79Xa3XdJhdTb4Jggnc6Q95XQy3z3LcljG6LjUxCt5GXxuNk_LisMVf5ptjTzs4YY88rZlbJTpktMlx14Cn2fBofhCcSEHBV0bKWl0W3jXuMB9b-dZe6Vmyis1x7gAx8rwxUN_ofV5ZMWf3ZTKws92NWxMUNGHsyGeEerVpqeCbQCoicMqZdZVGLa"/>
+<div class="truncate">
+<p class="font-label-md text-label-md font-semibold text-on-surface truncate">Soren Kierk</p>
+<p class="font-label-sm text-label-sm text-secondary truncate">Architectural Essayist</p>
+</div>
+</div>
+<button class="font-label-sm text-label-sm px-3 py-1 rounded-xl border border-outline-variant text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary transition-colors shrink-0">
+                Follow
+              </button>
+</div>
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 min-w-0">
+<img alt="Tara Thorne avatar" class="w-10 h-10 rounded-full object-cover shrink-0" data-alt="Portrait of Tara Thorne, computational typography researcher, clean paper aesthetic with neutral daylight tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd8KDfj3BgNlXmHQfsmBG0GxYRmKPGWeQxPzBTFJUnb2XmLAdRj1fnmABzsEHQbs035q34uuzijIpXpXBnRhHVH2v8wKPjSlsqDC2Qx4gUGPXB7bCjHYGZ0Drxgc_gCAsD95XKalOC51hlqJVoyhhwTDwxJaOhsrUPrZRLtFu6WXpgLe0RQrhIxxC-c3g6uHXv8PKCWLJzbOUJv5pXZUDB8ngT2K7DF7xL0P9qhtexMyMFM7C-NJ0cwCHUJ6evjGoi3A_GFQYhsmPs"/>
+<div class="truncate">
+<p class="font-label-md text-label-md font-semibold text-on-surface truncate">Tara Thorne</p>
+<p class="font-label-sm text-label-sm text-secondary truncate">Computational Type &amp; Systems</p>
+</div>
+</div>
+<button class="font-label-sm text-label-sm px-3 py-1 rounded-xl border border-outline-variant text-on-surface hover:bg-primary hover:border-primary hover:text-on-primary transition-colors shrink-0">
+                Follow
+              </button>
+</div>
+</div>
+</div>
+<!-- Saved Stories / Reading Drawer Quick Preview -->
+<div class="p-space-md rounded-xl bg-surface-container-low border border-outline-variant/40 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">bookmarks</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-semibold text-on-surface">Reading List</p>
+<p class="font-label-sm text-label-sm text-secondary">14 stories saved</p>
+</div>
+</div>
+<button class="font-label-sm text-label-sm text-primary hover:underline font-medium">
+            Open Drawer
+          </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- SECTION 4: FOOTER (Anchored from Footer JSON) -->
+<footer class="w-full bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant dark:border-outline flat no shadows mt-space-xl">
+<div class="w-full max-w-[1280px] mx-auto px-margin-mobile md:px-margin py-space-xl flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="flex flex-col items-center md:items-start gap-1">
+<div class="font-headline-sm text-headline-sm font-medium text-on-surface dark:text-inverse-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[22px]">edit_note</span>
+<span>PixelPen</span>
+</div>
+<p class="font-body-md text-body-md text-secondary">
+          Where ideas find their craft and audience.
+        </p>
+<p class="font-label-sm text-label-sm text-secondary mt-1">
+          © 2025 PixelPen Editorial Publishing Platform. All rights reserved.
+        </p>
+</div>
+<!-- Links Cluster from JSON (Exact Strings & Styling) -->
+<nav class="flex flex-wrap items-center justify-center md:justify-end gap-x-5 gap-y-2 text-secondary dark:text-secondary-fixed-dim font-label-sm text-label-sm">
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">Editorial Guidelines</a>
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">Curators</a>
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">Terms</a>
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">Privacy</a>
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">Writers Program</a>
+<a class="hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">RSS</a>
+</nav>
+</div>
+</footer>
+</body></html>

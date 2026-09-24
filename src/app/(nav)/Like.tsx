@@ -23,12 +23,7 @@ const Like = async ({ blogId }: { blogId: string }) => {
 
   return (
     <div>
-      <form
-        action={async () => {
-          "use server";
-          await likes(blogId);
-        }}
-      >
+      <form action={likes.bind(null, blogId)}>
         <HoverCard>
           {likeAccess ? (
             <Button

@@ -1,10 +1,12 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import prisma from "@/lib/db";
 import { getSession } from "@/app/actions";
 import ManageBlog from "./ManageBlog";
-import { redirect } from "next/navigation";
 import { AuthRequiredError } from "@/lib/exceptions";
 import { Blog } from "@/app/types";
+import { PageHeader, PageShell } from "@/components/page-shell";
+import { buttonVariants } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Manage Blog",
@@ -16,10 +18,14 @@ export default async function Page() {
   if (!session) throw new AuthRequiredError();
   const blogs: Blog[] = await prisma.blog.findMany({
     where: { ownerId: session.userInfo.id },
+    orderBy: { createdAt: "desc" },
     select: {
       id: true,
       title: true,
+      headline: true,
+      slug: true,
       status: true,
+      publishAt: true,
       createdAt: true,
       images: {
         select: {
@@ -33,21 +39,17 @@ export default async function Page() {
     select: { tag: true },
   });
   return (
-    <>
-      <div className=" h-full flex-1 flex-col space-y-8 p-8 md:flex">
-        <div className="flex items-center justify-between space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">
-              Welcome {session.userInfo.username}!
-            </h2>
-            <p className="text-muted-foreground">
-              Here&apos;s a list of your Blogs Written.
-            </p>
-          </div>
-          <div className="flex items-center space-x-2"></div>
-        </div>
-        <ManageBlog data={blogs} options={tags} />
-      </div>
-    </>
+    <PageShell>
+      <PageHeader
+        title="Your stories"
+        description={`Welcome back, ${session.userInfo.username}. Finish drafts, edit live stories, and schedule what comes next.`}
+        action={
+          <Link href="/publish-blog" className={buttonVariants()}>
+            Write
+          </Link>
+        }
+      />
+      <ManageBlog data={blogs} options={tags} />
+    </PageShell>
   );
 }

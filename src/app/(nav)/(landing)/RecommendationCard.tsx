@@ -14,7 +14,11 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import Like from "../Like";
 import { formatedNumber } from "@/lib/numberFormater";
-import { getFirstImageUrl, getFirstStringFromArray } from "@/lib/utils";
+import {
+  displayTitle,
+  getFirstImageUrl,
+  getFirstStringFromArray,
+} from "@/lib/utils";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 const RecommendationCard = async ({ data }: { data: Blog }) => {
   const session = await getSession();
@@ -28,6 +32,7 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
     },
   });
   const tags = data?.tags!;
+  const imageUrl = getFirstImageUrl(data.content);
   let isSubscribed = false;
   if (session) {
     isSubscribed = !!(await prisma.subscription.findFirst({
@@ -164,13 +169,19 @@ const RecommendationCard = async ({ data }: { data: Blog }) => {
       <div className="px-6 pb-6 pt-2 sm:p-8 w-full lg:mt-0 lg:w-2/5 lg:max-w-md lg:flex-shrink-0 min-h-fit flex justify-center items-center">
         <div className="h-48 w-64 lg:h-64 lg:w-64 rounded-sm text-center flex items-center justify-center overflow-hidden">
           <AspectRatio ratio={12 / 5}>
-            <Image
-              src={getFirstImageUrl(data.content)}
-              width={256}
-              height={256}
-              alt="Image"
-              className="rounded-sm h-auto w-auto"
-            />
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                width={256}
+                height={256}
+                alt={displayTitle(data.title)}
+                className="rounded-sm h-auto w-auto"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center rounded-sm bg-muted text-xs text-muted-foreground">
+                No image
+              </div>
+            )}
           </AspectRatio>
         </div>
       </div>

@@ -1,11 +1,9 @@
 import { Icons } from "@/components/icons";
-import React from "react";
-const loading = () => {
+
+export default function Loading() {
   return (
-    <div className="h-screen w-full flex justify-center items-center">
-      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
+    <div className="flex min-h-[50vh] w-full items-center justify-center">
+      <Icons.spinner className="h-8 w-8 animate-spin text-muted-foreground" />
     </div>
   );
-};
-
-export default loading;
+}

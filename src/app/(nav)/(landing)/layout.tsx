@@ -8,13 +8,14 @@ export default async function LandingLayout({
   recommendations: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen flex-col items-start justify-start">
-      <div className="h-full grid w-full grid-cols-1 lg:grid-cols-3">
-        <div className="col-span-1 lg:col-span-2 lg:border-r">
-          {recommendations}
-        </div>
-        <div className="hidden lg:block lg:col-span-1">{user}</div>
+    <main className="mx-auto w-full max-w-[1280px] flex-1 px-5 py-6 md:px-8">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
+        <div className="lg:col-span-8">{recommendations}</div>
+        <aside className="hidden lg:sticky lg:top-28 lg:col-span-4 lg:block">
+          {user}
+        </aside>
       </div>
-    </div>
+      {children}
+    </main>
   );
 }

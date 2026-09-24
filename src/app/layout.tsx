@@ -1,13 +1,28 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Newsreader, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-const fontSans = Roboto({
-  weight: ["400"],
+
+// Body / UI type
+const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+// Editorial serif for headlines
+const fontSerif = Newsreader({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+  adjustFontFallback: false,
 });
 import { cn } from "@/lib/utils";
 
@@ -27,15 +42,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "h-screen bg-background font-sans antialiased ",
-          fontSans.variable
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+          fontSerif.variable
         )}
       >
-        <Toaster />
-        <main>{children}</main>
+        <ThemeProvider>
+          <Toaster />
+          <SonnerToaster
+            theme="light"
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "#ffffff",
+                color: "#1a1c1a",
+                border: "1px solid #e5e5e5",
+              },
+            }}
+          />
+          <main>{children}</main>
+        </ThemeProvider>
         <SpeedInsights />
         <Analytics />
       </body>

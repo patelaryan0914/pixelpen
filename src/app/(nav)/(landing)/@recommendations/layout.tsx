@@ -1,15 +1,7 @@
-import NavigationBarForBlogs from "../NavigationBarForBlogs";
-import { Separator } from "@/components/ui/separator";
-export default async function Home({
+export default function RecommendationsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <>
-      <NavigationBarForBlogs />
-      <Separator />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }

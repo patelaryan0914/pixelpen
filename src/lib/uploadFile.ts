@@ -1,17 +1,6 @@
-import {
-  PutObjectCommand,
-  DeleteObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
-//uploadFile.ts
+// Client-safe upload helper. Sends the file to the server route so AWS
+// credentials never reach the browser bundle.
 
-const s3Client = new S3Client({
-  region: process.env.NEXT_PUBLIC_AWS_S3_REGION!,
-  credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID! as string,
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY! as string,
-  },
-});
 export const uploadFile = async ({
   fileName,
   file,
@@ -20,46 +9,25 @@ export const uploadFile = async ({
   fileName: string;
   file: File;
   object: string;
-}) => {
+}): Promise<string | undefined> => {
   try {
-    const clearFileName = fileName.replaceAll(" ", "").toLowerCase();
-    const sendRes = await s3Client.send(
-      new PutObjectCommand({
-        Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
-        Key: `${object}/${clearFileName}`,
-        Body: file,
-      })
-    );
-    const meta = sendRes.$metadata;
-    if (meta.httpStatusCode !== 200)
-      throw new Error(
-        `Error uploading file, with status: ${meta.httpStatusCode}`
-      );
+    if (!file || file.size === 0) return undefined;
+    if (file.size > 2 * 1024 * 1024) return undefined;
 
-    return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET}.s3.amazonaws.com/${object}/${clearFileName}`;
-  } catch (err) {
-    console.log(err);
-  }
-};
+    const form = new FormData();
+    form.append("file", file, fileName);
+    form.append("object", object);
 
-export const deleteFile = async ({ fileUrl }: { fileUrl: string }) => {
-  try {
-    const toReturn = fileUrl.split("/");
-    const key = toReturn[toReturn.length - 1];
-    const object = toReturn[toReturn.length - 2];
-    const sendRes = await s3Client.send(
-      new DeleteObjectCommand({
-        Bucket: process.env.NEXT_PUBLIC_AWS_BUCKET,
-        Key: `${object}/${key}`,
-      })
-    );
-    const meta = sendRes.$metadata;
-    if (meta.httpStatusCode !== 200)
-      throw new Error(
-        `Error Deleting file, with status: ${meta.httpStatusCode}`
-      );
-    return { status: meta.httpStatusCode };
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: form,
+    });
+
+    if (!res.ok) return undefined;
+    const data = (await res.json()) as { url?: string };
+    return data.url;
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    return undefined;
   }
 };

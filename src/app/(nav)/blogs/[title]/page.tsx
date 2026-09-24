@@ -1,39 +1,52 @@
 import prisma from "@/lib/db";
 import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
+import { publicStoryWhere } from "@/lib/stories";
+
 export const revalidate = 60;
+export const dynamicParams = true;
+
 const getBlogDetails = cache(async (title: string) => {
-  const blog: Blog | null = await prisma.blog.findFirst({
-    where: { title: title },
-    include: {
-      owner: true,
-      tags: true,
-      _count: {
-        select: {
-          likes: true,
-          comments: true,
-        },
-      },
-      images: {
-        select: {
-          imageUrl: true,
-        },
-      },
+  return prisma.blog.findFirst({
+    where: { OR: [{ slug: title }, { title }] },
+    select: {
+      id: true,
+      ownerId: true,
+      title: true,
+      headline: true,
+      slug: true,
+      description: true,
+      coverUrl: true,
+      content: true,
+      status: true,
+      publishAt: true,
+      createdAt: true,
+      owner: { select: { id: true, username: true, avatar: true, bio: true } },
+      series: { select: { id: true, title: true } },
+      tags: { select: { tag: true } },
+      images: { select: { imageUrl: true } },
       comments: {
         select: {
-          owner: true,
-          comment: true,
           id: true,
+          comment: true,
+          owner: { select: { avatar: true, username: true } },
         },
       },
+      _count: { select: { likes: true, comments: true } },
     },
   });
-  if (!blog) throw new BlogNotFound();
-  return blog;
 });
+
 export async function generateStaticParams() {
-  const blogs = await prisma.blog.findMany({ select: { title: true } });
-  return blogs.map((b) => ({ title: b.title }));
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: publicStoryWhere(),
+      select: { title: true, slug: true },
+    });
+    return blogs.map((blog) => ({ title: blog.slug || blog.title }));
+  } catch {
+    return [];
+  }
 }
 export async function generateMetadata(
   { params }: { params: { title: string } },
@@ -44,30 +57,38 @@ export async function generateMetadata(
 
   // fetch data
   const blog = await getBlogDetails(title);
+  if (!blog) return { title: "Story" };
 
   // optionally access and extend (rather than replace) parent metadata
   const previousImages = (await parent).openGraph?.images || [];
 
+  const label =
+    blog?.headline?.trim() ||
+    blog?.title.charAt(0).toUpperCase()! +
+      blog?.title.slice(1).replaceAll("-", " ")!;
+  const cover = blog?.coverUrl || blog?.images?.[0]?.imageUrl;
+
   return {
-    title:
-      blog?.title.charAt(0).toUpperCase()! +
-      blog?.title.slice(1).replaceAll("-", " ")!,
+    title: label,
+    description: blog?.description || undefined,
     openGraph: {
-      images: [{ url: blog?.images[0].imageUrl! as string }, ...previousImages],
+      title: label,
+      description: blog?.description || undefined,
+      images: cover ? [{ url: cover }, ...previousImages] : previousImages,
     },
   };
 }
 import dynamic from "next/dynamic";
-import { getSession, subscribe } from "@/app/actions";
 import { CircleUser, MessageSquareText } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Blog } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import Like from "../../Like";
+import LikeButton from "../../LikeButton";
+import FollowButton from "../../FollowButton";
 import { formatedNumber } from "@/lib/numberFormater";
-import { Icons } from "@/components/icons";
+import { storyPath, storyTitle } from "@/lib/utils";
+import RecordVisit from "@/components/record-visit";
 import {
   Sheet,
   SheetTrigger,
@@ -76,195 +97,238 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { HoverCard } from "@/components/ui/hover-card";
-import EditorJsRenderer from "../../(protectedRoutes)/EditorJsRenderer";
+import TiptapRenderer from "@/components/tiptap/TiptapRenderer";
+import ReadingProgress from "@/components/reading-progress";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BlogNotFound } from "@/lib/exceptions";
 
 const ShareButton = dynamic(() => import("../Share"), {
   ssr: false,
-  loading: () => (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
-    </div>
-  ),
 });
 const CommentForm = dynamic(() => import("../CommentForm"), {
   ssr: false,
-  loading: () => (
-    <div className="h-screen w-screen flex justify-center items-center">
-      <Icons.spinner className="mr-2 h-12 w-12 animate-spin" />
-    </div>
-  ),
 });
 
 const Page = async ({ params }: { params: { title: string } }) => {
-  const session = await getSession();
-  const followAccess: boolean = session ? true : false;
   const blog = await getBlogDetails(params.title);
-  const tags = blog?.tags!;
-  const comments = blog?.comments!;
-  const title =
-    blog?.title.charAt(0).toUpperCase()! +
-    blog?.title.slice(1).replaceAll("-", " ")!;
   if (!blog) notFound();
-  let isSubscribed = false;
-  if (session) {
-    isSubscribed = !!(await prisma.subscription.findFirst({
-      where: {
-        publisherId: blog?.owner?.id!,
-        readerId: session.userInfo.id,
-      },
-    }));
-  }
+  const tags = blog.tags;
+  const comments = blog.comments;
+  const title = storyTitle(blog);
+  const isLive =
+    blog.status === "Published" ||
+    (blog.status === "Scheduled" &&
+      !!blog.publishAt &&
+      new Date(blog.publishAt).getTime() <= Date.now());
+  if (!isLive) notFound();
+
+  const tagNames = tags.map((tag) => tag.tag);
+  const [related, seriesStories] = await Promise.all([
+    tagNames.length
+      ? prisma.blog.findMany({
+          where: {
+            AND: [
+              publicStoryWhere(),
+              { id: { not: blog.id } },
+              { tags: { some: { tag: { in: tagNames } } } },
+            ],
+          },
+          take: 3,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            title: true,
+            headline: true,
+            slug: true,
+            owner: { select: { username: true } },
+          },
+        })
+      : Promise.resolve([]),
+    blog.series?.id
+      ? prisma.blog.findMany({
+          where: {
+            seriesId: blog.series.id,
+            ...publicStoryWhere(),
+          },
+          orderBy: { createdAt: "asc" },
+          select: {
+            id: true,
+            title: true,
+            headline: true,
+            slug: true,
+          },
+        })
+      : Promise.resolve([]),
+  ]);
   return (
-    <div className="flex flex-col justify-center items-center ">
-      <div className="mt-4 w-full lg:w-4/5 xl:w-2/5 h-[100px] flex items-center justify-between space-x-4 border border-slate-200 shadow-sm rounded-lg ">
-        <div className="flex items-center space-x-4  px-4">
-          {blog?.owner?.avatar! === null ? (
-            <CircleUser className="h-10 w-10 text-black " />
-          ) : (
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={blog?.owner?.avatar!} alt="Image" />
-            </Avatar>
-          )}
-          <div>
-            <p className="text-sm font-medium leading-none">
-              {blog?.owner?.username!}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {blog?.owner?.email!}
-            </p>
-          </div>
-        </div>
-        <div className="px-4">
-          <form
-            action={async () => {
-              "use server";
-              await subscribe(blog?.owner?.id!);
-            }}
-          >
-            <Button
-              type="submit"
-              size="sm"
-              disabled={!followAccess}
-              aria-label="followAccess"
-            >
-              {isSubscribed ? "Unfollow" : "Follow"}
-            </Button>
-          </form>
-        </div>
-      </div>
-      <div className="w-4/5 xl:w-2/5 mt-2 font-serif">
-        <EditorJsRenderer data={blog?.content} title={title} />
-      </div>
-      <div className="w-4/5 xl:w-2/5 flex-col sm:flex justify-between">
-        <div className="mb-5 flex justify-start space-x-1 mt-2">
-          {tags.length > 0 ? (
-            tags.map((val: { tag: string }, index: number) => (
-              <Badge variant="outline" key={index}>
-                <p className="p-1 text-base">{val.tag}</p>
-              </Badge>
-            ))
-          ) : (
-            <></>
-          )}
-        </div>
-        <div className="mb-5 flex justify-between items-center mt-2">
-          <div className="flex space-x-4">
-            <div className="flex items-center text-sm font-medium leading-none space-x-1">
-              <div>
-                <Like blogId={blog?.id} />
-              </div>
-              <p className="text-xs">
-                {formatedNumber.format(blog?._count?.likes!)}
-              </p>
-            </div>
-            <div className="flex items-center text-sm font-medium leading-none space-x-1">
-              <div>
-                <Sheet>
-                  <SheetTrigger className="flex items-center" asChild>
-                    <Button variant="ghost" size="icon" aria-label="comment">
-                      <MessageSquareText color="#374151" />
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent>
-                    <SheetHeader>
-                      <SheetTitle>Comments</SheetTitle>
-                      <SheetDescription>Share us a feedback!</SheetDescription>
-                    </SheetHeader>
-                    <CommentForm disabled={followAccess} blogId={blog?.id} />
-                    <div className="flex flex-col">
-                      {comments.length > 0 ? (
-                        blog?.comments?.map((val) => (
-                          <div key={val.id} className="flex mt-4 items-center">
-                            {val.owner.avatar! === null ? (
-                              <CircleUser className="h-10 w-10 text-black " />
-                            ) : (
-                              <Avatar className="h-10 w-10">
-                                <AvatarImage
-                                  src={val.owner.avatar}
-                                  alt="Image"
-                                />
-                              </Avatar>
-                            )}
-                            <div className="ml-2">{val.comment}</div>
-                          </div>
-                        ))
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  </SheetContent>
-                </Sheet>
-              </div>
-              <p className="text-xs">
-                {formatedNumber.format(blog?._count?.comments!)}
-              </p>
-            </div>
-          </div>
-          <div className="flex justify-items-end">
-            <ShareButton />
-          </div>
-        </div>
-      </div>
-      <Separator className="w-4/5 xl:w-2/5 mb-5" />
-      <div className="w-4/5 xl:w-2/5 flex justify-between items-center">
-        <div className="flex justify-start items-center space-x-4 ">
-          {blog?.owner?.avatar! === null ? (
-            <CircleUser className="h-14 w-14 text-black " />
-          ) : (
-            <Avatar className="h-14 w-14">
-              <AvatarImage src={blog?.owner?.avatar!} alt="Image" />
-            </Avatar>
-          )}
-          <div>
-            <p className="text-sm font-medium leading-none">
-              {blog?.owner?.username!}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {blog?.owner?.email!}
-            </p>
-          </div>
-        </div>
-        <form
-          action={async () => {
-            "use server";
-            await subscribe(blog?.owner?.id!);
-          }}
-          className="justify-items-end"
+    <article className="mx-auto w-full max-w-3xl px-5 py-10 md:px-8">
+      <ReadingProgress />
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <Link
+          href={`/profile/${blog?.owner?.id}`}
+          className="flex items-center gap-3"
         >
-          <Button
-            type="submit"
-            size="sm"
-            disabled={!followAccess}
-            aria-label="follow"
-          >
-            <HoverCard>{isSubscribed ? "Unfollow" : "Follow"}</HoverCard>
-          </Button>
-        </form>
+          {blog?.owner?.avatar ? (
+            <Avatar className="h-11 w-11">
+              <AvatarImage src={blog.owner.avatar} alt="" />
+            </Avatar>
+          ) : (
+            <CircleUser className="h-11 w-11 text-muted-foreground" />
+          )}
+          <div>
+            <p className="text-sm font-semibold">{blog?.owner?.username}</p>
+            {blog?.owner?.bio && (
+              <p className="line-clamp-1 max-w-xs text-xs text-muted-foreground">
+                {blog.owner.bio}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {blog?.createdAt
+                ? new Date(blog.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : ""}
+            </p>
+          </div>
+        </Link>
+        <FollowButton publisherId={blog.ownerId} variant="outline" />
       </div>
-    </div>
+
+      <TiptapRenderer doc={blog?.content as any} title={title} />
+
+      {tags.length > 0 && (
+        <div className="mt-8 flex flex-wrap gap-2">
+          {tags.map((val: { tag: string }, index: number) => (
+            <Badge variant="outline" key={index} className="rounded-full">
+              {val.tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      <RecordVisit blogId={blog.id} />
+      <div className="mt-6 flex items-center justify-between border-y py-3">
+        <div className="flex items-center gap-3">
+          <LikeButton
+            blogId={blog.id}
+            count={blog._count?.likes ?? 0}
+            checkLiked
+          />
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="comment">
+                <MessageSquareText className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Comments</SheetTitle>
+                <SheetDescription>Share a note with the writer.</SheetDescription>
+              </SheetHeader>
+              <CommentForm blogId={blog.id} />
+              <div className="mt-4 flex flex-col gap-4">
+                {comments.length > 0
+                  ? blog?.comments?.map((val) => (
+                      <div key={val.id} className="flex items-start gap-3">
+                        {val.owner.avatar ? (
+                          <Avatar className="h-9 w-9">
+                            <AvatarImage src={val.owner.avatar} alt="" />
+                          </Avatar>
+                        ) : (
+                          <CircleUser className="h-9 w-9 text-muted-foreground" />
+                        )}
+                        <p className="text-sm leading-6">{val.comment}</p>
+                      </div>
+                    ))
+                  : (
+                    <p className="text-sm text-muted-foreground">
+                      No comments yet.
+                    </p>
+                  )}
+              </div>
+            </SheetContent>
+          </Sheet>
+          <span className="text-xs text-muted-foreground">
+            {formatedNumber.format(blog?._count?.comments!)}
+          </span>
+        </div>
+        <ShareButton />
+      </div>
+
+      <Separator className="my-8" />
+
+      <div className="flex items-center justify-between gap-4">
+        <Link
+          href={`/profile/${blog?.owner?.id}`}
+          className="flex items-center gap-4"
+        >
+          {blog?.owner?.avatar ? (
+            <Avatar className="h-14 w-14">
+              <AvatarImage src={blog.owner.avatar} alt="" />
+            </Avatar>
+          ) : (
+            <CircleUser className="h-14 w-14 text-muted-foreground" />
+          )}
+          <div>
+            <p className="font-serif text-lg font-medium">
+              {blog?.owner?.username}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {blog.owner?.bio || "More stories from this writer"}
+            </p>
+          </div>
+        </Link>
+        <FollowButton publisherId={blog.ownerId} />
+      </div>
+
+      {seriesStories.length > 1 && (
+        <section className="mt-12">
+          <h2 className="font-serif text-2xl font-medium">
+            Part of {blog.series?.title}
+          </h2>
+          <ol className="mt-4 divide-y border-t">
+            {seriesStories.map((story, index) => (
+              <li key={story.id}>
+                <Link href={storyPath(story)} className="flex gap-4 py-4">
+                  <span className="w-14 shrink-0 text-sm text-muted-foreground">
+                    Part {index + 1}
+                  </span>
+                  <span
+                    className={
+                      story.id === blog.id
+                        ? "font-serif text-lg text-primary"
+                        : "font-serif text-lg hover:text-primary"
+                    }
+                  >
+                    {storyTitle(story)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section className="mt-12">
+          <h2 className="font-serif text-2xl font-medium">More on this topic</h2>
+          <div className="mt-4 divide-y border-t">
+            {related.map((story) => (
+              <Link key={story.id} href={storyPath(story)} className="block py-4">
+                <p className="text-xs text-muted-foreground">
+                  {story.owner?.username}
+                </p>
+                <p className="font-serif text-lg hover:text-primary">
+                  {storyTitle(story)}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+    </article>
   );
 };
 

@@ -409,7 +409,9 @@ const MultipleSelector = React.forwardRef<
               return (
                 <Badge
                   key={option.value}
+                  variant="outline"
                   className={cn(
+                    "border-border bg-background text-foreground",
                     "data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
                     badgeClassName
@@ -419,8 +421,10 @@ const MultipleSelector = React.forwardRef<
                 >
                   {option.label}
                   <button
+                    type="button"
+                    aria-label={`Remove ${option.label}`}
                     className={cn(
-                      "ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                      "ml-1 rounded-full text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
                       (disabled || option.fixed) && "hidden"
                     )}
                     onKeyDown={(e) => {
@@ -434,7 +438,7 @@ const MultipleSelector = React.forwardRef<
                     }}
                     onClick={() => handleUnselect(option)}
                   >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                    <X className="h-3.5 w-3.5 text-foreground" strokeWidth={2.5} />
                   </button>
                 </Badge>
               );
@@ -477,8 +481,10 @@ const MultipleSelector = React.forwardRef<
             />
             <button
               type="button"
+              aria-label="Clear all tags"
               onClick={() => setSelected(selected.filter((s) => s.fixed))}
               className={cn(
+                "text-foreground",
                 (hideClearAllButton ||
                   disabled ||
                   selected.length < 1 ||
@@ -486,7 +492,7 @@ const MultipleSelector = React.forwardRef<
                   "hidden"
               )}
             >
-              <X />
+              <X className="h-4 w-4 text-foreground" strokeWidth={2.5} />
             </button>
           </div>
         </div>

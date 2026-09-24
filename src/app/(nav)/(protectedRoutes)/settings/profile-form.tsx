@@ -9,6 +9,7 @@ import { userInfoSchema } from "@/lib/zod-schema";
 import { uploadFile } from "@/lib/uploadFile";
 import { userInfo } from "@/app/actions";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { UserCircle2 } from "lucide-react";
 import { Session } from "@/app/types";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -32,7 +33,13 @@ const Submit = () => {
   );
 };
 
-export function ProfileForm({ session }: { session: Session }) {
+export function ProfileForm({
+  session,
+  bio,
+}: {
+  session: Session;
+  bio: string;
+}) {
   const [error, setError] = useState<any>([]);
   const [url, setUrl] = useState<string>("");
   const validateData = async (formdata: FormData) => {
@@ -41,11 +48,13 @@ export function ProfileForm({ session }: { session: Session }) {
       formdata.get("username")?.toString().length === 0
         ? null
         : formdata.get("username")?.toString();
+    const nextBio = formdata.get("bio")?.toString().trim() || null;
     try {
       const result = await userInfoSchema.safeParseAsync({
         username,
         avatarUrl: formdata.get("fileUrl"),
         fileSize: file.size,
+        bio: nextBio,
       });
       if (!result.success) {
         return setError(result.error.issues);
@@ -61,18 +70,23 @@ export function ProfileForm({ session }: { session: Session }) {
           await userInfo({
             username: result.data.username,
             avatarUrl: fileUrl,
+            bio: result.data.bio ?? null,
           });
-          formdata.append("fileUrl", fileUrl);
           return;
         }
       }
-      await userInfo(result.data);
+      await userInfo({
+        username: result.data.username,
+        avatarUrl: result.data.avatarUrl,
+        bio: result.data.bio ?? null,
+      });
     } catch (err) {
       console.error("Error in handleFileChange:", err);
     }
   };
   const usernameErrors = findErrors("username", error);
   const fileSizeErrors = findErrors("fileSize", error);
+  const bioErrors = findErrors("bio", error);
   return (
     <form action={validateData} className="space-y-8">
       <div className="flex gap-x-4 ">
@@ -92,46 +106,61 @@ export function ProfileForm({ session }: { session: Session }) {
           />
         </div>
       </div>
+      <div className="grid gap-y-2">
+        <Label htmlFor="bio" className="flex justify-between">
+          Bio
+          <ErrorMessages errors={bioErrors} />
+        </Label>
+        <Textarea
+          id="bio"
+          name="bio"
+          maxLength={160}
+          placeholder="A line about what you write."
+          defaultValue={bio}
+          className="min-h-[96px]"
+        />
+        <p className="text-xs text-muted-foreground">
+          Shown under your name on stories and your profile. 160 characters.
+        </p>
+      </div>
       <div className="col-span-full mt-1">
         <label
-          htmlFor="cover-photo"
-          className="block text-sm font-medium leading-6 text-gray-900"
+          htmlFor="file-upload"
+          className="mb-2 block text-sm font-medium leading-6 text-foreground"
         >
           Avatar photo
         </label>
-        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-          <div className="text-center">
-            {url !== "" ? (
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={url} alt="Image" />
-              </Avatar>
-            ) : (
-              <UserCircle2
-                className="mx-auto h-12 w-12 text-gray-300"
-                aria-hidden="true"
-              />
-            )}
-
-            <div className="mt-4 flex text-sm leading-6 text-gray-600">
-              <label
-                htmlFor="file-upload"
-                className="relative cursor-pointer rounded-md bg-white font-semiboldfocus-within:outline-none focus-within:ring-2"
-              >
-                <span className="font-bold">Upload a file</span>
-                <Input
-                  id="file-upload"
-                  name="file-upload"
-                  type="file"
-                  className="sr-only"
-                />
-              </label>
-              <p className="pl-1">or drag and drop</p>
-            </div>
-            <p className="text-xs leading-5 text-gray-600">
-              PNG, JPG, GIF up to 10MB
-            </p>
-            <ErrorMessages errors={fileSizeErrors} />
-          </div>
+        <label
+          htmlFor="file-upload"
+          className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/40 px-6 py-10 text-center transition-colors hover:border-primary hover:bg-accent/40"
+        >
+          {url !== "" ? (
+            <Avatar className="h-20 w-20">
+              <AvatarImage src={url} alt="Image" />
+            </Avatar>
+          ) : (
+            <UserCircle2
+              className="mx-auto h-12 w-12 text-muted-foreground"
+              aria-hidden="true"
+            />
+          )}
+          <p className="mt-4 text-sm leading-6 text-foreground">
+            <span className="font-semibold text-primary">Upload a file</span>{" "}
+            or drag and drop
+          </p>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            PNG, JPG, GIF up to 2MB
+          </p>
+          <Input
+            id="file-upload"
+            name="file-upload"
+            type="file"
+            accept="image/png,image/jpeg,image/gif"
+            className="sr-only"
+          />
+        </label>
+        <div className="mt-1">
+          <ErrorMessages errors={fileSizeErrors} />
         </div>
         <Submit />
       </div>
