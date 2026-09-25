@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/db";
+import { Prisma } from "@/generated/prisma/client";
 import { groqComplete } from "@/lib/groq";
 import { slugify } from "@/lib/utils";
 
@@ -302,7 +303,7 @@ export async function backfillCovers() {
 
     await prisma.blog.update({
       where: { id: blog.id },
-      data: { coverUrl, content: nextContent },
+      data: { coverUrl, content: nextContent as Prisma.InputJsonValue },
     });
     await prisma.image.create({
       data: { imageUrl: coverUrl, ownerId: blog.ownerId, blogId: blog.id },
